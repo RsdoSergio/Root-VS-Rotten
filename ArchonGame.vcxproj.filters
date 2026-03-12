@@ -25,34 +25,90 @@
     <Filter Include="assets\audio">
       <UniqueIdentifier>{77c670c6-3c2d-48e9-b3a7-cbddb774d2db}</UniqueIdentifier>
     </Filter>
-    <Filter Include="assets\images">
-      <UniqueIdentifier>{80ac5908-e628-4502-a948-9ca1854ff965}</UniqueIdentifier>
-    </Filter>
     <Filter Include="assets\sprites">
       <UniqueIdentifier>{7f4b4119-c83a-487d-acbe-05f44ca289a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\spells">
-      <UniqueIdentifier>{6b06dca1-0d9b-422a-bf7d-fb5bd91067a2}</UniqueIdentifier>
+    <Filter Include="assets\imagenes">
+      <UniqueIdentifier>{80ac5908-e628-4502-a948-9ca1854ff965}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\game">
-      <UniqueIdentifier>{454314d6-8881-425e-8442-46583b056783}</UniqueIdentifier>
+    <Filter Include="assets\imagenes\tablero">
+      <UniqueIdentifier>{233aa454-ff2a-4b63-bef3-737900c649da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\board">
+    <Filter Include="assets\sprites\equipo rotten %28zombies%29">
+      <UniqueIdentifier>{c1a0bfca-f7e5-49e4-b716-509e0fbbdb52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets\sprites\equipo root %28plantas%29">
+      <UniqueIdentifier>{a7e55805-d536-4089-b7b4-3506efdec467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets\imagenes\tests">
+      <UniqueIdentifier>{d93ba637-5212-44db-b89f-1ce203929ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tablero">
       <UniqueIdentifier>{24364c27-01a6-46d1-8fe5-1be669ea4aa5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\pieces">
-      <UniqueIdentifier>{d4d96ee1-a5bd-45b3-a54c-4aa6d39783fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\combat">
+    <Filter Include="src\combate">
       <UniqueIdentifier>{62138f73-4157-4092-83c3-7ba36f1cdcc1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\graphics">
+    <Filter Include="src\juego">
+      <UniqueIdentifier>{454314d6-8881-425e-8442-46583b056783}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graficos">
       <UniqueIdentifier>{53ffda82-3e4a-405b-a5cf-99fc69f4ceec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\piezas">
+      <UniqueIdentifier>{d4d96ee1-a5bd-45b3-a54c-4aa6d39783fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets\imagenes\efectos de combate">
+      <UniqueIdentifier>{6dfa1960-00cd-40fb-9edd-dcaa0fc8db8c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README_audio.md">
+      <Filter>assets\audio</Filter>
+    </None>
+    <None Include="README_imagenes.md">
+      <Filter>assets\imagenes</Filter>
+    </None>
+    <None Include="README_efectosdecombate.md">
+      <Filter>assets\imagenes\efectos de combate</Filter>
+    </None>
+    <None Include="README_tests.md">
+      <Filter>assets\imagenes\tests</Filter>
+    </None>
+    <None Include="README_tablero.md">
+      <Filter>assets\imagenes\tablero</Filter>
+    </None>
+    <None Include="README_sprites.md">
+      <Filter>assets\sprites</Filter>
+    </None>
+    <None Include="README_equiporotten.md">
+      <Filter>assets\sprites\equipo rotten %28zombies%29</Filter>
+    </None>
+    <None Include="README_equiporoot.md">
+      <Filter>assets\sprites\equipo root %28plantas%29</Filter>
+    </None>
+    <None Include="README_docs.md">
+      <Filter>docs</Filter>
+    </None>
+    <None Include="README_.tableromd">
+      <Filter>src\tablero</Filter>
+    </None>
+    <None Include="README_combate.md">
+      <Filter>src\combate</Filter>
+    </None>
+    <None Include="README_graficos.md">
+      <Filter>src\graficos</Filter>
+    </None>
+    <None Include="README_juego.md">
+      <Filter>src\juego</Filter>
+    </None>
+    <None Include="README_piezas.md">
+      <Filter>src\piezas</Filter>
+    </None>
   </ItemGroup>
 </Project>

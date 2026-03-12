@@ -24,6 +24,7 @@
     <ProjectGuid>{613aa423-9652-485f-b843-a03e5d892687}</ProjectGuid>
     <RootNamespace>ArchonGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ROOT VS ROTTEN</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -128,6 +129,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README_.tableromd" />
+    <None Include="README_combate.md" />
+    <None Include="README_docs.md" />
+    <None Include="README_equiporoot.md" />
+    <None Include="README_equiporotten.md" />
+    <None Include="README_audio.md" />
+    <None Include="README_efectosdecombate.md" />
+    <None Include="README_graficos.md" />
+    <None Include="README_imagenes.md" />
+    <None Include="README_juego.md" />
+    <None Include="README_piezas.md" />
+    <None Include="README_sprites.md" />
+    <None Include="README_tablero.md" />
+    <None Include="README_tests.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
