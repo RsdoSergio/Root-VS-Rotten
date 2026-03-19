@@ -1,3 +1,5 @@
+<img width="1280" height="640" alt="Diseño sin título (2)" src="https://github.com/user-attachments/assets/d8541843-4881-4720-9a0b-1d0bf32c47a5" />
+
 # Root VS Rotten
 
 **Root VS Rotten** es un videojuego inspirado en el clásico juego de estrategia **Archon: The Light and the Dark**, reinterpretado con una temática basada en el universo de **Plants vs. Zombies**.
