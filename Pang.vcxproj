@@ -21,10 +21,12 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mundo.cpp" />
+    <ClCompile Include="src\tablero\tablero.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\freeglut.h" />
     <ClInclude Include="src\mundo.h" />
+    <ClInclude Include="src\tablero\tablero.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

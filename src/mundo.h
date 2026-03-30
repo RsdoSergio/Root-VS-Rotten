@@ -1,12 +1,13 @@
 #pragma once
+#include "tablero/tablero.h"
 
 class Mundo
 {
 	double x_ojo;
 	double y_ojo;
 	double z_ojo;
+	Tablero tablero;
 public:
-	void rotar_ojo();
 	void inicializa();
 	void dibuja();
 	void mueve();
