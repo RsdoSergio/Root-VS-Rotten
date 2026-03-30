@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Archivos de origen">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Archivos de encabezado">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Archivos de recursos">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mundo.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\mundo.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\freeglut.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\audio\README_audio.md" />
+    <None Include="assets\imagenes\README_imagenes.md" />
+    <None Include="assets\imagenes\efectos de combate\README_efectosdecombate.md" />
+    <None Include="assets\imagenes\tablero\README_.tablero.md" />
+    <None Include="assets\imagenes\tests\README_tests.md" />
+    <None Include="assets\README_assets.md" />
+    <None Include="assets\sprites\README_sprites.md" />
+    <None Include="assets\sprites\equipo root (plantas)\README_equiporoot.md" />
+    <None Include="assets\sprites\equipo rotten (zombies)\README_equiporotten.md" />
+    <None Include="bin\freeglut.dll" />
+    <None Include="bin\Pang.exe" />
+    <None Include="bin\RootVsRotten.exe" />
+    <None Include="docs\README_docs.md" />
+    <None Include="settings.VisualStudio.json" />
+    <None Include="README.md" />
+    <None Include=".gitignore" />
+    <None Include="src\tablero\README_tablero.md" />
+    <None Include="src\combate\README_combate.md" />
+    <None Include="src\graficos\README_graficos.md" />
+    <None Include="src\juego\README_juego.md" />
+    <None Include="src\piezas\README_piezas.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\imagenes\tablero\diseño_tablero_v1.0.png">
+      <Filter>Archivos de recursos</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\freeglut.lib" />
+  </ItemGroup>
+</Project>

@@ -1,20 +1,74 @@
-// ArchonGame.cpp : Este archivo contiene la funci贸n "main". La ejecuci贸n del programa comienza y termina ah铆.
-//
+#include "freeglut.h"
+#include "mundo.h"
 
-#include <iostream>
+Mundo mundo; //centralizamos la informaci髇 en este objeto
 
-int main()
+//los callback, funciones que seran llamadas automaticamente por la glut
+//cuando sucedan eventos
+//NO HACE FALTA LLAMARLAS EXPLICITAMENTE
+void OnDraw(void); //esta funcion sera llamada para dibujar
+void OnTimer(int value); //esta funcion sera llamada cuando transcurra una temporizacion
+void OnKeyboardDown(unsigned char key, int x, int y); //cuando se pulse una tecla
+
+int main(int argc, char* argv[])
 {
-	std::cout << "Hello World!\n";
-	std::cout << "OMGLD"
+	//Inicializar el gestor de ventanas GLUT
+	//y crear la ventana
+	glutInit(&argc, argv);
+	glutInitWindowSize(800, 600);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+	glutCreateWindow("PANGSIDI");
+
+	//habilitar luces y definir perspectiva
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glMatrixMode(GL_PROJECTION);
+	gluPerspective(40.0, 800 / 600.0f, 0.1, 150);
+
+	//Registrar los callbacks
+	glutDisplayFunc(OnDraw);
+	glutTimerFunc(25, OnTimer, 0);//le decimos que dentro de 25ms llame 1 vez a la funcion OnTimer()
+	glutKeyboardFunc(OnKeyboardDown);
+
+	//inicializaci髇 de objetos de la simulaci髇
+	mundo.inicializa();
+
+	//pasarle el control a GLUT,que llamara a los callbacks
+	glutMainLoop();
+	return 0;
 }
 
-// Ejecutar programa: Ctrl + F5 o men煤 Depurar > Iniciar sin depurar
-// Depurar programa: F5 o men煤 Depurar > Iniciar depuraci贸n
+void OnDraw(void)
+{
+	//Borrado de la pantalla y reseteo de la matriz de transformacion
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
-// Sugerencias para primeros pasos: 1. Use la ventana del Explorador de soluciones para agregar y administrar archivos
-//   2. Use la ventana de Team Explorer para conectar con el control de c贸digo fuente
-//   3. Use la ventana de salida para ver la salida de compilaci贸n y otros mensajes
-//   4. Use la ventana Lista de errores para ver los errores
-//   5. Vaya a Proyecto > Agregar nuevo elemento para crear nuevos archivos de c贸digo, o a Proyecto > Agregar elemento existente para agregar archivos de c贸digo existentes al proyecto
-//   6. En el futuro, para volver a abrir este proyecto, vaya a Archivo > Abrir > Proyecto y seleccione el archivo .sln
+	mundo.dibuja();
+
+	//no borrar esta linea ni poner nada despues
+	glutSwapBuffers();
+}
+void OnKeyboardDown(unsigned char key, int x_t, int y_t)
+{
+	//codigo de gestion de teclado
+	mundo.tecla(key);
+
+	//indicamos que se vuelva a dibujar la pantalla, para que se vean los cambios
+	glutPostRedisplay();
+}
+
+void OnTimer(int value)
+{
+	//c骴igo de animacion
+	mundo.mueve();
+
+	//no borrar estas lineas
+	//indicamos que se vuelva a dibujar la pantalla, para que se vean los cambios
+	glutPostRedisplay();
+	//recurivamente, le decimos que dentro de 25ms vuelva a llamar a esta funcion, para que se siga animando
+	glutTimerFunc(25, OnTimer, 0);
+}
