@@ -1,28 +1,16 @@
 #pragma once
+#include "casilla.h"
 
 // Dimensiones del tablero
-const int FILAS = 9;
-const int COLS = 9;
-const float TAM_CELDA = 2.8f;
+constexpr int FILAS = 9;
+constexpr  int COLS = 9;
+constexpr float TAM_CELDA = 2.8f;
 
-// Tipos de casilla
-enum TipoCasilla {
-	NORMAL,
-	POWER_LIGHT,   // casillas especiales de Root (plantas)
-	POWER_DARK     // casillas especiales de Rotten (zombies)
-};
+class Tablero {
+public:
+	void inicializaTablero();
+	void dibujaTablero();
 
-// Struct que representa una casilla
-struct Casilla {
-	TipoCasilla tipo;
-	bool ocupada;
-};
-
-// El tablero completo
-struct Tablero {
+private:
 	Casilla casillas[FILAS][COLS];
 };
-
-// Funciones
-void inicializaTablero(Tablero& t);
-void dibujaTablero(const Tablero& t);

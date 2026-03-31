@@ -4,7 +4,7 @@
 #include "tablero/tablero.h"
 
 void Mundo::inicializa() {
-	inicializaTablero(tablero);
+	tablero.inicializaTablero();
 };
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
@@ -22,5 +22,5 @@ void Mundo::dibuja()
 {
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
 
-	dibujaTablero(tablero);
+	tablero.dibujaTablero();
 }

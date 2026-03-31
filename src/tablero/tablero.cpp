@@ -1,19 +1,17 @@
 #include "tablero.h"
 #include "freeglut.h"
 
-void inicializaTablero(Tablero& t) {
+void Tablero::inicializaTablero() {
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
-			t.casillas[i][j].ocupada = false;
+			casillas[i][j].ocupada = false;
 
-			t.casillas[i][j].tipo = NORMAL;
+			casillas[i][j].tipo = Casilla::NORMAL;
 		}
 	}
 }
 
-void dibujaTablero(const Tablero& t) {
-	glDisable(GL_LIGHTING);
-
+void Tablero::dibujaTablero() {
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
 			// Color según tipo de casilla
@@ -37,6 +35,4 @@ void dibujaTablero(const Tablero& t) {
 			glEnd();
 		}
 	}
-
-	glEnable(GL_LIGHTING);
 }
