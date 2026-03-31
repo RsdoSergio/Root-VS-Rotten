@@ -3,7 +3,7 @@
 // Dimensiones del tablero
 const int FILAS = 9;
 const int COLS = 9;
-const float TAM_CELDA = 2.0f;
+const float TAM_CELDA = 2.8f;
 
 // Tipos de casilla
 enum TipoCasilla {

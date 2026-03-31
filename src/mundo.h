@@ -3,9 +3,6 @@
 
 class Mundo
 {
-	double x_ojo;
-	double y_ojo;
-	double z_ojo;
 	Tablero tablero;
 public:
 	void inicializa();
