@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutCreateWindow("PANGSIDI");
 	// Ejecutar en pantalla completa
-	glutFullScreen();
+	//glutFullScreen();
 
 	// Configurar vista 2D sin perspectiva (ortonomal)
 	// Desactivar iluminación para dibujo 2D plano
