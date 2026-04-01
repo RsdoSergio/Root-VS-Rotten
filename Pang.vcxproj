@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\combate\caja.cpp" />
     <ClCompile Include="src\combate\pared.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mundo.cpp" />
@@ -27,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\freeglut.h" />
+    <ClInclude Include="src\combate\caja.h" />
     <ClInclude Include="src\combate\color.h" />
     <ClInclude Include="src\combate\pared.h" />
     <ClInclude Include="src\combate\vector2d.h" />
