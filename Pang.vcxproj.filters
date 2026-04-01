@@ -44,6 +44,9 @@
     <ClInclude Include="src\combate\color.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="src\combate\vector2d.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\audio\README_audio.md" />
