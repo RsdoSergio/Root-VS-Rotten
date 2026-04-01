@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\freeglut.h" />
+    <ClInclude Include="src\combate\color.h" />
     <ClInclude Include="src\mundo.h" />
     <ClInclude Include="src\tablero\casilla.h" />
     <ClInclude Include="src\tablero\tablero.h" />
