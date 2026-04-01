@@ -6,6 +6,8 @@ constexpr int FILAS = 9;
 constexpr  int COLS = 9;
 constexpr float TAM_CELDA = 2.8f;
 
+using byte = unsigned char;
+
 class Tablero {
 public:
 	void inicializaTablero();
