@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mundo.cpp" />
+    <ClCompile Include="src\tablero\casilla.cpp" />
     <ClCompile Include="src\tablero\tablero.cpp" />
   </ItemGroup>
   <ItemGroup>
