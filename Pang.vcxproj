@@ -21,10 +21,13 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mundo.cpp" />
+    <ClCompile Include="src\tablero\tablero.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\freeglut.h" />
     <ClInclude Include="src\mundo.h" />
+    <ClInclude Include="src\tablero\casilla.h" />
+    <ClInclude Include="src\tablero\tablero.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -47,7 +50,6 @@
     <None Include="src\graficos\README_graficos.md" />
     <None Include="src\juego\README_juego.md" />
     <None Include="src\piezas\README_piezas.md" />
-    <None Include="src\tablero\README_tablero.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\imagenes\tablero\diseño_tablero_v1.0.png" />

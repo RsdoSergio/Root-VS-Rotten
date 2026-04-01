@@ -21,12 +21,21 @@
     <ClCompile Include="src\mundo.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="src\tablero\tablero.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mundo.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="lib\freeglut.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tablero\tablero.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tablero\casilla.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,7 +56,6 @@
     <None Include="settings.VisualStudio.json" />
     <None Include="README.md" />
     <None Include=".gitignore" />
-    <None Include="src\tablero\README_tablero.md" />
     <None Include="src\combate\README_combate.md" />
     <None Include="src\graficos\README_graficos.md" />
     <None Include="src\juego\README_juego.md" />
