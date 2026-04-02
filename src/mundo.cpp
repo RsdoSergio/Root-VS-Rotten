@@ -5,6 +5,7 @@
 #include <vector>
 
 
+
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
 
@@ -18,7 +19,8 @@ void Mundo::inicializa() {
 		Peon.setTipo(peon);//añadir etiquita peon
 		Peon.setVida(12);
 		Peon.setFuerza(4);
-		//Peon.setVelpieza(Vector2D( 5.0, 5.0 );
+		Peon.setVelpieza(5.0, 5.0);
+		//no tiene proyectil
 
 		Planta.push_back(Peon);
 		Zombi.push_back(Peon);

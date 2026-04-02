@@ -1,5 +1,5 @@
 #include "pieza.h"
-
+#include"vector2d.h"
 
 
 double Pieza::getVida() const
@@ -35,6 +35,13 @@ void Pieza::setVida(double v)
 	if (v >= 100)v = 100; //revisar y comprobar parametro de MAX VIDA
 	
 	vida = v;
+
+}
+
+void Pieza::setVelpieza(double x, double y)
+{
+	velocidadPieza.setValores(x, y);
+
 
 }
 

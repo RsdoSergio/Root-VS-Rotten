@@ -3,9 +3,9 @@
 enum TipoPieza { peon, golem, archer, valquiria, djinn, unicornio, fenix, mago };
 class Pieza
 {
-	TipoPieza tipo;//etiqueta para saber que pieza es
-	double vida{};
-	double fuerza{};
+	TipoPieza tipo{peon};//etiqueta para saber que pieza es/ Lo inicializamos de manera temporal, luego cambiará al ser inicializado
+	double vida{100.0};
+	double fuerza{10.0};
 	Vector2D posicion{};
 	Vector2D velocidadPieza{};
 	Vector2D velocidadProyectil{};
@@ -20,12 +20,12 @@ public:
 	
 	TipoPieza getTipo() { return tipo; }
 	void setTipo(TipoPieza t) { tipo = t; }
-	//void setvida(double v) { vida = v; }
+	
 
 
 	void setVida(double v);//cambio en la vida de la pieza (curacion o recibir daño)
 	void setFuerza(double f) { fuerza = f; }
-	void setVelpieza(Vector2D vel) { velocidadPieza = vel; }
+	void setVelpieza(double x, double y);
 
 };
 
