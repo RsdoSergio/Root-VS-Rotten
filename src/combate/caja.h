@@ -20,6 +20,8 @@ class caja
 	std::string nombre1, nombre2;
 
 	void dibujaHUD();
+	void dibujaVida(double x, double y, double w, double h, double prop, int r, int g, int b);
+	void dibujaNombre(const std::string& nombre, double x, double y);
 
 public:
 	caja() = default;
