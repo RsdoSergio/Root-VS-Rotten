@@ -2,14 +2,18 @@
 #include "freeglut.h"
 #include <cmath>
 #include "tablero/tablero.h"
+#include "audio.h"
+#include "audio.h"
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
+	Audio::playMusica("audio/INTRO.mp3", true);
 };
+
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
-	// de momento vacía
+	if (key == 'm') Audio::stopMusica();
 }
 
 void Mundo::mueve()
