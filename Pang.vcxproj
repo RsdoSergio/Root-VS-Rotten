@@ -22,6 +22,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mundo.cpp" />
     <ClCompile Include="src\pieza.cpp" />
+    <ClCompile Include="src\proyectil.cpp" />
     <ClCompile Include="src\tablero\casilla.cpp" />
     <ClCompile Include="src\tablero\tablero.cpp" />
     <ClCompile Include="src\vector2d.cpp" />
@@ -30,6 +31,7 @@
     <ClInclude Include="lib\freeglut.h" />
     <ClInclude Include="src\mundo.h" />
     <ClInclude Include="src\pieza.h" />
+    <ClInclude Include="src\proyectil.h" />
     <ClInclude Include="src\tablero\casilla.h" />
     <ClInclude Include="src\tablero\tablero.h" />
     <ClInclude Include="src\vector2d.h" />

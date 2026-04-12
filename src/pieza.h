@@ -8,24 +8,23 @@ class Pieza
 	double fuerza{10.0};
 	Vector2D posicion{};
 	Vector2D velocidadPieza{};
-	Vector2D velocidadProyectil{};
+	
 
 public:
 
+	Pieza(TipoPieza t, double v, double f, double px, double py);
 	double getVida() const; //acceder al valor de la vida
 	double getFuerza() const; //acceder al valor de la fuerza
 	Vector2D getPosicion() const;//acceder al valor de la posicion
 	Vector2D getVelpieza() const; //acceder al valor de la velocidad pieza
-	Vector2D getVelproyectil() const;//acceder al valor de la velocidad proyectil
+	
 	
 	TipoPieza getTipo() { return tipo; }
 	void setTipo(TipoPieza t) { tipo = t; }
+	void setVida(double v);//cambio en la vida por daño o curacion
+	void setFuerza(double f) { fuerza = f; }//bufos de fuerza
+	void setVelpieza(double x, double y);//cambio en la velocidad de la pieza, bufos y cosas asi
 	
-
-
-	void setVida(double v);//cambio en la vida de la pieza (curacion o recibir daño)
-	void setFuerza(double f) { fuerza = f; }
-	void setVelpieza(double x, double y);
 
 };
 

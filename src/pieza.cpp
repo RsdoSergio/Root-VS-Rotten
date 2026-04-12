@@ -2,6 +2,12 @@
 #include"vector2d.h"
 
 
+Pieza::Pieza(TipoPieza t, double v, double f, double px, double py)
+{
+	posicion.setValores(px, py);
+	velocidadPieza.setValores(0.0, 0.0);
+}
+
 double Pieza::getVida() const
 {
 	return vida;
@@ -22,10 +28,6 @@ Vector2D Pieza::getVelpieza() const
 	return velocidadPieza;
 }
 
-Vector2D Pieza::getVelproyectil() const
-{
-	return velocidadProyectil;
-}
 
 void Pieza::setVida(double v)
 {
