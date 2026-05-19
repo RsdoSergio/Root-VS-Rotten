@@ -5,6 +5,9 @@ class Vector2D
 	double y;
 
 public:
-	void setValores(double x , double y);
+	
+	void setValores(double x, double y);
+	double getX() const { return x; } 
+	double getY() const { return y; } 
 };
 

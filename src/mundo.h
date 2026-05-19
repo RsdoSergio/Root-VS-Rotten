@@ -2,14 +2,16 @@
 #include<vector>
 #include<iostream>
 #include "tablero/tablero.h"
-#include "pieza.h"
+#include "pos.h"
 
 class Mundo
 {
 	Tablero tablero;
-	
-	std::vector<Pieza> Planta;
-	std::vector<Pieza> Zombi;
+	int turno = 0;	
+
+	Pos seleccionada;                    // Sustituye al pair<int,int>, mucho más legible
+	std::vector<Pos> casillasValidas;
+
 
 public:
 	void inicializa();

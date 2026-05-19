@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\freeglut.h" />
+    <ClInclude Include="pos.h" />
     <ClInclude Include="src\mundo.h" />
     <ClInclude Include="src\pieza.h" />
     <ClInclude Include="src\proyectil.h" />

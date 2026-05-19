@@ -42,6 +42,9 @@ void Tablero::inicializaTablero() {
 	}
 }
 
+
+
+
 void Tablero::dibujaTablero() {
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
