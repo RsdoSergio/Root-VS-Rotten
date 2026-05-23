@@ -20,7 +20,8 @@ void Tablero::inicializaTablero() {
 	};
 
 	// Definicion de colores RGB para cada tipo
-	unsigned char colores[3][3] = {
+	using byte = unsigned char;
+	byte colores[3][3] = {
 		{220, 255, 220},  // 0: verde muy claro
 		{34,  100,  34},  // 1: verde oscuro
 		{85, 140,  40},  // 2: verde medio
