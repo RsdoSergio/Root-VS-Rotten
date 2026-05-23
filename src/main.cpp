@@ -3,9 +3,6 @@
 
 Mundo mundo; //centralizamos la información en este objeto
 
-//los callback, funciones que seran llamadas automaticamente por la glut
-//cuando sucedan eventos
-//NO HACE FALTA LLAMARLAS EXPLICITAMENTE
 void OnDraw(void); //esta funcion sera llamada para dibujar
 void OnTimer(int value); //esta funcion sera llamada cuando transcurra una temporizacion
 void OnKeyboardDown(unsigned char key, int x, int y); //cuando se pulse una tecla
@@ -15,20 +12,37 @@ int main(int argc, char* argv[])
 	//Inicializar el gestor de ventanas GLUT
 	//y crear la ventana
 	glutInit(&argc, argv);
-	glutInitWindowSize(800, 600);
+	glutInitWindowSize(1920, 1080);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutCreateWindow("PANGSIDI");
+	glutCreateWindow("ROOT VS ROTTEN");
+	// Ejecutar en pantalla completa
+	//glutFullScreen();
 
-	//habilitar luces y definir perspectiva
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_COLOR_MATERIAL);
+	// Configurar vista 2D sin perspectiva (ortonomal)
+	// Desactivar iluminación para dibujo 2D plano
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_DEPTH_TEST);
+	// Proyección ortográfica inicial
 	glMatrixMode(GL_PROJECTION);
-	gluPerspective(40.0, 800 / 600.0f, 0.1, 150);
+	glLoadIdentity();
+	{
+		// usar tamaño real de la ventana (que está en full screen)
+		float w = (float)glutGet(GLUT_WINDOW_WIDTH);
+		float h = (float)glutGet(GLUT_WINDOW_HEIGHT);
+		if (h == 0.0f) h = 1.0f;
+		const float aspect = w / h;
+		const float orthoScale = 15.0f;
+		if (aspect >= 1.0f)
+			glOrtho(-orthoScale * aspect, orthoScale * aspect, -orthoScale, orthoScale, -1.0, 1.0);
+		else
+			glOrtho(-orthoScale, orthoScale, -orthoScale / aspect, orthoScale / aspect, -1.0, 1.0);
+	}
 
 	//Registrar los callbacks
 	glutDisplayFunc(OnDraw);
+
 	glutTimerFunc(25, OnTimer, 0);//le decimos que dentro de 25ms llame 1 vez a la funcion OnTimer()
 	glutKeyboardFunc(OnKeyboardDown);
 

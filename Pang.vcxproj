@@ -19,12 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\audio.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mundo.cpp" />
+    <ClCompile Include="src\tablero\casilla.cpp" />
+    <ClCompile Include="src\tablero\tablero.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="lib\ETSIDI.h" />
     <ClInclude Include="lib\freeglut.h" />
+    <ClInclude Include="src\audio.h" />
     <ClInclude Include="src\mundo.h" />
+    <ClInclude Include="src\tablero\casilla.h" />
+    <ClInclude Include="src\tablero\tablero.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -37,6 +44,8 @@
     <None Include="assets\sprites\equipo root (plantas)\README_equiporoot.md" />
     <None Include="assets\sprites\equipo rotten (zombies)\README_equiporotten.md" />
     <None Include="assets\sprites\README_sprites.md" />
+    <None Include="bin\ETSIDI.dll" />
+    <None Include="bin\fmodL.dll" />
     <None Include="bin\freeglut.dll" />
     <None Include="bin\Pang.exe" />
     <None Include="bin\RootVsRotten.exe" />
@@ -47,13 +56,28 @@
     <None Include="src\graficos\README_graficos.md" />
     <None Include="src\juego\README_juego.md" />
     <None Include="src\piezas\README_piezas.md" />
-    <None Include="src\tablero\README_tablero.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\imagenes\tablero\diseño_tablero_v1.0.png" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="lib\ETSIDI.lib" />
     <Library Include="lib\freeglut.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audio\COMBATE1.mp3" />
+    <Media Include="assets\audio\COMBATE2.mp3" />
+    <Media Include="assets\audio\COMBATE3.mp3" />
+    <Media Include="assets\audio\COMBATE4.mp3" />
+    <Media Include="assets\audio\COMBATE5.mp3" />
+    <Media Include="assets\audio\INTRO.mp3" />
+    <Media Include="assets\audio\PANTALLAFINAL1.mp3" />
+    <Media Include="assets\audio\PANTALLAFINAL2.mp3" />
+    <Media Include="assets\audio\PANTALLAFINAL3.mp3" />
+    <Media Include="assets\audio\PANTALLAFINAL4.mp3" />
+    <Media Include="assets\audio\TABLERO1.mp3" />
+    <Media Include="assets\audio\TABLERO2.mp3" />
+    <Media Include="assets\audio\TABLERO3.mp3" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
