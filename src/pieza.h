@@ -1,6 +1,7 @@
 #pragma once
 #include "vector2d.h"
 #include "pos.h"
+#include<iostream>
 
 enum  Bando { planta, zombi };
 
@@ -29,6 +30,10 @@ public:
     void setCasilla(Pos p) { casilla = p; }
     void recibirDanio(double d);
     void curar(double cantidad);
+    
+    virtual void dibujaTablero(float x, float y) const {};
+    virtual std::string getNombre() const { return "Pieza"; }
+    virtual void usarAtaqueSecundario() {};
 
     virtual ~Pieza() {} // Imprescindible en jerarquías
 };
