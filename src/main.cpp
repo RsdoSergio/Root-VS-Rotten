@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutInitWindowSize(1920, 1080);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutCreateWindow("PANGSIDI");
+	glutCreateWindow("ROOT VS ROTTEN");
 	// Ejecutar en pantalla completa
 	//glutFullScreen();
 
