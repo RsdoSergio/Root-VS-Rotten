@@ -8,7 +8,7 @@
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
-
+	tablero.colocarPiezasIniciales();
 	//inicializacion de piezas para el juego
 
 	//inicializacion de peones para ambos bandos
