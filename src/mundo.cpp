@@ -2,6 +2,7 @@
 #include "freeglut.h"
 #include <cmath>
 #include "tablero/tablero.h"
+
 feature/Herencia_Piezas/Emmanuel
 #include <vector>
 #include "audio.h"
@@ -10,13 +11,13 @@ feature/Herencia_Piezas/Emmanuel
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
-
+	tablero.colocarPiezasIniciales();
 	//inicializacion de piezas para el juego
-Audio::playMusica("audio/INTRO.mp3", true);
+
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda
 	const float pos = (9 * TAM) / 2.0f;
-
+Audio::playMusica("audio/INTRO.mp3", true);
 };
 
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
