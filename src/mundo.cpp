@@ -33,8 +33,4 @@ void Mundo::dibuja()
 {
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
 	tablero.dibujaTablero();
-	//cajaCombate.dibuja();
-	//Test prueba github
-	//nuevo cambio sergio
-	//test tres para actualizar
 }
