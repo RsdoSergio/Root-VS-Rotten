@@ -14,9 +14,9 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutInitWindowSize(1920, 1080);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutCreateWindow("ROOT VS ROTTEN");
+	glutCreateWindow("PANGSIDI");
 	// Ejecutar en pantalla completa
-	//glutFullScreen();
+	glutFullScreen();
 
 	// Configurar vista 2D sin perspectiva (ortonomal)
 	// Desactivar iluminación para dibujo 2D plano
