@@ -25,6 +25,8 @@
     <ClCompile Include="src\golem.cpp" />
     <ClCompile Include="src\mago.cpp" />
     <ClCompile Include="src\audio.cpp" />
+    <ClCompile Include="src\combate\caja.cpp" />
+    <ClCompile Include="src\combate\pared.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mundo.cpp" />
     <ClCompile Include="src\peon.cpp" />
@@ -49,6 +51,10 @@
     <ClInclude Include="src\golem.h" />
     <ClInclude Include="src\mago.h" />
     <ClInclude Include="src\audio.h" />
+    <ClInclude Include="src\combate\caja.h" />
+    <ClInclude Include="src\combate\color.h" />
+    <ClInclude Include="src\combate\pared.h" />
+    <ClInclude Include="src\combate\vector2d.h" />
     <ClInclude Include="src\mundo.h" />
     <ClInclude Include="src\peon.h" />
     <ClInclude Include="src\pieza.h" />
