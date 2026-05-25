@@ -35,4 +35,5 @@ void Mundo::dibuja()
 	tablero.dibujaTablero();
 	//cajaCombate.dibuja();
 	//Test prueba github
+	//nuevo cambio sergio
 }
