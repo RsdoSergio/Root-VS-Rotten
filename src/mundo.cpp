@@ -37,4 +37,5 @@ void Mundo::dibuja()
 	tablero.dibujaPiezas();
 	//cajaCombate.dibuja();
 	
+
 }
