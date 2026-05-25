@@ -8,5 +8,4 @@ void Casilla::inicializa(int f, int c, TipoCasilla t, unsigned char cr, unsigned
 	r = cr;
 	g = cg;
 	b = cb;
-	pieza = nullptr;
 }
