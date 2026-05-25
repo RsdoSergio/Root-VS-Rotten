@@ -2,6 +2,7 @@
 
 class Pieza;//avisar de que existe
 using byte = unsigned char;
+
 class Casilla 
 {
 public:

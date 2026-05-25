@@ -19,12 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+feature/Herencia_Piezas/Emmanuel
     <ClCompile Include="src\arquero.cpp" />
     <ClCompile Include="src\fenix.cpp" />
     <ClCompile Include="src\genio.cpp" />
     <ClCompile Include="src\golem.cpp" />
     <ClCompile Include="src\mago.cpp" />
+
     <ClCompile Include="src\audio.cpp" />
+
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mundo.cpp" />
     <ClCompile Include="src\peon.cpp" />
