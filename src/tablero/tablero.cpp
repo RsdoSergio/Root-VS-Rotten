@@ -30,10 +30,10 @@ void Tablero::inicializaTablero() {
 	};
 
 	// Definicion de colores RGB para cada tipo
-	unsigned char colores[3][3] = {
+	byte colores[3][3] = {
 		{220, 255, 220},  // 0: verde muy claro
 		{34,  100,  34},  // 1: verde oscuro
-		{85, 140,  40},  // 2: verde medio
+		{85, 140,  40},  // 2: verde medio  
 	};
 
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color

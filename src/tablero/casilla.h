@@ -1,7 +1,7 @@
 #pragma once
 
 class Pieza;//avisar de que existe
-
+using byte = unsigned char;
 class Casilla 
 {
 public:
@@ -19,5 +19,5 @@ public:
 	bool CasOcupada() const { return pieza != nullptr; } //true si la casilla esta ocupada
 	bool CasPoder() const { return tipo == PODER; }//true si es casilla especial
 
-	void inicializa(int f, int c, TipoCasilla t, unsigned char cr, unsigned char cg, unsigned char cb);
+	void inicializa(int f, int c, TipoCasilla t, byte cr, byte cg, byte cb);
 };

@@ -22,7 +22,7 @@ void Mundo::inicializa() {
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
-	// de momento vacía
+	if (key == 'm') Audio::stopMusica();
 }
 
 void Mundo::mueve()
