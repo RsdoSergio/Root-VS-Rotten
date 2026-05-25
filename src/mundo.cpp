@@ -36,4 +36,5 @@ void Mundo::dibuja()
 	//cajaCombate.dibuja();
 	//Test prueba github
 	//nuevo cambio sergio
+	//test tres para actualizar
 }
