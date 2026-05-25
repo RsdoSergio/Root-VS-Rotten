@@ -12,12 +12,13 @@ public:
 
 	TipoCasilla tipo;
 	bool ocupada;
-	unsigned char r, g, b; // Color de la casilla
+	using byte = unsigned char;
+	byte r, g, b; // Color de la casilla
 	int fila, col;  // Posición en el tablero
 	Pieza* pieza = nullptr; //Puntero a la pieza que ocupa la casilla (vacía? = nullptr)
 
 	bool CasOcupada() const { return pieza != nullptr; } //true si la casilla esta ocupada
 	bool CasPoder() const { return tipo == PODER; }//true si es casilla especial
 
-	void inicializa(int f, int c, TipoCasilla t, unsigned char cr, unsigned char cg, unsigned char cb);
+	void inicializa(int f, int c, TipoCasilla t, byte cr, byte cg, byte cb);
 };
