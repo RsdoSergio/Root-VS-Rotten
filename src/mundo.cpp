@@ -9,6 +9,7 @@
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
+	
 	//inicializacion de piezas para el juego
 
 	//inicializacion de peones para ambos bandos
@@ -33,6 +34,7 @@ void Mundo::dibuja()
 {
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
 	tablero.dibujaTablero();
+	tablero.dibujaPiezas();
 	//cajaCombate.dibuja();
 	
 }

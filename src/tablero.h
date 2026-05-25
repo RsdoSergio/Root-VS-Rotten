@@ -10,7 +10,7 @@ public:
     void inicializaTablero();
     void dibujaTablero(); // ← solo esta, sin duplicados ni vector/pair
     void colocarPiezasIniciales();
-
+    void dibujaPiezas();
 private:
     Casilla casillas[FILAS][COLS];
 };

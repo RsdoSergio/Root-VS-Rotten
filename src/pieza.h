@@ -3,6 +3,8 @@
 #include "pos.h"
 #include<iostream>
 
+
+constexpr float TAM_PIEZA = 0.9f;//Porvisional para las piezas
 enum  Bando { planta, zombi };
 
 class Pieza {
