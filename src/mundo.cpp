@@ -1,12 +1,19 @@
 #include "mundo.h"
 #include "freeglut.h"
 #include <cmath>
-#include "tablero/tablero.h"
+#include "tablero.h"
+#include <vector>
 #include "audio.h"
 #include "audio.h"
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
+	tablero.colocarPiezasIniciales();
+	//inicializacion de piezas para el juego
+
+	//inicializacion de peones para ambos bandos
+	const float TAM = 2.8f; //tener presente el tamaño de cada celda
+	const float pos = (9 * TAM) / 2.0f;
 	Audio::playMusica("audio/INTRO.mp3", true);
 };
 
@@ -25,6 +32,5 @@ void Mundo::mueve()
 void Mundo::dibuja()
 {
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
-
 	tablero.dibujaTablero();
 }

@@ -1,88 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Archivos de origen">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Archivos de encabezado">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Archivos de recursos">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="src\arquero.cpp" />
+    <ClCompile Include="src\fenix.cpp" />
+    <ClCompile Include="src\genio.cpp" />
+    <ClCompile Include="src\golem.cpp" />
+    <ClCompile Include="src\mago.cpp" />
+    <ClCompile Include="src\audio.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\mundo.cpp" />
+    <ClCompile Include="src\peon.cpp" />
+    <ClCompile Include="src\pieza.cpp" />
+    <ClCompile Include="src\piezateletransporte.cpp" />
+    <ClCompile Include="src\piezatierra.cpp" />
+    <ClCompile Include="src\piezavuelo.cpp" />
+    <ClCompile Include="src\proyectil.cpp" />
+    <ClCompile Include="src\casilla.cpp" />
+    <ClCompile Include="src\tablero.cpp" />
+    <ClCompile Include="src\unicornio.cpp" />
+    <ClCompile Include="src\valquiria.cpp" />
+    <ClCompile Include="src\vector2d.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mundo.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tablero\tablero.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tablero\casilla.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\audio.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
+    <ClInclude Include="lib\ETSIDI.h" />
+    <ClInclude Include="lib\freeglut.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\arquero.h" />
+    <ClInclude Include="src\fenix.h" />
+    <ClInclude Include="src\genio.h" />
+    <ClInclude Include="src\golem.h" />
+    <ClInclude Include="src\mago.h" />
+    <ClInclude Include="src\audio.h" />
+    <ClInclude Include="src\mundo.h" />
+    <ClInclude Include="src\peon.h" />
+    <ClInclude Include="src\pieza.h" />
+    <ClInclude Include="src\piezateletransporte.h" />
+    <ClInclude Include="src\piezatierra.h" />
+    <ClInclude Include="src\piezavuelo.h" />
+    <ClInclude Include="src\proyectil.h" />
+    <ClInclude Include="src\casilla.h" />
+    <ClInclude Include="src\tablero.h" />
+    <ClInclude Include="src\unicornio.h" />
+    <ClInclude Include="src\valquiria.h" />
+    <ClInclude Include="src\vector2d.h" />
+    <ClInclude Include="src\pos.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\mundo.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\freeglut.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tablero\tablero.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tablero\casilla.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="src\audio.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\ETSIDI.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\audio\README_audio.md" />
-    <None Include="assets\imagenes\README_imagenes.md" />
-    <None Include="assets\imagenes\efectos de combate\README_efectosdecombate.md" />
-    <None Include="assets\imagenes\tablero\README_.tablero.md" />
-    <None Include="assets\imagenes\tests\README_tests.md" />
-    <None Include="assets\README_assets.md" />
-    <None Include="assets\sprites\README_sprites.md" />
-    <None Include="assets\sprites\equipo root (plantas)\README_equiporoot.md" />
-    <None Include="assets\sprites\equipo rotten (zombies)\README_equiporotten.md" />
-    <None Include="bin\Pang.exe" />
-    <None Include="bin\RootVsRotten.exe" />
-    <None Include="docs\README_docs.md" />
-    <None Include="settings.VisualStudio.json" />
-    <None Include="README.md" />
-    <None Include=".gitignore" />
-    <None Include="src\combate\README_combate.md" />
-    <None Include="src\graficos\README_graficos.md" />
-    <None Include="src\juego\README_juego.md" />
-    <None Include="src\piezas\README_piezas.md" />
-    <None Include="bin\ETSIDI.dll" />
-    <None Include="bin\fmodL.dll" />
-    <None Include="bin\freeglut.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\imagenes\tablero\diseño_tablero_v1.0.png">
-      <Filter>Archivos de recursos</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="lib\freeglut.lib" />
     <Library Include="lib\ETSIDI.lib" />
+    <Library Include="lib\freeglut.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RootVsRotten.rc" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audio\COMBATE1.mp3" />
@@ -98,5 +66,41 @@
     <Media Include="assets\audio\TABLERO1.mp3" />
     <Media Include="assets\audio\TABLERO2.mp3" />
     <Media Include="assets\audio\TABLERO3.mp3" />
+    <ClCompile Include="src\main.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mundo.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\mundo.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\freeglut.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\imagenes\tablero\diseño_tablero_v1.0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="assets\audio\README_audio.md" />
+    <None Include="assets\imagenes\efectos de combate\README_efectosdecombate.md" />
+    <None Include="assets\imagenes\README_imagenes.md" />
+    <None Include="assets\imagenes\tablero\README_.tablero.md" />
+    <None Include="assets\imagenes\tests\README_tests.md" />
+    <None Include="assets\README_assets.md" />
+    <None Include="assets\sprites\equipo root (plantas)\README_equiporoot.md" />
+    <None Include="assets\sprites\equipo rotten (zombies)\README_equiporotten.md" />
+    <None Include="assets\sprites\README_sprites.md" />
+    <None Include="bin\ETSIDI.dll" />
+    <None Include="bin\fmodL.dll" />
+    <None Include="bin\freeglut.dll" />
+    <None Include="bin\Pang.exe" />
+    <None Include="bin\RootVsRotten.exe" />
+    <None Include="README.md" />
+    <None Include="settings.VisualStudio.json" />
   </ItemGroup>
 </Project>

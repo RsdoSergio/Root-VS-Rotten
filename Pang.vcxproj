@@ -19,19 +19,49 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\arquero.cpp" />
+    <ClCompile Include="src\fenix.cpp" />
+    <ClCompile Include="src\genio.cpp" />
+    <ClCompile Include="src\golem.cpp" />
+    <ClCompile Include="src\mago.cpp" />
     <ClCompile Include="src\audio.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mundo.cpp" />
-    <ClCompile Include="src\tablero\casilla.cpp" />
-    <ClCompile Include="src\tablero\tablero.cpp" />
+    <ClCompile Include="src\peon.cpp" />
+    <ClCompile Include="src\pieza.cpp" />
+    <ClCompile Include="src\piezateletransporte.cpp" />
+    <ClCompile Include="src\piezatierra.cpp" />
+    <ClCompile Include="src\piezavuelo.cpp" />
+    <ClCompile Include="src\proyectil.cpp" />
+    <ClCompile Include="src\casilla.cpp" />
+    <ClCompile Include="src\tablero.cpp" />
+    <ClCompile Include="src\unicornio.cpp" />
+    <ClCompile Include="src\valquiria.cpp" />
+    <ClCompile Include="src\vector2d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\ETSIDI.h" />
     <ClInclude Include="lib\freeglut.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\arquero.h" />
+    <ClInclude Include="src\fenix.h" />
+    <ClInclude Include="src\genio.h" />
+    <ClInclude Include="src\golem.h" />
+    <ClInclude Include="src\mago.h" />
     <ClInclude Include="src\audio.h" />
     <ClInclude Include="src\mundo.h" />
-    <ClInclude Include="src\tablero\casilla.h" />
-    <ClInclude Include="src\tablero\tablero.h" />
+    <ClInclude Include="src\peon.h" />
+    <ClInclude Include="src\pieza.h" />
+    <ClInclude Include="src\piezateletransporte.h" />
+    <ClInclude Include="src\piezatierra.h" />
+    <ClInclude Include="src\piezavuelo.h" />
+    <ClInclude Include="src\pos.h" />
+    <ClInclude Include="src\proyectil.h" />
+    <ClInclude Include="src\casilla.h" />
+    <ClInclude Include="src\tablero.h" />
+    <ClInclude Include="src\unicornio.h" />
+    <ClInclude Include="src\valquiria.h" />
+    <ClInclude Include="src\vector2d.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -49,13 +79,8 @@
     <None Include="bin\freeglut.dll" />
     <None Include="bin\Pang.exe" />
     <None Include="bin\RootVsRotten.exe" />
-    <None Include="docs\README_docs.md" />
     <None Include="README.md" />
     <None Include="settings.VisualStudio.json" />
-    <None Include="src\combate\README_combate.md" />
-    <None Include="src\graficos\README_graficos.md" />
-    <None Include="src\juego\README_juego.md" />
-    <None Include="src\piezas\README_piezas.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\imagenes\tablero\diseño_tablero_v1.0.png" />
@@ -65,6 +90,7 @@
     <Library Include="lib\freeglut.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="RootVsRotten.rc" />
     <Media Include="assets\audio\COMBATE1.mp3" />
     <Media Include="assets\audio\COMBATE2.mp3" />
     <Media Include="assets\audio\COMBATE3.mp3" />
