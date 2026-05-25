@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-feature/Herencia_Piezas/Emmanuel
     <ClCompile Include="src\arquero.cpp" />
     <ClCompile Include="src\fenix.cpp" />
     <ClCompile Include="src\genio.cpp" />
