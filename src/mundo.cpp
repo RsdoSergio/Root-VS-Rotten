@@ -9,6 +9,7 @@
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
+	seleccionada = Pos(4, 4);
 	//inicializacion de piezas para el juego
 
 	//inicializacion de peones para ambos bandos
@@ -21,6 +22,10 @@ void Mundo::inicializa() {
 void Mundo::tecla(unsigned char key)
 {
 	if (key == 'm') Audio::stopMusica();
+	if (key == 'w' || key == 'W')  if (seleccionada.fila < FILAS - 1) seleccionada.fila++;
+	if (key == 's' || key == 'S')  if (seleccionada.fila > 0)  seleccionada.fila--;
+	if (key == 'a' || key == 'A')  if (seleccionada.col > 0)  seleccionada.col--;
+	if (key == 'd' || key == 'D')  if (seleccionada.col < COLS - 1)  seleccionada.col++;
 }
 
 void Mundo::mueve()
@@ -32,7 +37,7 @@ void Mundo::mueve()
 void Mundo::dibuja()
 {
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
-	tablero.dibujaTablero();
+	tablero.dibujaTablero(seleccionada);//añadido argumento para pintar sobre la casilla activa
 	//cajaCombate.dibuja();
 	//Test prueba github
 	//nuevo cambio sergio
