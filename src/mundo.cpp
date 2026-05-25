@@ -2,8 +2,6 @@
 #include "freeglut.h"
 #include <cmath>
 #include "tablero/tablero.h"
-
-feature/Herencia_Piezas/Emmanuel
 #include <vector>
 #include "audio.h"
 #include "audio.h"
