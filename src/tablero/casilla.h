@@ -12,7 +12,8 @@ public:
 
 	TipoCasilla tipo;
 	bool ocupada;
-	unsigned char r, g, b; // Color de la casilla
+	using byte = unsigned char;
+	byte r, g, b; // Color de la casilla
 	int fila, col;  // Posición en el tablero
 	Pieza* pieza = nullptr; //Puntero a la pieza que ocupa la casilla (vacía? = nullptr)
 

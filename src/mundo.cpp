@@ -2,8 +2,10 @@
 #include "freeglut.h"
 #include <cmath>
 #include "tablero/tablero.h"
-#include <vector>
 
+#include <vector>
+#include "audio.h"
+#include "audio.h"
 
 
 void Mundo::inicializa() {
@@ -14,11 +16,9 @@ void Mundo::inicializa() {
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda
 	const float pos = (9 * TAM) / 2.0f;
-
-
-
-
+Audio::playMusica("audio/INTRO.mp3", true);
 };
+
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
