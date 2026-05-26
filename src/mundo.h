@@ -5,6 +5,7 @@
 #include "cursor.h"
 #include "pos.h"
 #include "arena.h"
+#include "menu.h"
 
 class Mundo
 {
@@ -13,6 +14,8 @@ class Mundo
 	int     turno = 0;
 	std::vector<Pos> casillasValidas;
 	arena arena;
+	Menu    menu;
+	bool    enPartida = false;
 
 public:
 	void inicializa();

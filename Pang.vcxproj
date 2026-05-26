@@ -28,6 +28,7 @@
     <ClCompile Include="src\mago.cpp" />
     <ClCompile Include="src\audio.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\mundo.cpp" />
     <ClCompile Include="src\peon.cpp" />
     <ClCompile Include="src\pieza.cpp" />
@@ -44,7 +45,6 @@
   <ItemGroup>
     <ClInclude Include="lib\ETSIDI.h" />
     <ClInclude Include="lib\freeglut.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="src\arena.h" />
     <ClInclude Include="src\arquero.h" />
     <ClInclude Include="src\cursor.h" />
@@ -53,6 +53,7 @@
     <ClInclude Include="src\golem.h" />
     <ClInclude Include="src\mago.h" />
     <ClInclude Include="src\audio.h" />
+    <ClInclude Include="src\menu.h" />
     <ClInclude Include="src\mundo.h" />
     <ClInclude Include="src\peon.h" />
     <ClInclude Include="src\pieza.h" />

@@ -9,7 +9,7 @@
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
-	
+
 	//inicializacion de piezas para el juego
 
 	//inicializacion de peones para ambos bandos
@@ -26,7 +26,16 @@ void Mundo::tecla(unsigned char key)
 	//Pulsar "c" para probar la arena de combate
 	if (key == 'c') { arena.estaActiva() ? arena.desactiva() : arena.activa(); }
 	cursor.mover(key);   // el cursor gestiona su propio movimiento
-	
+
+	if (!enPartida)
+	{
+		menu.tecla(key);              //el menú gestiona sus teclas
+
+		if (menu.seEligeJugar())
+			enPartida = true;
+
+		return;
+	}
 }
 
 void Mundo::mueve()
@@ -37,9 +46,16 @@ void Mundo::mueve()
 //Metodo que gestiona el dibujo de la simulacion
 void Mundo::dibuja()
 {
-	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
-	tablero.dibujaTablero();
-	tablero.dibujaPiezas();
-	arena.dibuja();
-	cursor.dibuja();
+	if (!enPartida)
+	{
+		menu.dibuja();
+		return;
+	}
+	else
+	{
+		tablero.dibujaTablero();
+		tablero.dibujaPiezas();
+		arena.dibuja();
+		cursor.dibuja();
+	}
 }
