@@ -1,9 +1,0 @@
-/* Visual Studio Settings File */
-{
-  "debugging.general.useExceptionHelper": false,
-  "debugging.general.justMyCode": true,
-  "debugging.general.allowOutOfProcessSymbols": false,
-  "debugging.hotReload.enableHotReload": false,
-  "debugging.symbols.load.includeSymbolsNextToModules": false,
-  "debugging.symbols.load.includeSymbolsOnDemand": false
-}

@@ -1,6 +1,6 @@
 #include "tablero.h"
 #include "freeglut.h"
-
+#include "pos.h"
 #include "pieza.h"
 #include"peon.h"
 #include "golem.h"
@@ -56,7 +56,7 @@ void Tablero::inicializaTablero() {
 
 
 
-void Tablero::dibujaTablero() {
+void Tablero::dibujaTablero(Pos cursor) {
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
 			glColor3ub(casillas[i][j].r, casillas[i][j].g, casillas[i][j].b);
@@ -72,6 +72,23 @@ void Tablero::dibujaTablero() {
 			glEnd();
 		}
 	}
+	//Cursor WASD color amarillo, calcula las celdas de igual manera que  arriba
+	if (cursor.esValida()) {
+		float x = cursor.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
+		float y = cursor.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
+
+		glColor3ub(255, 220, 0);
+		glLineWidth(3.5f);
+		glBegin(GL_LINE_LOOP);
+		glVertex3f(x, y, 0);
+		glVertex3f(x + TAM_CELDA, y, 0);
+		glVertex3f(x + TAM_CELDA, y + TAM_CELDA, 0);
+		glVertex3f(x, y + TAM_CELDA, 0);
+		glEnd();
+		glLineWidth(1.0f);
+	
+	}
+	
 }
 
 void Tablero::colocarPiezasIniciales() {
@@ -109,4 +126,20 @@ void Tablero::colocarPiezasIniciales() {
 	for (int i = 1; i <= 7; i++)
 		casillas[i][7].pieza = new Peon(Bando::zombi, Pos(i, 7));
 	casillas[8][7].pieza = new Arquero(Bando::zombi, Pos(8, 7));
+}
+
+void Tablero::dibujaPiezas()
+{
+	for (int i = 0; i < FILAS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = casillas[i][j].pieza;
+			if (p != nullptr) {
+				// Centro de la casilla en coordenadas OpenGL
+				float x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+				float y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+				p->dibujaTablero(x, y); // Polimorfismo: cada pieza sabe cómo dibujarse
+			}
+		}
+	}
+	
 }
