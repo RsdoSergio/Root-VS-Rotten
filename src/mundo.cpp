@@ -9,8 +9,7 @@
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
-	seleccionada = Pos(4, 4);
-
+	
 	//inicializacion de piezas para el juego
 
 	//inicializacion de peones para ambos bandos
@@ -26,10 +25,8 @@ void Mundo::tecla(unsigned char key)
 
 	//Pulsar "c" para probar la arena de combate
 	if (key == 'c') { arena.estaActiva() ? arena.desactiva() : arena.activa(); }
-	if (key == 'w' || key == 'W')  if (seleccionada.fila < FILAS - 1) seleccionada.fila++;
-	if (key == 's' || key == 'S')  if (seleccionada.fila > 0)  seleccionada.fila--;
-	if (key == 'a' || key == 'A')  if (seleccionada.col > 0)  seleccionada.col--;
-	if (key == 'd' || key == 'D')  if (seleccionada.col < COLS - 1)  seleccionada.col++;
+	cursor.mover(key);   // el cursor gestiona su propio movimiento
+	
 }
 
 void Mundo::mueve()
@@ -41,7 +38,8 @@ void Mundo::mueve()
 void Mundo::dibuja()
 {
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
-	tablero.dibujaTablero(seleccionada);
+	tablero.dibujaTablero();
 	tablero.dibujaPiezas();
 	arena.dibuja();
+	cursor.dibuja();
 }
