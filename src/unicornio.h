@@ -11,6 +11,7 @@ public:
             6.0,   // Daño medio
             7.5,   // Vel. movimiento muy alta
             0.5,   // Enfriamiento bajo
+            4, //rad de mov
             b, pos),
         velocidadProyectil(6.0) {} // Proyectil medio
 

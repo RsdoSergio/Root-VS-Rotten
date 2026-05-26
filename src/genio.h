@@ -11,6 +11,7 @@ public:
             15.0,  // Daño muy alto
             5.5,   // Vel. movimiento alta
             2.5,   // Enfriamiento muy alto
+            3, //rad de mov
             b, pos),
         velocidadProyectil(3.0) {} // Proyectil lento
 

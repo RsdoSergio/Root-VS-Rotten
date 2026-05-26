@@ -14,12 +14,13 @@ protected:
     double   fuerza;
     double   velocidad;
     double   intervaloAtaque;
+    int      radioMovimiento;
     Bando    bando;
     Pos      casilla;
     Vector2D posArena;
 
 public:
-    Pieza(double vida, double fuerza, double vel, double intervalo, Bando b, Pos pos);
+    Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos);
 
     double getVida()      const { return vida; }
     double getVidaMax()   const { return vidaMax; }
@@ -32,6 +33,8 @@ public:
     void setCasilla(Pos p) { casilla = p; }
     void recibirDanio(double d);
     void curar(double cantidad);
+
+    int getRadioMovimiento() const { return radioMovimiento; }
     
     virtual void dibujaTablero(float x, float y) const {};
     virtual std::string getNombre() const { return "Pieza"; }

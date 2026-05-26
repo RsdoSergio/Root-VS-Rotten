@@ -11,6 +11,7 @@ public:
             8.0,   // Daño área
             6.0,   // Vel. movimiento alta
             1.0,   // Enfriamiento medio
+            5, //rad de mov
             b, pos) {}
 
     bool puedeUsarPoder() const { return !poderUsado; }

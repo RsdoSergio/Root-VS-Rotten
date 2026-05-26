@@ -11,6 +11,7 @@ public:
             2.0,   // Daño bajo por proyectil (compensa con ráfaga)
             6.5,   // Vel. movimiento muy alta
             0.2,   // Enfriamiento ráfaga muy bajo
+            4,//rad de mov
             b, pos),
         velocidadProyectil(8.0) {}
 

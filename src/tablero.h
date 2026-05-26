@@ -13,6 +13,8 @@ public:
     //← solo esta, sin duplicados ni vector/pair
     void colocarPiezasIniciales();
     void dibujaPiezas();
+    Pieza* getPieza(Pos p) const;
+    bool   estaOcupada(Pos p) const;
 private:
     Casilla casillas[FILAS][COLS];
 };

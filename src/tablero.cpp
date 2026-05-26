@@ -143,3 +143,13 @@ void Tablero::dibujaPiezas()
 	}
 	
 }
+
+Pieza* Tablero::getPieza(Pos p) const {
+	if (p.fila < 0 || p.fila >= FILAS || p.col < 0 || p.col >= COLS)
+		return nullptr; // Fuera del tablero
+	return casillas[p.fila][p.col].pieza;
+}
+
+bool Tablero::estaOcupada(Pos p) const {
+	return casillas[p.fila][p.col].CasOcupada(); // ya tiene Casilla
+}

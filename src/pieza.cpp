@@ -1,10 +1,12 @@
 #include "pieza.h"
 
-Pieza::Pieza(double v, double f, double vel, double intervalo, Bando b, Pos pos)
+
+Pieza::Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos)
     : vida(v), vidaMax(v),
     fuerza(f),
     velocidad(vel),
     intervaloAtaque(intervalo),
+    radioMovimiento(radio), // ? nuevo
     bando(b),
     casilla(pos)
 {
