@@ -56,7 +56,7 @@ void Tablero::inicializaTablero() {
 
 
 
-void Tablero::dibujaTablero(Pos cursor) {
+void Tablero::dibujaTablero() {
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
 			glColor3ub(casillas[i][j].r, casillas[i][j].g, casillas[i][j].b);
@@ -72,22 +72,7 @@ void Tablero::dibujaTablero(Pos cursor) {
 			glEnd();
 		}
 	}
-	//Cursor WASD color amarillo, calcula las celdas de igual manera que  arriba
-	if (cursor.esValida()) {
-		float x = cursor.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
-		float y = cursor.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
-
-		glColor3ub(255, 220, 0);
-		glLineWidth(3.5f);
-		glBegin(GL_LINE_LOOP);
-		glVertex3f(x, y, 0);
-		glVertex3f(x + TAM_CELDA, y, 0);
-		glVertex3f(x + TAM_CELDA, y + TAM_CELDA, 0);
-		glVertex3f(x, y + TAM_CELDA, 0);
-		glEnd();
-		glLineWidth(1.0f);
 	
-	}
 	
 }
 

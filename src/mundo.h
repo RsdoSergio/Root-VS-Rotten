@@ -1,7 +1,8 @@
 #pragma once
-#include<vector>
-#include<iostream>
+#include <vector>
+#include <iostream>
 #include "tablero.h"
+#include "cursor.h"
 #include "pos.h"
 #include "arena.h"
 
@@ -12,8 +13,9 @@ class Mundo
 
 	Pos seleccionada;                    
 	Pos piezaSeleccionada;
+	Cursor  cursor;                  // gestiona posicion y dibujo del cursor
+	int     turno = 0;
 	std::vector<Pos> casillasValidas;
-
 	arena arena;
 
 public:

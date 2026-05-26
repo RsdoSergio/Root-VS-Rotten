@@ -9,8 +9,7 @@
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
-	seleccionada = Pos(4, 4);
-
+	
 	//inicializacion de piezas para el juego
 
 	//inicializacion de peones para ambos bandos
@@ -33,6 +32,8 @@ void Mundo::tecla(unsigned char key)
 
 	if (key == 13) tablero.gestionarEntrada(seleccionada, turno);
 	if (key == 27) tablero.cancelarSeleccion();
+	cursor.mover(key);   // el cursor gestiona su propio movimiento
+	
 }
 
 void Mundo::mueve()
@@ -44,8 +45,9 @@ void Mundo::mueve()
 void Mundo::dibuja()
 {
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
-	tablero.dibujaTablero(seleccionada);
+	tablero.dibujaTablero();
 	tablero.dibujaPiezas();
 	arena.dibuja();
 	tablero.marcaCasillasValidas();
+	cursor.dibuja();
 }
