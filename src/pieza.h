@@ -3,7 +3,7 @@
 #include "pos.h"
 #include<iostream>
 
-
+enum class TipoMovimiento { TIERRA, VUELO, TELETRANSPORTE };
 constexpr float TAM_PIEZA = 0.9f;//Porvisional para las piezas
 enum  Bando { planta, zombi };
 
@@ -39,6 +39,9 @@ public:
     virtual void dibujaTablero(float x, float y) const {};
     virtual std::string getNombre() const { return "Pieza"; }
     virtual void usarAtaqueSecundario() {};
+
+    virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
+
 
     virtual ~Pieza() {} // Imprescindible en jerarquías
 };

@@ -10,7 +10,8 @@ class Mundo
 	Tablero tablero;
 	int turno = 0;
 
-	Pos seleccionada;                    // Sustituye al pair<int,int>, mucho más legible
+	Pos seleccionada;                    
+	Pos piezaSeleccionada;
 	std::vector<Pos> casillasValidas;
 
 	arena arena;

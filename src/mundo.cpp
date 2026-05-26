@@ -30,6 +30,9 @@ void Mundo::tecla(unsigned char key)
 	if (key == 's' || key == 'S')  if (seleccionada.fila > 0)  seleccionada.fila--;
 	if (key == 'a' || key == 'A')  if (seleccionada.col > 0)  seleccionada.col--;
 	if (key == 'd' || key == 'D')  if (seleccionada.col < COLS - 1)  seleccionada.col++;
+
+	if (key == 13) tablero.gestionarEntrada(seleccionada, turno);
+	if (key == 27) tablero.cancelarSeleccion();
 }
 
 void Mundo::mueve()
@@ -44,4 +47,5 @@ void Mundo::dibuja()
 	tablero.dibujaTablero(seleccionada);
 	tablero.dibujaPiezas();
 	arena.dibuja();
+	tablero.marcaCasillasValidas();
 }

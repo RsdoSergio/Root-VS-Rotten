@@ -6,4 +6,8 @@ class PiezaTierra : public Pieza {
 public:
     PiezaTierra(double vida, double fuerza, double vel, double intervalo, int radio, Bando b, Pos pos)
         : Pieza(vida, fuerza, vel, intervalo, radio, b, pos) {}
+
+    TipoMovimiento getTipoMovimiento() const override {
+        return TipoMovimiento::TIERRA;
+    }
 };
