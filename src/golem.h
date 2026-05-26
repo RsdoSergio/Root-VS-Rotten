@@ -11,17 +11,9 @@ public:
             3.0,   // velocidad baja
            1.2,   // recarga lenta
             b, pos) {}
-
-    void dibujaTablero(float x, float y) const override {
-        // Marrón claro para LUZ, marrón oscuro para OSCURIDAD
-        if (bando == Bando::planta) glColor3f(0.8f, 0.6f, 0.3f);
-        else                     glColor3f(0.5f, 0.3f, 0.1f);
-        glBegin(GL_POLYGON);
-        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
-        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
-        glEnd();
+    void getColorTablero(float& r, float& g, float& b) const override {
+        if (bando == Bando::planta) { r = 0.8f; g = 0.6f; b = 0.3f; }
+        else { r = 0.5f; g = 0.3f; b = 0.1f; }
     }
 
 

@@ -16,18 +16,10 @@ public:
 
     double getVelocidadProyectil() const { return velocidadProyectil; }
 
-    void dibujaTablero(float x, float y) const override {
-        // Cian para LUZ, azul oscuro para OSCURIDAD
-        if (bando == Bando::planta) glColor3f(0.2f, 0.9f, 0.9f);
-        else                     glColor3f(0.1f, 0.3f, 0.7f);
-        glBegin(GL_POLYGON);
-        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
-        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
-        glEnd();
+    void getColorTablero(float& r, float& g, float& b) const override {
+        if (bando == Bando::planta) { r = 0.2f; g = 0.9f; b = 0.9f; }
+        else { r = 0.1f; g = 0.3f; b = 0.7f; }
     }
-
     std::string getNombre() const override {
         return bando == Bando::planta ? "Rotinabo" : "Globador";
     }

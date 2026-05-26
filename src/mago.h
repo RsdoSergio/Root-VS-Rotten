@@ -34,17 +34,9 @@ public:
     void usarHechizo(Hechizo h) {
         hechizosUsados[static_cast<int>(h)] = true;
     }
-
-    void dibujaTablero(float x, float y) const override {
-        // Dorado para LUZ, rojo oscuro para OSCURIDAD (son los líderes, destacan)
-        if (bando == Bando::planta) glColor3f(1.0f, 0.85f, 0.0f);
-        else                     glColor3f(0.7f, 0.0f, 0.0f);
-        glBegin(GL_POLYGON);
-        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
-        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
-        glEnd();
+    void getColorTablero(float& r, float& g, float& b) const override {
+        if (bando == Bando::planta) { r = 1.0f; g = 0.85f; b = 0.0f; }
+        else { r = 0.7f; g = 0.0f;  b = 0.0f; }
     }
 
     std::string getNombre() const override {

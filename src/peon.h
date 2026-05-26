@@ -12,18 +12,10 @@ public:
             0.4,   // recarga rápida
             b, pos) {}
 
-    void dibujaTablero(float x, float y) const override {
-        // Verde claro para LUZ, gris verdoso para OSCURIDAD
-        if (bando == Bando::planta) glColor3b(214, 255, 99);
-        else                     glColor3b(99, 117, 47);
-        glBegin(GL_POLYGON);
-        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
-        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
-        glEnd();
+    void getColorTablero(float& r, float& g, float& b) const override {
+        if (bando == Bando::planta) { r = 0.84f; g = 1.0f;  b = 0.39f; }
+        else { r = 0.39f; g = 0.46f; b = 0.18f; }
     }
-
     std::string getNombre() const override {
         return bando == Bando::planta ? "Seta Solar" : "Zombi";
     }

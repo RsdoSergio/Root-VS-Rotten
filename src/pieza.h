@@ -33,7 +33,12 @@ public:
     void recibirDanio(double d);
     void curar(double cantidad);
     
-    virtual void dibujaTablero(float x, float y) const {};
+    // Cada pieza devuelve su color segun bando
+    virtual void getColorTablero(float& r, float& g, float& b) const = 0;
+
+    
+    void dibujaTablero(float x, float y) const;
+
     virtual std::string getNombre() const { return "Pieza"; }
     virtual void usarAtaqueSecundario() {};
 
