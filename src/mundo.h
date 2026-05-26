@@ -3,6 +3,7 @@
 #include<iostream>
 #include "tablero.h"
 #include "pos.h"
+#include "arena.h"
 
 class Mundo
 {
@@ -11,6 +12,8 @@ class Mundo
 
 	Pos seleccionada;                    // Sustituye al pair<int,int>, mucho más legible
 	std::vector<Pos> casillasValidas;
+
+	arena arena;
 
 public:
 	void inicializa();
