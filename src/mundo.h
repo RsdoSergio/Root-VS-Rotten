@@ -9,8 +9,6 @@
 class Mundo
 {
 	Tablero tablero;
-	int turno = 0;
-
 	Pos seleccionada;                    
 	Pos piezaSeleccionada;
 	Cursor  cursor;                  // gestiona posicion y dibujo del cursor
