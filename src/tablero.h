@@ -12,7 +12,7 @@ public:
 	void dibujaTablero(Pos cursor); //añadido argumento cursor para dibujar el borde del cursor en la casilla activa
     //← solo esta, sin duplicados ni vector/pair
     void colocarPiezasIniciales();
-
+    void dibujaPiezas();
 private:
     Casilla casillas[FILAS][COLS];
 };
