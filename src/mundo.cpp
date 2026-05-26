@@ -10,7 +10,7 @@ void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
 	seleccionada = Pos(4, 4);
-	
+
 	//inicializacion de piezas para el juego
 
 	//inicializacion de peones para ambos bandos
@@ -32,7 +32,6 @@ void Mundo::tecla(unsigned char key)
 	if (key == 'd' || key == 'D')  if (seleccionada.col < COLS - 1)  seleccionada.col++;
 }
 
-
 void Mundo::mueve()
 {
 	// de momento vacía
@@ -42,15 +41,7 @@ void Mundo::mueve()
 void Mundo::dibuja()
 {
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
-	tablero.dibujaTablero();
-
-	arena.dibuja();
-}
-
-
 	tablero.dibujaTablero(seleccionada);
 	tablero.dibujaPiezas();
-	//cajaCombate.dibuja();
-	
-
+	arena.dibuja();
 }
