@@ -21,7 +21,11 @@ void Mundo::inicializa() {
 void Mundo::tecla(unsigned char key)
 {
 	if (key == 'm') Audio::stopMusica();
+
+	//Pulsar "c" para probar la arena de combate
+	if (key == 'c') { arena.estaActiva() ? arena.desactiva() : arena.activa(); }
 }
+
 
 void Mundo::mueve()
 {
@@ -33,6 +37,8 @@ void Mundo::dibuja()
 {
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
 	tablero.dibujaTablero();
-	//cajaCombate.dibuja();
-	
+
+	arena.dibuja();
 }
+
+
