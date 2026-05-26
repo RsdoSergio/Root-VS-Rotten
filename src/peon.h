@@ -12,9 +12,22 @@ public:
             0.4,   // recarga rápida
             b, pos) {}
 
-    void dibujaTablero(float x, float y) const override {}
+    void dibujaTablero(float x, float y) const override {
+        // Verde claro para LUZ, gris verdoso para OSCURIDAD
+        if (bando == Bando::planta) glColor3b(214, 255, 99);
+        else                     glColor3b(99, 117, 47);
+        glBegin(GL_POLYGON);
+        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
+        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
+        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
+        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
+        glEnd();
+    }
+
     std::string getNombre() const override {
         return bando == Bando::planta ? "Seta Solar" : "Zombi";
     }
     void usarAtaqueSecundario() override {};
+
+   
 };

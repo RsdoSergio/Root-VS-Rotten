@@ -110,3 +110,19 @@ void Tablero::colocarPiezasIniciales() {
 		casillas[i][7].pieza = new Peon(Bando::zombi, Pos(i, 7));
 	casillas[8][7].pieza = new Arquero(Bando::zombi, Pos(8, 7));
 }
+
+void Tablero::dibujaPiezas()
+{
+	for (int i = 0; i < FILAS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = casillas[i][j].pieza;
+			if (p != nullptr) {
+				// Centro de la casilla en coordenadas OpenGL
+				float x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+				float y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+				p->dibujaTablero(x, y); // Polimorfismo: cada pieza sabe cómo dibujarse
+			}
+		}
+	}
+	
+}

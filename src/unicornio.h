@@ -16,7 +16,19 @@ public:
 
     double getVelocidadProyectil() const { return velocidadProyectil; }
 
-    void dibujaTablero(float x, float y) const override {}
+    void dibujaTablero(float x, float y) const override {
+        // Rosa claro para LUZ, rosa oscuro para OSCURIDAD
+        if (bando == Bando::planta) glColor3f(0.95f, 0.7f, 0.8f);
+        else                     glColor3f(0.6f, 0.3f, 0.4f);
+        glBegin(GL_POLYGON);
+        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
+        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
+        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
+        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
+        glEnd();
+    }
+
+
     std::string getNombre() const override {
         return bando == Bando::planta ? "Rabano Casillero" : "Zombidito Momia";
     }
