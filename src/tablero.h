@@ -20,9 +20,13 @@ public:
 	Pieza* getPieza(Pos p) const;
 	bool   estaOcupada(Pos p) const;
 
-	void gestionarEntrada(Pos cursor, int& turno);
+	bool gestionarEntrada(Pos cursor, int& turno);
 	void cancelarSeleccion();
 	void dibuja(const Cursor& cursor);
+
+	// Getters para que Mundo pueda acceder a los combatientes
+	Pieza* getPersonaje1() const { return personaje1; }
+	Pieza* getPersonaje2() const { return personaje2; }
 
 private:
 
@@ -34,6 +38,10 @@ private:
 	Pos piezaSeleccionada;
 	std::vector<Pos> casillasValidas;
 	bool movimientoPendiente = false;
+
+	// Piezas involucradas en el ultimo combate detectado
+	Pieza* personaje1 = nullptr;
+	Pieza* personaje2 = nullptr;
 
 	std::vector<Pos> movimientosValidos(Pos origen);
 	bool moverPieza(Pos origen, Pos destino);

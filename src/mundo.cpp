@@ -32,9 +32,13 @@ void Mundo::tecla(unsigned char key)
 	if (key == 'm') Audio::stopMusica();
 
 	cursor.mover(key);
-	if (key == 13) tablero.gestionarEntrada(cursor.getPosicion(), turno);
-	if (key == 27) tablero.cancelarSeleccion();
-
+	if (key == 13) {
+		bool combate = tablero.gestionarEntrada(cursor.getPosicion(), turno);
+		if (combate) {
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+			arena.activa();
+		}
+	}
 	//Pulsar "c" para probar la arena de combate
 	if (key == 'c') {
 		Peon p1(Bando::planta, Pos(0, 0));

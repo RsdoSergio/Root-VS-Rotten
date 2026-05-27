@@ -24,10 +24,15 @@ class arena
 	double vidaMaxPieza1 = 1.0;
 	double vidaMaxPieza2 = 1.0;
 
+	// Punteros a las piezas que combaten (para dibujarlas)
+	const Pieza* pieza1 = nullptr;
+	const Pieza* pieza2 = nullptr;
+
 	void dibujaFondo() const;
 	void dibujaInterior() const;
 	void dibujaMarco() const;
 	void dibujaHUD() const;
+	void dibujaPiezasArena() const;
 
 public:
 	arena() {};
