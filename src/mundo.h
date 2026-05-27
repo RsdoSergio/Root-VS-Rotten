@@ -10,6 +10,8 @@
 class Mundo
 {
 	Tablero tablero;
+	Pos seleccionada;                    
+	Pos piezaSeleccionada;
 	Cursor  cursor;                  // gestiona posicion y dibujo del cursor
 	int     turno = 0;
 	std::vector<Pos> casillasValidas;
