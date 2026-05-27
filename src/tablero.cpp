@@ -1,3 +1,4 @@
+#pragma once
 #include "tablero.h"
 #include "freeglut.h"
 #include "pos.h"
@@ -10,6 +11,8 @@
 #include "unicornio.h"
 #include "fenix.h"
 #include "mago.h"
+#include"cursor.h"
+
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -56,7 +59,8 @@ void Tablero::inicializaTablero() {
 
 
 
-void Tablero::dibujaTablero(Pos cursor) {
+void Tablero::dibujaTablero(const Cursor& cursor) {
+	// Dibuja las casillas
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
 			glColor3ub(casillas[i][j].r, casillas[i][j].g, casillas[i][j].b);
@@ -72,23 +76,9 @@ void Tablero::dibujaTablero(Pos cursor) {
 			glEnd();
 		}
 	}
-	//Cursor WASD color amarillo, calcula las celdas de igual manera que  arriba
-	if (cursor.esValida()) {
-		float x = cursor.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
-		float y = cursor.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
 
-		glColor3ub(255, 220, 0);
-		glLineWidth(3.5f);
-		glBegin(GL_LINE_LOOP);
-		glVertex3f(x, y, 0);
-		glVertex3f(x + TAM_CELDA, y, 0);
-		glVertex3f(x + TAM_CELDA, y + TAM_CELDA, 0);
-		glVertex3f(x, y + TAM_CELDA, 0);
-		glEnd();
-		glLineWidth(1.0f);
-	
-	}
-	
+	// Dibuja el borde amarillo del cursor encima
+	cursor.dibuja();
 }
 
 void Tablero::colocarPiezasIniciales() {
@@ -142,4 +132,137 @@ void Tablero::dibujaPiezas()
 		}
 	}
 	
+}
+
+Pieza* Tablero::getPieza(Pos p) const {
+	if (p.fila < 0 || p.fila >= FILAS || p.col < 0 || p.col >= COLS)
+		return nullptr; // Fuera del tablero
+	return casillas[p.fila][p.col].pieza;
+}
+
+bool Tablero::estaOcupada(Pos p) const {
+	return casillas[p.fila][p.col].CasOcupada(); // ya tiene Casilla
+}
+
+std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
+	std::vector<Pos> validos;
+	Pieza* p = getPieza(origen);
+	if (p == nullptr) return validos; // Sin pieza, sin movimientos
+
+	int radio = p->getRadioMovimiento();
+	TipoMovimiento tipo = p->getTipoMovimiento();
+	Bando bandoPieza = p->getBando();
+
+	if (tipo == TipoMovimiento::TIERRA || tipo == TipoMovimiento::VUELO) {
+
+		// Tierra: 4 direcciones. Vuelo: 8 direcciones
+		int dirs[8][2] = {
+			{1,0},{-1,0},{0,1},{0,-1},   // horizontal y vertical
+			{1,1},{1,-1},{-1,1},{-1,-1}  // diagonales (solo vuelo)
+		};
+		int numDirs = (tipo == TipoMovimiento::TIERRA) ? 4 : 8;
+
+		for (int d = 0; d < numDirs; d++) {
+			for (int i = 1; i <= radio; i++) {
+				int nf = origen.fila + dirs[d][0] * i;
+				int nc = origen.col + dirs[d][1] * i;
+
+				if (nf < 0 || nf >= FILAS || nc < 0 || nc >= COLS) break; // Fuera del tablero
+
+				Pos dest(nf, nc);
+				Pieza* enDestino = getPieza(dest);
+
+				if (enDestino == nullptr) {
+					validos.push_back(dest); // Vacía: puede ir y seguir
+				}
+				else if (enDestino->getBando() != bandoPieza) {
+					validos.push_back(dest); // Enemigo: puede ir pero no pasar
+					break;
+				}
+				else {
+					break; // Aliado: bloquea
+				}
+			}
+		}
+	}
+
+	if (tipo == TipoMovimiento::TELETRANSPORTE) {
+		// Puede ir a cualquier casilla vacía o con enemigo
+		for (int f = 0; f < FILAS; f++) {
+			for (int c = 0; c < COLS; c++) {
+				Pos dest(f, c);
+				if (dest.fila == origen.fila && dest.col == origen.col) continue;
+				Pieza* enDestino = getPieza(dest);
+				if (enDestino == nullptr || enDestino->getBando() != bandoPieza)
+					validos.push_back(dest);
+			}
+		}
+	}
+
+	return validos;
+}
+
+void Tablero::marcaCasillasValidas() {
+	for (Pos& p : casillasValidas) { // Usa el vector interno
+		float x = p.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
+		float y = p.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
+		glColor3f(0.0f, 1.0f, 0.0f);
+		glLineWidth(2.5f);
+		glBegin(GL_LINE_LOOP);
+		glVertex3f(x, y, 0);
+		glVertex3f(x + TAM_CELDA, y, 0);
+		glVertex3f(x + TAM_CELDA, y + TAM_CELDA, 0);
+		glVertex3f(x, y + TAM_CELDA, 0);
+		glEnd();
+		glLineWidth(1.0f);
+	}
+}
+
+
+bool Tablero::moverPieza(Pos origen, Pos destino) {
+	Pieza* p = casillas[origen.fila][origen.col].pieza;
+	if (p == nullptr) return false;
+
+	bool hayCombate = casillas[destino.fila][destino.col].CasOcupada(); // ¿Hay enemigo?
+
+	casillas[destino.fila][destino.col].pieza = p;       // Coloca pieza en destino
+	casillas[origen.fila][origen.col].pieza = nullptr; // Vacía el origen
+	p->setCasilla(destino);                              // La pieza actualiza su posición
+
+	return hayCombate;
+}
+
+
+void Tablero::gestionarEntrada(Pos cursor, int& turno) {
+	if (!piezaSeleccionada.esValida()) {
+		// Intentar seleccionar pieza del turno actual
+		Pieza* p = getPieza(cursor);
+		if (p != nullptr && (int)p->getBando() == turno) {
+			piezaSeleccionada = cursor;
+			casillasValidas = movimientosValidos(cursor);
+		}
+	}
+	else {
+		// Comprobar si el destino es válido
+		bool destinoValido = false;
+		for (Pos& pos : casillasValidas)
+			if (pos.fila == cursor.fila && pos.col == cursor.col)
+			{
+				destinoValido = true; break;
+			}
+
+		if (destinoValido) {
+			bool hayCombate = moverPieza(piezaSeleccionada, cursor);
+			turno = 1 - turno; // Cambia turno
+			// hayCombate → arena de combate, se gestiona más adelante
+		}
+		piezaSeleccionada = Pos();
+		casillasValidas.clear();
+	}
+}
+
+
+void Tablero::cancelarSeleccion() {
+	piezaSeleccionada = Pos();
+	casillasValidas.clear();
 }

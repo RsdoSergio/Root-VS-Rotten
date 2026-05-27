@@ -23,6 +23,7 @@ public:
             7.0,   // Daño medio
             4.0,   // Vel. movimiento media
             0.8,   // Enfriamiento medio
+            -1,//rad de mov
             b, pos),
         velocidadProyectil(6.0) {}
 
