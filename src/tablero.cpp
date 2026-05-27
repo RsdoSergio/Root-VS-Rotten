@@ -34,7 +34,7 @@ void Tablero::inicializaTablero() {
 	byte colores[3][3] = {
 		{220, 255, 220},  // 0: verde muy claro
 		{34,  100,  34},  // 1: verde oscuro
-		{85, 140,  40},  // 2: verde medio  
+		{85, 140,  40},  // 2: verde medio
 	};
 
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
@@ -53,9 +53,6 @@ void Tablero::inicializaTablero() {
 	}
 }
 
-
-
-
 void Tablero::dibujaTablero() {
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
@@ -72,12 +69,9 @@ void Tablero::dibujaTablero() {
 			glEnd();
 		}
 	}
-	
-	
 }
 
 void Tablero::colocarPiezasIniciales() {
-
 	// --- BANDO LUZ (columna 0 - fila trasera, de esquina a centro) ---
 	casillas[0][0].pieza = new Valquiria(Bando::planta, Pos(0, 0)); // A1 esquina
 	casillas[1][0].pieza = new Golem(Bando::planta, Pos(1, 0)); // A2
@@ -126,7 +120,6 @@ void Tablero::dibujaPiezas()
 			}
 		}
 	}
-	
 }
 
 Pieza* Tablero::getPieza(Pos p) const {
@@ -149,7 +142,6 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
 	Bando bandoPieza = p->getBando();
 
 	if (tipo == TipoMovimiento::TIERRA || tipo == TipoMovimiento::VUELO) {
-
 		// Tierra: 4 direcciones. Vuelo: 8 direcciones
 		int dirs[8][2] = {
 			{1,0},{-1,0},{0,1},{0,-1},   // horizontal y vertical
@@ -213,7 +205,6 @@ void Tablero::marcaCasillasValidas() {
 	}
 }
 
-
 bool Tablero::moverPieza(Pos origen, Pos destino) {
 	Pieza* p = casillas[origen.fila][origen.col].pieza;
 	if (p == nullptr) return false;
@@ -226,7 +217,6 @@ bool Tablero::moverPieza(Pos origen, Pos destino) {
 
 	return hayCombate;
 }
-
 
 void Tablero::gestionarEntrada(Pos cursor, int& turno) {
 	if (!piezaSeleccionada.esValida()) {
@@ -255,7 +245,6 @@ void Tablero::gestionarEntrada(Pos cursor, int& turno) {
 		casillasValidas.clear();
 	}
 }
-
 
 void Tablero::cancelarSeleccion() {
 	piezaSeleccionada = Pos();

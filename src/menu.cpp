@@ -48,6 +48,10 @@ void Menu::dibuja() const
 	ETSIDI::setTextColor(0.5f, 0.5f, 0.5f);
 	ETSIDI::setFont("fuentes/Minecraft.ttf", 24);
 	ETSIDI::printxy("W / S para moverte   |   ENTER para confirmar", -14, -13);
+
+	glColor3ub(255, 255, 255);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 }
 
 void Menu::tecla(unsigned char key)

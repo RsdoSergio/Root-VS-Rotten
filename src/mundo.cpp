@@ -21,6 +21,16 @@ void Mundo::inicializa() {
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
+	if (!enPartida)
+	{
+		menu.tecla(key);              //el menú gestiona sus teclas
+
+		if (menu.seEligeJugar())
+			enPartida = true;
+
+		return;
+	}
+
 	if (key == 'm') Audio::stopMusica();
 
 	//Pulsar "c" para probar la arena de combate
@@ -33,16 +43,6 @@ void Mundo::tecla(unsigned char key)
 	if (key == 13) tablero.gestionarEntrada(seleccionada, turno);
 	if (key == 27) tablero.cancelarSeleccion();
 	cursor.mover(key);   // el cursor gestiona su propio movimiento
-
-	if (!enPartida)
-	{
-		menu.tecla(key);              //el menú gestiona sus teclas
-
-		if (menu.seEligeJugar())
-			enPartida = true;
-
-		return;
-	}
 }
 
 void Mundo::mueve()
@@ -60,6 +60,14 @@ void Mundo::dibuja()
 	}
 	else
 	{
+		//instrucciones para resetear el dibujo (sino da fallos al imprimir el tablero, piezas...)
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glDisable(GL_LIGHTING);
+		glMatrixMode(GL_MODELVIEW);
+		glDisable(GL_DEPTH_TEST);
+		glColor3ub(255, 255, 255);
+
 		tablero.dibujaTablero();
 		tablero.dibujaPiezas();
 		arena.dibuja();
