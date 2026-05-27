@@ -15,17 +15,21 @@ public:
 
 	void colocarPiezasIniciales();
 
-	void dibujaTablero(const Cursor& cursor); //recibe un cursor para poder dibujar el cursor. las casillas se siguen dibujando de igual manera
-	void dibujaPiezas();
-	void marcaCasillasValidas();
-
+	 //recibe un cursor para poder dibujar el cursor. las casillas se siguen dibujando de igual manera
+	
 	Pieza* getPieza(Pos p) const;
 	bool   estaOcupada(Pos p) const;
 
 	void gestionarEntrada(Pos cursor, int& turno);
 	void cancelarSeleccion();
+	void dibuja(const Cursor& cursor);
 
 private:
+
+	void dibujaTablero(const Cursor& cursor);
+	void dibujaPiezas();
+	void marcaCasillasValidas();
+
 	Casilla casillas[FILAS][COLS];
 	Pos piezaSeleccionada;
 	std::vector<Pos> casillasValidas;
