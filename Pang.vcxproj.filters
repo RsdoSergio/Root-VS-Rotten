@@ -24,7 +24,6 @@
   <ItemGroup>
     <ClInclude Include="lib\ETSIDI.h" />
     <ClInclude Include="lib\freeglut.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="src\arquero.h" />
     <ClInclude Include="src\fenix.h" />
     <ClInclude Include="src\genio.h" />
@@ -48,9 +47,6 @@
   <ItemGroup>
     <Library Include="lib\ETSIDI.lib" />
     <Library Include="lib\freeglut.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="RootVsRotten.rc" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audio\COMBATE1.mp3" />
@@ -101,6 +97,5 @@
     <None Include="bin\Pang.exe" />
     <None Include="bin\RootVsRotten.exe" />
     <None Include="README.md" />
-    <None Include="settings.VisualStudio.json" />
   </ItemGroup>
 </Project>

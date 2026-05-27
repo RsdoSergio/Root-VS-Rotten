@@ -9,6 +9,7 @@
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
+
 	//inicializacion de piezas para el juego
 
 	//inicializacion de peones para ambos bandos
@@ -20,7 +21,28 @@ void Mundo::inicializa() {
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
+	if (!enPartida)
+	{
+		menu.tecla(key);
+		if (menu.seEligeJugar())
+			enPartida = true;
+		return;   // el tablero y el cursor no tocan nada
+	}
+
 	if (key == 'm') Audio::stopMusica();
+
+	cursor.mover(key);
+	if (key == 13) tablero.gestionarEntrada(cursor.getPosicion(), turno);
+	if (key == 27) tablero.cancelarSeleccion();
+
+	//Pulsar "c" para probar la arena de combate
+	if (key == 'c') {
+		Peon p1(Bando::planta, Pos(0, 0));
+		Peon p2(Bando::zombi, Pos(1, 0));
+		arena.fDatos(p1, p2);
+		arena.activa();
+	}
+	if (key == 'v') arena.desactiva();
 }
 
 void Mundo::mueve()
@@ -31,6 +53,21 @@ void Mundo::mueve()
 //Metodo que gestiona el dibujo de la simulacion
 void Mundo::dibuja()
 {
-	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
-	tablero.dibujaTablero();
+	if (!enPartida)
+	{
+		menu.dibuja();
+		return;
+	}
+
+	//Resets necesarios sino no funciona bien
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glMatrixMode(GL_MODELVIEW);
+	glColor3ub(255, 255, 255);
+
+	tablero.dibujaTablero(cursor);
+	tablero.dibujaPiezas();
+	arena.dibuja();
 }
