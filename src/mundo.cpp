@@ -23,11 +23,20 @@ void Mundo::tecla(unsigned char key)
 {
 	if (key == 'm') Audio::stopMusica();
 
-	//Pulsar "c" para probar la arena de combate
-	cursor.mover(key);
+	
+	if (key == 'w' || key == 'W')  if (seleccionada.fila < FILAS - 1) seleccionada.fila++;
+	if (key == 's' || key == 'S')  if (seleccionada.fila > 0)  seleccionada.fila--;
+	if (key == 'a' || key == 'A')  if (seleccionada.col > 0)  seleccionada.col--;
+	if (key == 'd' || key == 'D')  if (seleccionada.col < COLS - 1)  seleccionada.col++;
 
-	if (key == 13) tablero.gestionarEntrada(cursor.getPosicion(), turno);
-	if (key == 27) tablero.cancelarSeleccion();
+	//Pulsar "c" para probar la arena de combate
+	if (key == 'c') {
+		Peon p1(Bando::planta, Pos(0, 0));
+		Peon p2(Bando::zombi, Pos(1, 0));
+		arena.fDatos(p1, p2);
+		arena.activa();
+	}
+	if (key == 'v') arena.desactiva();
 }
 
 void Mundo::mueve()
@@ -41,7 +50,6 @@ void Mundo::dibuja()
 	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
 	tablero.dibujaTablero(cursor);
 	tablero.dibujaPiezas();
+
 	arena.dibuja();
-	tablero.marcaCasillasValidas();
-	//cursor.dibuja();
 }

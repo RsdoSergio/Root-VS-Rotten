@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 
 	glutTimerFunc(25, OnTimer, 0);//le decimos que dentro de 25ms llame 1 vez a la funcion OnTimer()
 	glutKeyboardFunc(OnKeyboardDown);
-
+	
 	//inicialización de objetos de la simulación
 	mundo.inicializa();
 
