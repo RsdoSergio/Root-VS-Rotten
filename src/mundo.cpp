@@ -53,9 +53,21 @@ void Mundo::mueve()
 //Metodo que gestiona el dibujo de la simulacion
 void Mundo::dibuja()
 {
-	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
+	if (!enPartida)
+	{
+		menu.dibuja();
+		return;
+	}
+
+	//Resets necesarios sino no funciona bien
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glMatrixMode(GL_MODELVIEW);
+	glColor3ub(255, 255, 255);
+
 	tablero.dibujaTablero(cursor);
 	tablero.dibujaPiezas();
-
 	arena.dibuja();
 }
