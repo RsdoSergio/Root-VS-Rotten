@@ -1,18 +1,19 @@
 #pragma once
 #include "ETSIDI.h"
 
-enum class EstadoMenu {
-	OPCION_0,   //jugar
-	OPCION_1    //salir
-};
+//menu general (pantalla):
+//      0 = principal, 1 = instrucciones, 2 = creditos
+//dentro de menu principal (opcion):
+//      0 = jugar, 1 = instrucciones, 2 = creditos, 3 = salir
 
 class Menu
 {
-	EstadoMenu opcionSeleccionada = EstadoMenu::OPCION_0;
+	int pantalla = 0;
+	int opcion = 0;
 	bool confirmadoJugar = false;
 
 public:
-	void dibuja() const;
+	void dibuja();
 	void tecla(unsigned char key);
 	bool seEligeJugar() const { return confirmadoJugar; }
 };

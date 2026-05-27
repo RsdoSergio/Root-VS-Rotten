@@ -23,12 +23,10 @@ void Mundo::tecla(unsigned char key)
 {
 	if (!enPartida)
 	{
-		menu.tecla(key);              //el menú gestiona sus teclas
-
+		menu.tecla(key);
 		if (menu.seEligeJugar())
 			enPartida = true;
-
-		return;
+		return;   // el tablero y el cursor no tocan nada
 	}
 
 	if (key == 'm') Audio::stopMusica();
@@ -40,8 +38,6 @@ void Mundo::tecla(unsigned char key)
 	if (key == 'a' || key == 'A')  if (seleccionada.col > 0)  seleccionada.col--;
 	if (key == 'd' || key == 'D')  if (seleccionada.col < COLS - 1)  seleccionada.col++;
 
-	if (key == 13) tablero.gestionarEntrada(seleccionada, turno);
-	if (key == 27) tablero.cancelarSeleccion();
 	cursor.mover(key);   // el cursor gestiona su propio movimiento
 }
 
