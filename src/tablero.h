@@ -3,7 +3,6 @@
 #include"pos.h"
 #include<vector>
 
-
 class Cursor;
 
 constexpr int FILAS = 9;
@@ -12,28 +11,26 @@ constexpr float TAM_CELDA = 2.8f;
 
 class Tablero {
 public:
-    void inicializaTablero();
-	
-    void colocarPiezasIniciales();
+	void inicializaTablero();
+
+	void colocarPiezasIniciales();
 
 	void dibujaTablero(const Cursor& cursor); //recibe un cursor para poder dibujar el cursor. las casillas se siguen dibujando de igual manera
-    void dibujaPiezas();
-    void marcaCasillasValidas();
-    
-    Pieza* getPieza(Pos p) const;
-    bool   estaOcupada(Pos p) const ;
+	void dibujaPiezas();
+	void marcaCasillasValidas();
 
-    void gestionarEntrada(Pos cursor, int& turno);
-    void cancelarSeleccion();
+	Pieza* getPieza(Pos p) const;
+	bool   estaOcupada(Pos p) const;
+
+	void gestionarEntrada(Pos cursor, int& turno);
+	void cancelarSeleccion();
 
 private:
-    Casilla casillas[FILAS][COLS];
-    Pos piezaSeleccionada;
-    std::vector<Pos> casillasValidas;
-    bool movimientoPendiente = false;   
+	Casilla casillas[FILAS][COLS];
+	Pos piezaSeleccionada;
+	std::vector<Pos> casillasValidas;
+	bool movimientoPendiente = false;
 
-   
-
-    std::vector<Pos> movimientosValidos(Pos origen);
-    bool moverPieza(Pos origen, Pos destino);            
+	std::vector<Pos> movimientosValidos(Pos origen);
+	bool moverPieza(Pos origen, Pos destino);
 };
