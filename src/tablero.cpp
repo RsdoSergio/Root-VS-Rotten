@@ -1,3 +1,4 @@
+#pragma once
 #include "tablero.h"
 #include "freeglut.h"
 #include "pos.h"
@@ -10,6 +11,7 @@
 #include "unicornio.h"
 #include "fenix.h"
 #include "mago.h"
+#include"cursor.h"
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -53,7 +55,8 @@ void Tablero::inicializaTablero() {
 	}
 }
 
-void Tablero::dibujaTablero() {
+void Tablero::dibujaTablero(const Cursor& cursor) {
+	// Dibuja las casillas
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
 			glColor3ub(casillas[i][j].r, casillas[i][j].g, casillas[i][j].b);
@@ -69,6 +72,9 @@ void Tablero::dibujaTablero() {
 			glEnd();
 		}
 	}
+
+	// Dibuja el borde amarillo del cursor encima
+	cursor.dibuja();
 }
 
 void Tablero::colocarPiezasIniciales() {

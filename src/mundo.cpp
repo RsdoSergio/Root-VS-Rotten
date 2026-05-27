@@ -31,14 +31,18 @@ void Mundo::tecla(unsigned char key)
 
 	if (key == 'm') Audio::stopMusica();
 
-	//Pulsar "c" para probar la arena de combate
-	if (key == 'c') { arena.estaActiva() ? arena.desactiva() : arena.activa(); }
-	if (key == 'w' || key == 'W')  if (seleccionada.fila < FILAS - 1) seleccionada.fila++;
-	if (key == 's' || key == 'S')  if (seleccionada.fila > 0)  seleccionada.fila--;
-	if (key == 'a' || key == 'A')  if (seleccionada.col > 0)  seleccionada.col--;
-	if (key == 'd' || key == 'D')  if (seleccionada.col < COLS - 1)  seleccionada.col++;
+	cursor.mover(key);
+	if (key == 13) tablero.gestionarEntrada(cursor.getPosicion(), turno);
+	if (key == 27) tablero.cancelarSeleccion();
 
-	cursor.mover(key);   // el cursor gestiona su propio movimiento
+	//Pulsar "c" para probar la arena de combate
+	if (key == 'c') {
+		Peon p1(Bando::planta, Pos(0, 0));
+		Peon p2(Bando::zombi, Pos(1, 0));
+		arena.fDatos(p1, p2);
+		arena.activa();
+	}
+	if (key == 'v') arena.desactiva();
 }
 
 void Mundo::mueve()
@@ -49,24 +53,9 @@ void Mundo::mueve()
 //Metodo que gestiona el dibujo de la simulacion
 void Mundo::dibuja()
 {
-	if (!enPartida)
-	{
-		menu.dibuja();
-		return;
-	}
-	else
-	{
-		//instrucciones para resetear el dibujo (sino da fallos al imprimir el tablero, piezas...)
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
-		glDisable(GL_LIGHTING);
-		glMatrixMode(GL_MODELVIEW);
-		glDisable(GL_DEPTH_TEST);
-		glColor3ub(255, 255, 255);
+	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
+	tablero.dibujaTablero(cursor);
+	tablero.dibujaPiezas();
 
-		tablero.dibujaTablero();
-		tablero.dibujaPiezas();
-		arena.dibuja();
-		cursor.dibuja();
-	}
+	arena.dibuja();
 }
