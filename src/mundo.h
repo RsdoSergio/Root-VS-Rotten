@@ -4,6 +4,8 @@
 #include "tablero.h"
 #include "pos.h"
 #include "arena.h"
+#include "pieza.h"
+#include "peon.h"
 
 class Mundo
 {
