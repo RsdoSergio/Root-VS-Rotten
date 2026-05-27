@@ -21,6 +21,14 @@ void Mundo::inicializa() {
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
+	if (!enPartida)
+	{
+		menu.tecla(key);
+		if (menu.seEligeJugar())
+			enPartida = true;
+		return;   // el tablero y el cursor no tocan nada
+	}
+
 	if (key == 'm') Audio::stopMusica();
 
 	cursor.mover(key);
@@ -45,9 +53,21 @@ void Mundo::mueve()
 //Metodo que gestiona el dibujo de la simulacion
 void Mundo::dibuja()
 {
-	//aqui es donde hay que poner el codigo de dibujo (2D sobre el plano XY)
+	if (!enPartida)
+	{
+		menu.dibuja();
+		return;
+	}
+
+	//Resets necesarios sino no funciona bien
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glMatrixMode(GL_MODELVIEW);
+	glColor3ub(255, 255, 255);
+
 	tablero.dibujaTablero(cursor);
 	tablero.dibujaPiezas();
-
 	arena.dibuja();
 }
