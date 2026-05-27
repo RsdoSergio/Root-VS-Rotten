@@ -256,3 +256,9 @@ void Tablero::cancelarSeleccion() {
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
 }
+
+void Tablero::dibuja(const Cursor& cursor) {
+	dibujaTablero(cursor);     // casillas + cursor
+	dibujaPiezas();            // piezas encima
+	marcaCasillasValidas();    // casillas verdes encima de todo
+}

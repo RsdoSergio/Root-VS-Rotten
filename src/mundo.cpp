@@ -67,7 +67,6 @@ void Mundo::dibuja()
 	glMatrixMode(GL_MODELVIEW);
 	glColor3ub(255, 255, 255);
 
-	tablero.dibujaTablero(cursor);
-	tablero.dibujaPiezas();
+	tablero.dibuja(cursor);
 	arena.dibuja();
 }
