@@ -3,6 +3,9 @@
 #include "pos.h"
 #include<iostream>
 
+
+enum class DirArena { ARRIBA, ABAJO, IZQUIERDA, DERECHA };
+
 enum class TipoMovimiento { TIERRA, VUELO, TELETRANSPORTE };
 constexpr float TAM_PIEZA = 0.9f;//Porvisional para las piezas
 enum  Bando { planta, zombi };
@@ -29,6 +32,9 @@ public:
     Bando  getBando()     const { return bando; }
     Pos    getCasilla()   const { return casilla; }
     bool   estaViva()     const { return vida > 0; }
+    //para actualizar pos en arena
+    Vector2D getPosArena() const { return posArena; }
+    void     setPosArena(double x, double y) { posArena.setValores(x, y); }
 
     void setCasilla(Pos p) { casilla = p; }
     void recibirDanio(double d);
@@ -41,7 +47,9 @@ public:
     virtual void usarAtaqueSecundario() {};
 
     virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
-
+    
+    //Para mov en arena. recibe los limites de la caja dearena
+    virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 
     virtual ~Pieza() {} // Imprescindible en jerarquías
 };
