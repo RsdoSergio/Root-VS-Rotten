@@ -8,7 +8,7 @@
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
-	tablero.colocarPiezasIniciales();
+	tablero.colocarPiezasIniciales(ListaPieza);
 	
 	//inicializacion de piezas para el juego
 
@@ -38,7 +38,7 @@ void Mundo::tecla(unsigned char key)
 
 void Mundo::mueve()
 {
-	// de momento vacía
+	ListaPieza.eliminarMuertas(); // de momento vacía
 }
 
 //Metodo que gestiona el dibujo de la simulacion

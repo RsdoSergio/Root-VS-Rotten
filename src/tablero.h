@@ -2,6 +2,7 @@
 #include "casilla.h"
 #include"pos.h"
 #include<vector>
+#include "listapieza.h"
 
 constexpr int FILAS = 9;
 constexpr int COLS = 9;
@@ -11,7 +12,7 @@ class Tablero {
 public:
     void inicializaTablero();
 	void dibujaTablero(); //← solo esta, sin duplicados ni vector/pair
-    void colocarPiezasIniciales();
+    void colocarPiezasIniciales(listapieza& lista);
 
 	void dibujaTablero(Pos cursor); 
     void dibujaPiezas();

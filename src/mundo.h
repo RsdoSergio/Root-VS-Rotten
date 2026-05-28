@@ -5,13 +5,15 @@
 #include "cursor.h"
 #include "pos.h"
 #include "arena.h"
+#include "listapieza.h"
 
 class Mundo
 {
 	Tablero tablero;
 	Pos seleccionada;                    
 	Pos piezaSeleccionada;
-	Cursor  cursor;                  // gestiona posicion y dibujo del cursor
+	Cursor  cursor; // gestiona posicion y dibujo del cursor
+	listapieza ListaPieza;
 	int     turno = 0;
 	std::vector<Pos> casillasValidas;
 	arena arena;
