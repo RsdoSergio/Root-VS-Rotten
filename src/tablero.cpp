@@ -215,13 +215,23 @@ bool Tablero::moverPieza(Pos origen, Pos destino) {
 	Pieza* p = casillas[origen.fila][origen.col].pieza;
 	if (p == nullptr) return false;
 
+	Pieza* d = casillas[destino.fila][destino.col].pieza;
+
+
 	personaje1 = p;
-	personaje2 = casillas[destino.fila][destino.col].pieza;
+	personaje2 = d;
+	
 	bool hayCombate = (personaje2 != nullptr); // ¿Hay enemigo?
 
-	casillas[destino.fila][destino.col].pieza = p;       // Coloca pieza en destino
-	casillas[origen.fila][origen.col].pieza = nullptr; // Vacía el origen
-	p->setCasilla(destino);                              // La pieza actualiza su posición
+	if (!hayCombate) { //Movimiento normal
+		casillas[destino.fila][destino.col].pieza = p; 
+		casillas[origen.fila][origen.col].pieza = nullptr;
+		p->setCasilla(destino);
+	}
+	else { //Hay combate, guardo posiciones
+		posOrigen = origen;	
+		posDestino = destino;
+	}
 
 	return hayCombate;
 }

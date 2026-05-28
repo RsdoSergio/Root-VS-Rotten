@@ -43,6 +43,9 @@ private:
 	Pieza* personaje1 = nullptr;
 	Pieza* personaje2 = nullptr;
 
+	Pos posOrigen;
+	Pos posDestino;
+
 	std::vector<Pos> movimientosValidos(Pos origen);
 	bool moverPieza(Pos origen, Pos destino);
 };

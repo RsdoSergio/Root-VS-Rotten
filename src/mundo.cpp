@@ -39,13 +39,11 @@ void Mundo::tecla(unsigned char key)
 			arena.activa();
 		}
 	}
-	//Pulsar "c" para probar la arena de combate
-	if (key == 'c') {
-		Peon p1(Bando::planta, Pos(0, 0));
-		Peon p2(Bando::zombi, Pos(1, 0));
-		arena.fDatos(p1, p2);
-		arena.activa();
-	}
+
+	if (key == 27) tablero.cancelarSeleccion(); //Escape para cancelar seleccion
+
+
+
 	if (key == 'v') arena.desactiva();
 }
 
