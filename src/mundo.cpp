@@ -31,9 +31,13 @@ void Mundo::tecla(unsigned char key)
 
 	if (key == 'm') Audio::stopMusica();
 
-	cursor.mover(key);
+	// Cada cursor se mueve solo durante su turno
+	if (turno == 0) cursor.mover(key);  // WASD
+
 	if (key == 13) {
-		bool combate = tablero.gestionarEntrada(cursor.getPosicion(), turno);
+		// El cursor activo depende del turno
+		Pos posActiva = (turno == 0) ? cursor.getPosicion() : cursor2.getPosicion();
+		bool combate = tablero.gestionarEntrada(posActiva, turno);
 		if (combate) {
 			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
 			arena.activa();
@@ -70,5 +74,13 @@ void Mundo::dibuja()
 	glColor3ub(255, 255, 255);
 
 	tablero.dibuja(cursor);
+	cursor.dibuja();   // borde amarillo
+	cursor2.dibuja();  // borde morado   
 	arena.dibuja();
+}
+// Flechas
+void Mundo::teclaEspecial(int key)
+{
+	if (!enPartida) return;
+	if (turno == 1) cursor2.moverFlechas(key);
 }

@@ -6,6 +6,8 @@ Mundo mundo; //centralizamos la información en este objeto
 void OnDraw(void); //esta funcion sera llamada para dibujar
 void OnTimer(int value); //esta funcion sera llamada cuando transcurra una temporizacion
 void OnKeyboardDown(unsigned char key, int x, int y); //cuando se pulse una tecla
+void OnSpecialKey(int key, int x, int y);//flechas del teclado
+
 
 int main(int argc, char* argv[])
 {
@@ -45,6 +47,7 @@ int main(int argc, char* argv[])
 
 	glutTimerFunc(25, OnTimer, 0);//le decimos que dentro de 25ms llame 1 vez a la funcion OnTimer()
 	glutKeyboardFunc(OnKeyboardDown);
+	glutSpecialFunc(OnSpecialKey);    //registrar callback de flechas
 	
 	//inicialización de objetos de la simulación
 	mundo.inicializa();
@@ -85,4 +88,10 @@ void OnTimer(int value)
 	glutPostRedisplay();
 	//recurivamente, le decimos que dentro de 25ms vuelva a llamar a esta funcion, para que se siga animando
 	glutTimerFunc(25, OnTimer, 0);
+}
+
+void OnSpecialKey(int key, int x, int y)
+{
+	mundo.teclaEspecial(key);
+	glutPostRedisplay();
 }
