@@ -8,9 +8,11 @@ static void dibujaPrincipal(int opcion)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_menu_inicio.png").id);
-	// Mejora la calidad de escalado (me lo ha dicho la IA)
+	// Forzar máxima calidad
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glDisable(GL_LIGHTING);
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
@@ -186,9 +188,11 @@ void Menu::dibujaPausa(int opcion) const
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_pausa.png").id);
-	// Mejora la calidad de escalado (me lo ha dicho la IA)
+	// Forzar máxima calidad
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glDisable(GL_LIGHTING);
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
