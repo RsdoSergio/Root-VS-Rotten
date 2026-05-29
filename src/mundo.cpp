@@ -60,6 +60,7 @@ void Mundo::tecla(unsigned char key)
 		}
 	}
 
+	if (arena.estaActiva()) arena.tecla(key);  // q/k disparan en la arena
 	if (key == 27) tablero.cancelarSeleccion(); //Escape para cancelar seleccion
 	if (key == 'v') arena.desactiva();
 }
@@ -67,6 +68,7 @@ void Mundo::tecla(unsigned char key)
 void Mundo::mueve()
 {
 	if (!enPartida || enPausa) return;
+	if (arena.estaActiva()) arena.mueve(0.025); // para no mover los poryectiles si no estan en la arena
 }
 
 //Metodo que gestiona el dibujo de la simulacion

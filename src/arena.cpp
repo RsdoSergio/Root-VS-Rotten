@@ -125,6 +125,7 @@ void arena::dibuja() const
 	dibujaMarco();
 	dibujaHUD();
 	dibujaPiezasArena();
+	dibujaProyectiles();
 }
 
 void arena::fDatos(const Pieza& p1, const Pieza& p2)
@@ -145,4 +146,49 @@ void arena::dibujaPiezasArena() const
 	if (pieza1 == nullptr || pieza2 == nullptr) return;
 	pieza1->dibujaTablero(-SEMIANCHO / 2.0f, 0.0f);  // Para colocar las piezas en su sitio de la arena
 	pieza2->dibujaTablero(+SEMIANCHO / 2.0f, 0.0f);  //
+}
+
+//SE AÑADEN LOS PROYECTILES EN ARENA PARA PROBAR SU FUNCIONAMIENTO POSTERIORMENTE SE TIENE QUE CAMBIAR
+// CADA PIEZA DEBERÁ GESTIONAR SU PROPIO PROYECTIL
+// 
+//
+// Mueve los proyectiles activos
+// Sigue el mismo patron que Mundo::mueve en el juego de referencia
+void arena::mueve(double dt)
+{
+	if (!activo) return;
+	if (proyectil1) proyectil1->mueve(dt);
+	if (proyectil2) proyectil2->mueve(dt);
+}
+
+
+void arena::tecla(unsigned char key)
+{
+	if (!activo) return;
+
+	if (key == 'q' || key == 'Q')
+	{
+		delete proyectil1;  // eliminar el anterior si existia
+		// Sale desde la posicion de pieza1, hacia la derecha
+		//se fuerza a salir desde el centro de la pieza, estoy hay q cambiarlo
+		Vector2D pos(-SEMIANCHO / 2.0, 0.0);
+		Vector2D vel(VEL_PROYECTIL, 0.0);
+		proyectil1 = new Proyectil(pos, vel, 5.0);
+	}
+
+	if (key == 'k' || key == 'K')
+	{
+		delete proyectil2;
+		// Sale desde la posicion de pieza2, hacia la izquierda
+		Vector2D pos(+SEMIANCHO / 2.0, 0.0);
+		Vector2D vel(-VEL_PROYECTIL, 0.0);
+		proyectil2 = new Proyectil(pos, vel, 5.0);
+	}
+}
+
+// Dibuja los proyectiles activos
+void arena::dibujaProyectiles() const
+{
+	if (proyectil1) proyectil1->dibuja();
+	if (proyectil2) proyectil2->dibuja();
 }
