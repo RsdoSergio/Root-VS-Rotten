@@ -29,7 +29,12 @@ void Mundo::tecla(unsigned char key)
 		return;   // el tablero y el cursor no tocan nada
 	}
 
-	if (key == 'm') Audio::stopMusica();
+	if (key == 'm') {
+		enPausa = !enPausa;   //m alterna pausa/reanuda
+		return;
+	}
+
+	if (enPausa) return; //si esta en pausa, se ignora el resto
 
 	// Cada cursor se mueve solo durante su turno
 	if (turno == 0) cursor.mover(key);  // WASD
@@ -45,15 +50,12 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	if (key == 27) tablero.cancelarSeleccion(); //Escape para cancelar seleccion
-
-
-
 	if (key == 'v') arena.desactiva();
 }
 
 void Mundo::mueve()
 {
-	// de momento vacía
+	if (!enPartida || enPausa) return;
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -75,8 +77,10 @@ void Mundo::dibuja()
 
 	tablero.dibuja(cursor);
 	cursor.dibuja();   // borde amarillo
-	cursor2.dibuja();  // borde morado   
+	cursor2.dibuja();  // borde morado
 	arena.dibuja();
+	menu.dibujaTeclaMenu();
+	if (enPausa) menu.dibujaPausa();
 }
 // Flechas
 void Mundo::teclaEspecial(int key)

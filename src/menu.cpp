@@ -229,6 +229,45 @@ void Menu::dibuja()
 	if (pantalla == 2) dibujaCreditos();
 }
 
+void Menu::dibujaTeclaMenu() const
+{
+	ETSIDI::setFont("fuentes/texto.ttf", 18);
+	ETSIDI::setTextColor(0.3f, 0.3f, 0.3f);
+	ETSIDI::printxy("M (Menu)", -25.f, -13.f);
+}
+
+void Menu::dibujaPausa() const
+{
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(0.0f, 0.0f, 0.0f, 0.6f);
+	glBegin(GL_QUADS);
+	glVertex2f(-10.0f, -8.0f);
+	glVertex2f(10.0f, -8.0f);
+	glVertex2f(10.0f, 8.0f);
+	glVertex2f(-10.0f, 8.0f);
+	glEnd();
+	glDisable(GL_BLEND);
+
+	glColor3ub(255, 255, 255);
+	glLineWidth(2.0f);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(-10.0f, -8.0f);
+	glVertex2f(10.0f, -8.0f);
+	glVertex2f(10.0f, 8.0f);
+	glVertex2f(-10.0f, 8.0f);
+	glEnd();
+	glLineWidth(1.0f);
+
+	ETSIDI::setFont("fuentes/texto.ttf", 56);
+	ETSIDI::setTextColor(0.8f, 0.8f, 0.8f);
+	ETSIDI::printxy("PAUSA", -4.5f, 4.0f);
+
+	ETSIDI::setFont("fuentes/texto.ttf", 28);
+	ETSIDI::setTextColor(0.6f, 0.6f, 0.6f);
+	ETSIDI::printxy("M (Continuar)", -5.5f, 0.0f);
+}
+
 void Menu::tecla(unsigned char key)
 {
 	//Menu principal
