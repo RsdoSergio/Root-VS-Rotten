@@ -10,7 +10,10 @@ void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
 
-	//inicializacion de piezas para el juego
+	//precargar texturas para evitar freeze al primer uso (igual hay q meterlo en alguna clase o .cpp aparte)
+	ETSIDI::getTexture("imagenes/fondo_menu_inicio.png");
+	ETSIDI::getTexture("imagenes/fondo_pausa.png");
+	ETSIDI::getTexture("imagenes/fondo_archon.png");
 
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda
