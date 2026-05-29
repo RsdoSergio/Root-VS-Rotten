@@ -236,7 +236,7 @@ void Menu::dibujaTeclaMenu() const
 	ETSIDI::printxy("M (Menu)", -25.f, -13.f);
 }
 
-void Menu::dibujaPausa() const
+void Menu::dibujaPausa(int opcion) const
 {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -263,9 +263,16 @@ void Menu::dibujaPausa() const
 	ETSIDI::setTextColor(0.8f, 0.8f, 0.8f);
 	ETSIDI::printxy("PAUSA", -4.5f, 4.0f);
 
-	ETSIDI::setFont("fuentes/texto.ttf", 28);
-	ETSIDI::setTextColor(0.6f, 0.6f, 0.6f);
-	ETSIDI::printxy("M (Continuar)", -5.5f, 0.0f);
+	ETSIDI::setFont("fuentes/texto.ttf", 32);
+	if (opcion == 0) ETSIDI::setTextColor(1.0f, 1.0f, 0.0f);  // amarillo = seleccionado
+	else ETSIDI::setTextColor(0.6f, 0.6f, 0.6f);
+
+	ETSIDI::printxy("CONTINUAR", -5.0f, 0.5f);
+
+	if (opcion == 1) ETSIDI::setTextColor(1.0f, 1.0f, 0.0f);
+	else ETSIDI::setTextColor(0.6f, 0.6f, 0.6f);
+
+	ETSIDI::printxy("SALIR", -3.0f, -2.5f);
 }
 
 void Menu::tecla(unsigned char key)

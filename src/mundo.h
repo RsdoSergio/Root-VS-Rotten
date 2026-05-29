@@ -21,6 +21,7 @@ class Mundo
 	Menu    menu;
 	bool    enPartida = false;
 	bool    enPausa = false;
+	int opcionPausa = 0;
 
 public:
 	void inicializa();
