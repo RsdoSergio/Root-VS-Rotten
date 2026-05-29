@@ -12,7 +12,7 @@
 class Mundo
 {
 	Tablero tablero;
-	
+
 	Cursor cursor{ 4, 4, 255, 220,   0 };  // amarillo
 	Cursor cursor2{ 4, 4, 180,   0, 255 };  //morado
 	int     turno = 0;
@@ -20,6 +20,7 @@ class Mundo
 	arena arena;
 	Menu    menu;
 	bool    enPartida = false;
+	bool    enPausa = false;
 
 public:
 	void inicializa();
