@@ -83,14 +83,14 @@ void Tablero::colocarPiezasIniciales(listapieza& lista) {
 
 	// --- BANDO LUZ (columna 0 - fila trasera, de esquina a centro) ---
 	p = new Valquiria(Bando::planta, Pos(0, 0)); lista.agregar(p); casillas[0][0].pieza = p; // A1 esquina
-	p = new Golem(Bando::planta, Pos(1, 8));     lista.agregar(p); casillas[1][8].pieza = p;  // A2
-	p = new Unicornio(Bando::planta, Pos(2, 8)); lista.agregar(p); casillas[2][8].pieza = p;  // A3
-	p = new Djinn(Bando::planta, Pos(3, 8));     lista.agregar(p); casillas[3][8].pieza = p;  // A4
-	p = new Mago(Bando::planta, Pos(4, 8));      lista.agregar(p); casillas[4][8].pieza = p;  // A5 centro - lider
-	p = new Fenix(Bando::planta, Pos(5, 8));     lista.agregar(p); casillas[5][8].pieza = p;  // A6
-	p = new Unicornio(Bando::planta, Pos(6, 8)); lista.agregar(p); casillas[6][8].pieza = p;  // A7
-	p = new Golem(Bando::planta, Pos(7, 8));     lista.agregar(p); casillas[7][8].pieza = p;  // A8
-	p = new Valquiria(Bando::planta, Pos(8, 8)); lista.agregar(p); casillas[8][8].pieza = p;  // A9 esquina
+	p = new Golem(Bando::planta, Pos(1, 8));     lista.agregar(p); casillas[1][0].pieza = p;  // A2
+	p = new Unicornio(Bando::planta, Pos(2, 8)); lista.agregar(p); casillas[2][0].pieza = p;  // A3
+	p = new Djinn(Bando::planta, Pos(3, 8));     lista.agregar(p); casillas[3][0].pieza = p;  // A4
+	p = new Mago(Bando::planta, Pos(4, 8));      lista.agregar(p); casillas[4][0].pieza = p;  // A5 centro - lider
+	p = new Fenix(Bando::planta, Pos(5, 8));     lista.agregar(p); casillas[5][0].pieza = p;  // A6
+	p = new Unicornio(Bando::planta, Pos(6, 8)); lista.agregar(p); casillas[6][0].pieza = p;  // A7
+	p = new Golem(Bando::planta, Pos(7, 8));     lista.agregar(p); casillas[7][0].pieza = p;  // A8
+	p = new Valquiria(Bando::planta, Pos(8, 8)); lista.agregar(p); casillas[8][0].pieza = p;  // A9 esquina
 
 
 	// --- BANDO LUZ (columna 1 - fila delantera) ---
