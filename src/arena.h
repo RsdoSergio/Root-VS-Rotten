@@ -25,8 +25,8 @@ class arena
 	double vidaMaxPieza2 = 1.0;
 
 	// Punteros a las piezas que combaten (para dibujarlas)
-	const Pieza* pieza1 = nullptr;
-	const Pieza* pieza2 = nullptr;
+	 Pieza* pieza1 = nullptr;
+	 Pieza* pieza2 = nullptr;
 
 	void dibujaFondo() const;
 	void dibujaInterior() const;
@@ -41,7 +41,9 @@ public:
 	void activa() { activo = true; }
 	void desactiva() { activo = false; }
 	bool estaActiva() const { return activo; }
-	void fDatos(const Pieza& p1, const Pieza& p2);
+	void fDatos( Pieza& p1,  Pieza& p2);
+	void MoverPiezaPlanta(unsigned char key);
+	void MoverPiezaZombi(int key);
 	
 
 

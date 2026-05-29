@@ -29,10 +29,14 @@ void Mundo::tecla(unsigned char key)
 		return;   // el tablero y el cursor no tocan nada
 	}
 
-	if (key == 'm') {
-		enPausa = !enPausa;   //m alterna pausa/reanuda
+	if (key == 'm') {enPausa = !enPausa;return;}   //m alterna pausa/reanuda
+	if (arena.estaActiva()) {
+		if (key == 27) arena.desactiva();
+		else           arena.MoverPiezaPlanta(key);
 		return;
 	}
+		
+	
 
 	if (enPausa) return; //si esta en pausa, se ignora el resto
 

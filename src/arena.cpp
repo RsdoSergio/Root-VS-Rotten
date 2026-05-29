@@ -124,7 +124,7 @@ void arena::dibuja() const
     dibujaPiezasArena();
 }
 
-void arena::fDatos(const Pieza& p1, const Pieza& p2)
+void arena::fDatos( Pieza& p1,  Pieza& p2)
 {
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
@@ -134,12 +134,16 @@ void arena::fDatos(const Pieza& p1, const Pieza& p2)
 	vidaMaxPieza2 = p2.getVidaMax();
     pieza1 = &p1;
     pieza2 = &p2;
+
+    pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
+    pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
+    activo = true;
 }
 
 // Dibuja las dos piezas en sus lados respectivos de la arena
 void arena::dibujaPiezasArena() const
 {
     if (pieza1 == nullptr || pieza2 == nullptr) return;
-    pieza1->dibujaTablero(-SEMIANCHO / 2.0f, 0.0f);  // Para colocar las piezas en su sitio de la arena
-    pieza2->dibujaTablero(+SEMIANCHO / 2.0f, 0.0f);  // 
+    pieza1->dibujaTablero(pieza1->getPosArena().getX(), pieza1->getPosArena().getY());
+    pieza2->dibujaTablero(pieza2->getPosArena().getX(), pieza2->getPosArena().getY());
 }
