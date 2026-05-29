@@ -1,57 +1,48 @@
 #include "menu.h"
 #include "freeglut.h"
 
+extern float G_XMAX;
+extern float G_YMAX;
+
 static void dibujaPrincipal(int opcion)
 {
-	glColor3f(0.0f, 0.0f, 0.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_menu_inicio.png").id);
+	// Mejora la calidad de escalado (me lo ha dicho la IA)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
-	glVertex2f(-25.0f, -15.0f);
-	glVertex2f(25.0f, -15.0f);
-	glVertex2f(25.0f, 15.0f);
-	glVertex2f(-25.0f, 15.0f);
+	glTexCoord2d(0, 1); glVertex2f(-G_XMAX, -G_YMAX);
+	glTexCoord2d(1, 1); glVertex2f(G_XMAX, -G_YMAX);
+	glTexCoord2d(1, 0); glVertex2f(G_XMAX, G_YMAX);
+	glTexCoord2d(0, 0); glVertex2f(-G_XMAX, G_YMAX);
 	glEnd();
+	glEnable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);
 
 	ETSIDI::setTextColor(1.f, 1.f, 1.f);
-	ETSIDI::setFont("fuentes/titulo.ttf", 80);
-	ETSIDI::printxy("Root VS Rotten", -20.0f, 8.0f);
-
-	ETSIDI::setTextColor(0.8f, 0.8f, 0.8f);
-	ETSIDI::setFont("fuentes/subtitulo.ttf", 28);
-	ETSIDI::printxy("UN JUEGO DE ESTRATEGIA POR TURNOS", -11.0f, 5.5f);
+	ETSIDI::setFont("fuentes/titulo.ttf", 85);
+	ETSIDI::printxy("Root VS Rotten", -21.5f, 8.0f);
 
 	//JUGAR
 	if (opcion == 0) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(0.1f, 0.6f, 0.1f, 0.35f);
-		glBegin(GL_QUADS);
-		glVertex2f(-7.0f, 0.5f - 0.8f); glVertex2f(7.0f, 0.5f - 0.8f);
-		glVertex2f(7.0f, 0.5f + 1.2f); glVertex2f(-7.0f, 0.5f + 1.2f);
-		glEnd();
-		glDisable(GL_BLEND);
-		ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
+		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
 		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("> JUGAR <", -5.5f, 1.5f);
+		ETSIDI::printxy("JUGAR", -4.5f, 1.5f);
 	}
 	else {
 		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
 		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("JUGAR", -3.5f, 1.5f);
+		ETSIDI::printxy("JUGAR", -4.f, 1.5f);
 	}
 
 	//INSTRUCCIONES
 	if (opcion == 1) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(0.1f, 0.6f, 0.1f, 0.35f);
-		glBegin(GL_QUADS);
-		glVertex2f(-10.0f, -2.5f - 0.8f); glVertex2f(10.0f, -2.5f - 0.8f);
-		glVertex2f(10.0f, -2.5f + 1.2f); glVertex2f(-10.0f, -2.5f + 1.2f);
-		glEnd();
-		glDisable(GL_BLEND);
-		ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
+		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
 		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("> INSTRUCCIONES <", -11.5f, -2.5f);
+		ETSIDI::printxy("INSTRUCCIONES", -9.5f, -2.5f);
 	}
 	else {
 		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
@@ -61,47 +52,31 @@ static void dibujaPrincipal(int opcion)
 
 	//CREDITOS
 	if (opcion == 2) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(0.1f, 0.6f, 0.1f, 0.35f);
-		glBegin(GL_QUADS);
-		glVertex2f(-7.0f, -5.5f - 0.8f); glVertex2f(7.0f, -5.5f - 0.8f);
-		glVertex2f(7.0f, -5.5f + 1.2f); glVertex2f(-7.0f, -5.5f + 1.2f);
-		glEnd();
-		glDisable(GL_BLEND);
-		ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
+		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
 		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("> CREDITOS <", -7.5f, -5.5f);
+		ETSIDI::printxy("CREDITOS", -6.f, -5.5f);
 	}
 	else {
 		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
 		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("CREDITOS", -5.5f, -5.5f);
+		ETSIDI::printxy("CREDITOS", -6.f, -5.5f);
 	}
 
 	//SALIR
 	if (opcion == 3) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(0.1f, 0.6f, 0.1f, 0.35f);
-		glBegin(GL_QUADS);
-		glVertex2f(-7.0f, -8.5f - 0.8f); glVertex2f(7.0f, -8.5f - 0.8f);
-		glVertex2f(7.0f, -8.5f + 1.2f); glVertex2f(-7.0f, -8.5f + 1.2f);
-		glEnd();
-		glDisable(GL_BLEND);
-		ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
+		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
 		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("> SALIR <", -5.5f, -8.f);
+		ETSIDI::printxy("SALIR", -4.f, -8.f);
 	}
 	else {
 		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
 		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("SALIR", -3.5f, -8.f);
+		ETSIDI::printxy("SALIR", -4.f, -8.f);
 	}
 
 	ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
 	ETSIDI::setFont("fuentes/texto.ttf", 20);
-	ETSIDI::printxy("W/S o flechas para navegar   |   ENTER para confirmar", -13.0f, -13.5f);
+	ETSIDI::printxy("W/S o flechas para navegar                            ENTER para confirmar", -22.0f, -13.5f);
 
 	glColor3ub(255, 255, 255);
 	glDisable(GL_BLEND);
@@ -112,23 +87,15 @@ static void dibujaInstrucciones()
 	// Fondo negro
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_QUADS);
-	glVertex2f(-25.0f, -15.0f);
-	glVertex2f(25.0f, -15.0f);
-	glVertex2f(25.0f, 15.0f);
-	glVertex2f(-25.0f, 15.0f);
+	glTexCoord2d(0, 1); glVertex2f(-G_XMAX, -G_YMAX);
+	glTexCoord2d(1, 1); glVertex2f(G_XMAX, -G_YMAX);
+	glTexCoord2d(1, 0); glVertex2f(G_XMAX, G_YMAX);
+	glTexCoord2d(0, 0); glVertex2f(-G_XMAX, G_YMAX);
 	glEnd();
 
 	ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
 	ETSIDI::setFont("fuentes/texto.ttf", 64);
 	ETSIDI::printxy("INSTRUCCIONES", -11.0f, 10.5f);
-
-	glColor3f(0.2f, 0.7f, 0.2f);
-	glLineWidth(2.0f);
-	glBegin(GL_LINES);
-	glVertex2f(-18.0f, 9.0f);
-	glVertex2f(18.0f, 9.0f);
-	glEnd();
-	glLineWidth(1.0f);
 
 	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
 	ETSIDI::setFont("fuentes/texto.ttf", 26);
@@ -147,14 +114,6 @@ static void dibujaInstrucciones()
 	ETSIDI::printxy("Activar / desactivar arena", -10.0f, -3.0f);
 	ETSIDI::printxy("Silenciar musica", -10.0f, -5.5f);
 
-	glColor3f(0.2f, 0.7f, 0.2f);
-	glLineWidth(2.0f);
-	glBegin(GL_LINES);
-	glVertex2f(-18.0f, -7.0f);
-	glVertex2f(18.0f, -7.0f);
-	glEnd();
-	glLineWidth(1.0f);
-
 	ETSIDI::setTextColor(0.6f, 0.85f, 1.0f);
 	ETSIDI::setFont("fuentes/texto.ttf", 22);
 	ETSIDI::printxy("--------------------------------------------------", -18.0f, -8.5f);
@@ -172,23 +131,15 @@ static void dibujaCreditos()
 {
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_QUADS);
-	glVertex2f(-25.0f, -15.0f);
-	glVertex2f(25.0f, -15.0f);
-	glVertex2f(25.0f, 15.0f);
-	glVertex2f(-25.0f, 15.0f);
+	glTexCoord2d(0, 1); glVertex2f(-G_XMAX, -G_YMAX);
+	glTexCoord2d(1, 1); glVertex2f(G_XMAX, -G_YMAX);
+	glTexCoord2d(1, 0); glVertex2f(G_XMAX, G_YMAX);
+	glTexCoord2d(0, 0); glVertex2f(-G_XMAX, G_YMAX);
 	glEnd();
 
 	ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
 	ETSIDI::setFont("fuentes/texto.ttf", 64);
 	ETSIDI::printxy("CREDITOS", -7.5f, 10.5f);
-
-	glColor3f(0.2f, 0.7f, 0.2f);
-	glLineWidth(2.0f);
-	glBegin(GL_LINES);
-	glVertex2f(-18.0f, 9.0f);
-	glVertex2f(18.0f, 9.0f);
-	glEnd();
-	glLineWidth(1.0f);
 
 	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
 	ETSIDI::setFont("fuentes/texto.ttf", 30);
@@ -201,14 +152,6 @@ static void dibujaCreditos()
 	ETSIDI::printxy("Pablo Paz", -18.0f, 1.5f);
 	ETSIDI::printxy("Tomás Estevez", -18.0f, -1.5f);
 	ETSIDI::printxy("Sergio Rosado", -18.0f, -3.5f);
-
-	glColor3f(0.2f, 0.7f, 0.2f);
-	glLineWidth(2.0f);
-	glBegin(GL_LINES);
-	glVertex2f(-18.0f, -8.5f);
-	glVertex2f(18.0f, -8.5f);
-	glEnd();
-	glLineWidth(1.0f);
 
 	ETSIDI::setTextColor(0.4f, 0.6f, 1.0f);
 	ETSIDI::setFont("fuentes/texto.ttf", 22);
@@ -236,36 +179,56 @@ void Menu::dibujaTeclaMenu() const
 	ETSIDI::printxy("M (Menu)", -25.f, -13.f);
 }
 
-void Menu::dibujaPausa() const
+void Menu::dibujaPausa(int opcion) const
 {
-	glEnable(GL_BLEND);
+	glEnable(GL_BLEND); 	// Activar transparencia para respetar el canal alfa del PNG (me lo ha dicho la IA)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4f(0.0f, 0.0f, 0.0f, 0.6f);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_pausa.png").id);
+	// Mejora la calidad de escalado (me lo ha dicho la IA)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
-	glVertex2f(-10.0f, -8.0f);
-	glVertex2f(10.0f, -8.0f);
-	glVertex2f(10.0f, 8.0f);
-	glVertex2f(-10.0f, 8.0f);
+	glTexCoord2d(0, 1); glVertex2f(-G_XMAX, -G_YMAX);
+	glTexCoord2d(1, 1); glVertex2f(G_XMAX, -G_YMAX);
+	glTexCoord2d(1, 0); glVertex2f(G_XMAX, G_YMAX);
+	glTexCoord2d(0, 0); glVertex2f(-G_XMAX, G_YMAX);
 	glEnd();
-	glDisable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);
 
-	glColor3ub(255, 255, 255);
-	glLineWidth(2.0f);
-	glBegin(GL_LINE_LOOP);
-	glVertex2f(-10.0f, -8.0f);
-	glVertex2f(10.0f, -8.0f);
-	glVertex2f(10.0f, 8.0f);
-	glVertex2f(-10.0f, 8.0f);
-	glEnd();
-	glLineWidth(1.0f);
+	ETSIDI::setFont("fuentes/texto.ttf", 75);
+	ETSIDI::setTextColor(1.f, 1.f, 1.f);
+	ETSIDI::printxy("PAUSA", -7.0f, 4.0f);
 
-	ETSIDI::setFont("fuentes/texto.ttf", 56);
-	ETSIDI::setTextColor(0.8f, 0.8f, 0.8f);
-	ETSIDI::printxy("PAUSA", -4.5f, 4.0f);
+	if (opcion == 0)
+	{
+		ETSIDI::setTextColor(0.85f, 0.85f, 0.f);  // amarillo = seleccionado
+		ETSIDI::setFont("fuentes/texto.ttf", 48);
+	}
+	else
+	{
+		ETSIDI::setTextColor(1.f, 1.f, 1.f);
+		ETSIDI::setFont("fuentes/texto.ttf", 44);
+	}
 
-	ETSIDI::setFont("fuentes/texto.ttf", 28);
-	ETSIDI::setTextColor(0.6f, 0.6f, 0.6f);
-	ETSIDI::printxy("M (Continuar)", -5.5f, 0.0f);
+	ETSIDI::printxy("CONTINUAR", -7.6f, -3.f);
+
+	if (opcion == 1)
+	{
+		ETSIDI::setTextColor(0.85f, 0.85f, 0.f);
+		ETSIDI::setFont("fuentes/texto.ttf", 48);
+	}
+	else
+	{
+		ETSIDI::setTextColor(1.f, 1.f, 1.f);
+		ETSIDI::setFont("fuentes/texto.ttf", 44);
+	}
+
+	ETSIDI::printxy("SALIR", -4.2f, -6.5f);
 }
 
 void Menu::tecla(unsigned char key)

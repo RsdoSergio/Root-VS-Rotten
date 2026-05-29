@@ -10,7 +10,10 @@ void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
 
-	//inicializacion de piezas para el juego
+	//precargar texturas para evitar freeze al primer uso (igual hay q meterlo en alguna clase o .cpp aparte)
+	ETSIDI::getTexture("imagenes/fondo_menu_inicio.png");
+	ETSIDI::getTexture("imagenes/fondo_pausa.png");
+	ETSIDI::getTexture("imagenes/fondo_archon.png");
 
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda
@@ -21,20 +24,28 @@ void Mundo::inicializa() {
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
-	if (!enPartida)
-	{
+	if (!enPartida) {
 		menu.tecla(key);
 		if (menu.seEligeJugar())
 			enPartida = true;
-		return;   // el tablero y el cursor no tocan nada
-	}
-
-	if (key == 'm') {
-		enPausa = !enPausa;   //m alterna pausa/reanuda
 		return;
 	}
 
-	if (enPausa) return; //si esta en pausa, se ignora el resto
+	if (key == 'm' || key == 'M') {
+		enPausa = !enPausa;
+		opcionPausa = 0;   // resetea al abrir
+		return;
+	}
+
+	if (enPausa) {
+		if (key == 'w' || key == 'W') opcionPausa = 0;
+		if (key == 's' || key == 'S') opcionPausa = 1;
+		if (key == 13) {
+			if (opcionPausa == 0) enPausa = false;
+			if (opcionPausa == 1) exit(0);
+		}
+		return;
+	}
 
 	// Cada cursor se mueve solo durante su turno
 	if (turno == 0) cursor.mover(key);  // WASD
@@ -80,7 +91,7 @@ void Mundo::dibuja()
 	cursor2.dibuja();  // borde morado
 	arena.dibuja();
 	menu.dibujaTeclaMenu();
-	if (enPausa) menu.dibujaPausa();
+	if (enPausa) menu.dibujaPausa(opcionPausa);
 }
 // Flechas
 void Mundo::teclaEspecial(int key)
