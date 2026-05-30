@@ -16,4 +16,6 @@ public:
 	void dibuja();
 	void tecla(unsigned char key);
 	bool seEligeJugar() const { return confirmadoJugar; }
+	void dibujaTeclaMenu() const;
+	void dibujaPausa(int opcion) const;
 };

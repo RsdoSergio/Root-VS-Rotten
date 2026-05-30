@@ -16,7 +16,12 @@ public:
     double getDamageProyectil()const;
     bool getEstado()const;
 
+	void desactivar() { activo = false; }// Para marcarlo como inactivo cuando choque con algo
+    //habra que implementarlo posteriormente
 
+	//nuevos atributos y metodos para el movimiento y dibujo del proyectil
+    void mueve(double dt);
+    void dibuja() const;
     
 
 };

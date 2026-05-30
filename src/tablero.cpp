@@ -215,16 +215,28 @@ bool Tablero::moverPieza(Pos origen, Pos destino) {
 	Pieza* p = casillas[origen.fila][origen.col].pieza;
 	if (p == nullptr) return false;
 
-	bool hayCombate = casillas[destino.fila][destino.col].CasOcupada(); // ¿Hay enemigo?
+	Pieza* d = casillas[destino.fila][destino.col].pieza;
 
-	casillas[destino.fila][destino.col].pieza = p;       // Coloca pieza en destino
-	casillas[origen.fila][origen.col].pieza = nullptr; // Vacía el origen
-	p->setCasilla(destino);                              // La pieza actualiza su posición
+
+	personaje1 = p;
+	personaje2 = d;
+	
+	bool hayCombate = (personaje2 != nullptr); // ¿Hay enemigo?
+
+	if (!hayCombate) { //Movimiento normal
+		casillas[destino.fila][destino.col].pieza = p; 
+		casillas[origen.fila][origen.col].pieza = nullptr;
+		p->setCasilla(destino);
+	}
+	else { //Hay combate, guardo posiciones
+		posOrigen = origen;	
+		posDestino = destino;
+	}
 
 	return hayCombate;
 }
 
-void Tablero::gestionarEntrada(Pos cursor, int& turno) {
+bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
 	if (!piezaSeleccionada.esValida()) {
 		// Intentar seleccionar pieza del turno actual
 		Pieza* p = getPieza(cursor);
@@ -244,15 +256,22 @@ void Tablero::gestionarEntrada(Pos cursor, int& turno) {
 
 		if (destinoValido) {
 			bool hayCombate = moverPieza(piezaSeleccionada, cursor);
-			turno = 1 - turno; // Cambia turno
-			// hayCombate → arena de combate, se gestiona más adelante
+			if (!hayCombate) turno = 1 - turno; // turno cambia solo si no hay combate
+			piezaSeleccionada = Pos();
+			casillasValidas.clear();
+			return hayCombate;
 		}
-		piezaSeleccionada = Pos();
-		casillasValidas.clear();
 	}
+	return false; // No se ha movido
 }
 
 void Tablero::cancelarSeleccion() {
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
+}
+
+void Tablero::dibuja(const Cursor& cursor) {
+	dibujaTablero(cursor);     // casillas + cursor
+	dibujaPiezas();            // piezas encima
+	marcaCasillasValidas();    // casillas verdes encima de todo
 }

@@ -6,6 +6,27 @@ Mundo mundo; //centralizamos la información en este objeto
 void OnDraw(void); //esta funcion sera llamada para dibujar
 void OnTimer(int value); //esta funcion sera llamada cuando transcurra una temporizacion
 void OnKeyboardDown(unsigned char key, int x, int y); //cuando se pulse una tecla
+void OnSpecialKey(int key, int x, int y);//flechas del teclado
+
+// Variables globales accesibles desde cualquier .cpp
+float G_XMAX = 26.67f;  // valor por defecto 16:9
+float G_YMAX = 15.0f;
+
+void OnReshape(int w, int h)
+{
+	if (h == 0) h = 1;
+	float aspect = (float)w / h;
+	const float orthoScale = 15.0f;
+
+	G_YMAX = orthoScale;
+	G_XMAX = orthoScale * aspect;
+
+	glViewport(0, 0, w, h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-G_XMAX, G_XMAX, -G_YMAX, G_YMAX, -1.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+}
 
 int main(int argc, char* argv[])
 {
@@ -16,7 +37,7 @@ int main(int argc, char* argv[])
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutCreateWindow("ROOT VS ROTTEN");
 	// Ejecutar en pantalla completa
-	//glutFullScreen();
+	glutFullScreen();
 
 	// Configurar vista 2D sin perspectiva (ortonomal)
 	// Desactivar iluminación para dibujo 2D plano
@@ -42,11 +63,24 @@ int main(int argc, char* argv[])
 
 	//Registrar los callbacks
 	glutDisplayFunc(OnDraw);
-
+	glutReshapeFunc(OnReshape);
 	glutTimerFunc(25, OnTimer, 0);//le decimos que dentro de 25ms llame 1 vez a la funcion OnTimer()
 	glutKeyboardFunc(OnKeyboardDown);
-	
+	glutSpecialFunc(OnSpecialKey);    //registrar callback de flechas
+
 	//inicialización de objetos de la simulación
+	// Pantalla de carga simple antes de inicializar
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-1, 1, -1, 1, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	ETSIDI::setFont("fuentes/texto.ttf", 40); //puesto de forma provisional para q le de tiempo a precargar todas las imágenes
+	ETSIDI::setTextColor(1.f, 1.f, 1.f);
+	ETSIDI::printxy("Cargando...", -0.5f, 0.0f);
+	glutSwapBuffers();
 	mundo.inicializa();
 
 	//pasarle el control a GLUT,que llamara a los callbacks
@@ -85,4 +119,10 @@ void OnTimer(int value)
 	glutPostRedisplay();
 	//recurivamente, le decimos que dentro de 25ms vuelva a llamar a esta funcion, para que se siga animando
 	glutTimerFunc(25, OnTimer, 0);
+}
+
+void OnSpecialKey(int key, int x, int y)
+{
+	mundo.teclaEspecial(key);
+	glutPostRedisplay();
 }

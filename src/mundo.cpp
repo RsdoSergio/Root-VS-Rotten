@@ -10,7 +10,10 @@ void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
 
-	//inicializacion de piezas para el juego
+	//precargar texturas para evitar freeze al primer uso (igual hay q meterlo en alguna clase o .cpp aparte)
+	ETSIDI::getTexture("imagenes/fondo_menu_inicio.png");
+	ETSIDI::getTexture("imagenes/fondo_pausa.png");
+	ETSIDI::getTexture("imagenes/fondo_archon.png");
 
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda
@@ -21,33 +24,51 @@ void Mundo::inicializa() {
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
-	if (!enPartida)
-	{
+	if (!enPartida) {
 		menu.tecla(key);
 		if (menu.seEligeJugar())
 			enPartida = true;
-		return;   // el tablero y el cursor no tocan nada
+		return;
 	}
 
-	if (key == 'm') Audio::stopMusica();
-
-	cursor.mover(key);
-	if (key == 13) tablero.gestionarEntrada(cursor.getPosicion(), turno);
-	if (key == 27) tablero.cancelarSeleccion();
-
-	//Pulsar "c" para probar la arena de combate
-	if (key == 'c') {
-		Peon p1(Bando::planta, Pos(0, 0));
-		Peon p2(Bando::zombi, Pos(1, 0));
-		arena.fDatos(p1, p2);
-		arena.activa();
+	if (key == 'm' || key == 'M') {
+		enPausa = !enPausa;
+		opcionPausa = 0;   // resetea al abrir
+		return;
 	}
+
+	if (enPausa) {
+		if (key == 'w' || key == 'W') opcionPausa = 0;
+		if (key == 's' || key == 'S') opcionPausa = 1;
+		if (key == 13) {
+			if (opcionPausa == 0) enPausa = false;
+			if (opcionPausa == 1) exit(0);
+		}
+		return;
+	}
+
+	// Cada cursor se mueve solo durante su turno
+	if (turno == 0) cursor.mover(key);  // WASD
+
+	if (key == 13) {
+		// El cursor activo depende del turno
+		Pos posActiva = (turno == 0) ? cursor.getPosicion() : cursor2.getPosicion();
+		bool combate = tablero.gestionarEntrada(posActiva, turno);
+		if (combate) {
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+			arena.activa();
+		}
+	}
+
+	if (arena.estaActiva()) arena.tecla(key);  // q/k disparan en la arena
+	if (key == 27) tablero.cancelarSeleccion(); //Escape para cancelar seleccion
 	if (key == 'v') arena.desactiva();
 }
 
 void Mundo::mueve()
 {
-	// de momento vacía
+	if (!enPartida || enPausa) return;
+	if (arena.estaActiva()) arena.mueve(0.025); // para no mover los poryectiles si no estan en la arena
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -67,7 +88,17 @@ void Mundo::dibuja()
 	glMatrixMode(GL_MODELVIEW);
 	glColor3ub(255, 255, 255);
 
-	tablero.dibujaTablero(cursor);
-	tablero.dibujaPiezas();
+	tablero.dibuja(cursor);
+	cursor.dibuja();   // borde amarillo
+	cursor2.dibuja();  // borde morado
+	//caja.dibuja();
 	arena.dibuja();
+	menu.dibujaTeclaMenu();
+	if (enPausa) menu.dibujaPausa(opcionPausa);
+}
+// Flechas
+void Mundo::teclaEspecial(int key)
+{
+	if (!enPartida) return;
+	if (turno == 1) cursor2.moverFlechas(key);
 }
