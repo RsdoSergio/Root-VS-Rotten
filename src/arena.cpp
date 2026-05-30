@@ -15,7 +15,7 @@ void arena::dibujaFondo() const
 void arena::dibujaInterior() const
 {
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_archon.png").id);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_arena1.png").id);
 	// Mejora la calidad de escalado
 	// Forzar máxima calidad
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -150,7 +150,7 @@ void arena::dibujaPiezasArena() const
 
 //SE AÑADEN LOS PROYECTILES EN ARENA PARA PROBAR SU FUNCIONAMIENTO POSTERIORMENTE SE TIENE QUE CAMBIAR
 // CADA PIEZA DEBERÁ GESTIONAR SU PROPIO PROYECTIL
-// 
+//
 //
 // Mueve los proyectiles activos
 // Sigue el mismo patron que Mundo::mueve en el juego de referencia
@@ -160,7 +160,6 @@ void arena::mueve(double dt)
 	if (proyectil1) proyectil1->mueve(dt);
 	if (proyectil2) proyectil2->mueve(dt);
 }
-
 
 void arena::tecla(unsigned char key)
 {
