@@ -13,6 +13,10 @@ constexpr double HUD_ALTO = 1.0;
 constexpr double HUD_BASE = SEMIALTO - HUD_ALTO;
 constexpr double HUD_TECHO = SEMIALTO;
 
+constexpr double MARGEN = 1.5;
+constexpr double MARGEN_INF = 4;
+
+
 class arena
 {
 	bool activo = false;
