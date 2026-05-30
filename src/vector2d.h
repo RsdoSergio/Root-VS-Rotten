@@ -1,8 +1,9 @@
 #pragma once
-class Vector2D
+
+struct Vector2D
 {
-	double x;
-	double y;
+    double x{};
+    double y{};
 
 public:
 	
@@ -21,3 +22,7 @@ public:
 
 };
 
+    void setValores(double x, double y);
+    double getX() const { return x; }
+    double getY() const { return y; }
+};

@@ -91,6 +91,7 @@ void Mundo::dibuja()
 	tablero.dibuja(cursor);
 	cursor.dibuja();   // borde amarillo
 	cursor2.dibuja();  // borde morado
+	//caja.dibuja();
 	arena.dibuja();
 	menu.dibujaTeclaMenu();
 	if (enPausa) menu.dibujaPausa(opcionPausa);
