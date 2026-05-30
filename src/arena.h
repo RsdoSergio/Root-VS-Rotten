@@ -2,6 +2,8 @@
 #include "pieza.h"
 #include <string>
 #include "ETSIDI.h"
+#include "proyectil.h"
+
 
 using namespace std;
 
@@ -12,6 +14,7 @@ constexpr double SEMIALTO = ARENA_ALTO / 2.0;
 constexpr double HUD_ALTO = 1.0;
 constexpr double HUD_BASE = SEMIALTO - HUD_ALTO;
 constexpr double HUD_TECHO = SEMIALTO;
+constexpr double VEL_PROYECTIL = 12.0;
 
 constexpr double MARGEN = 1.5;
 constexpr double MARGEN_INF = 4;
@@ -32,16 +35,26 @@ class arena
 	const Pieza* pieza1 = nullptr;
 	const Pieza* pieza2 = nullptr;
 
+
+	// Proyectil activo de cada bando 
+	// Se usa un puntero para poder tenerlo o no
+	Proyectil* proyectil1 = nullptr;  // Q
+	Proyectil* proyectil2 = nullptr;  // K
+
 	void dibujaFondo() const;
 	void dibujaInterior() const;
 	void dibujaMarco() const;
 	void dibujaHUD() const;
 	void dibujaPiezasArena() const;
+	void dibujaProyectiles() const;
 
 public:
 	arena() {};
 
 	void dibuja() const;
+	void mueve(double dt);           // mueve los proyectiles activos
+	void tecla(unsigned char key);   // q dispara pieza1, k dispara pieza2
+
 	void activa() { activo = true; }
 	void desactiva() { activo = false; }
 	bool estaActiva() const { return activo; }
