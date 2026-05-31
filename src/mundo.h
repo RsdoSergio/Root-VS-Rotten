@@ -8,6 +8,7 @@
 #include "pieza.h"
 #include "peon.h"
 #include "menu.h"
+#include "caja.h"	
 
 class Mundo
 {
@@ -21,6 +22,8 @@ class Mundo
 	Menu    menu;
 	bool    enPartida = false;
 	bool    enPausa = false;
+	Caja caja;
+	int opcionPausa = 0;
 
 public:
 	void inicializa();
