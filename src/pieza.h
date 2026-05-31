@@ -47,7 +47,7 @@ public:
 
     virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
 
-    virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax);
+    virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 
     virtual ~Pieza() {} // Imprescindible en jerarquías
 };

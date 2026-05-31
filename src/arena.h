@@ -3,21 +3,13 @@
 #include <string>
 #include "ETSIDI.h"
 #include "proyectil.h"
+#include "arena_constantes.h"
+#include"caja.h"
 
 
 using namespace std;
 
-constexpr double ARENA_ANCHO = 44.0;
-constexpr double ARENA_ALTO = 26.0;
-constexpr double SEMIANCHO = ARENA_ANCHO / 2.0;
-constexpr double SEMIALTO = ARENA_ALTO / 2.0;
-constexpr double HUD_ALTO = 1.0;
-constexpr double HUD_BASE = SEMIALTO - HUD_ALTO;
-constexpr double HUD_TECHO = SEMIALTO;
-constexpr double VEL_PROYECTIL = 12.0;
 
-constexpr double MARGEN = 1.5;
-constexpr double MARGEN_INF = 4;
 
 
 class arena
@@ -35,6 +27,7 @@ class arena
 	 Pieza* pieza1 = nullptr;
 	 Pieza* pieza2 = nullptr;
 
+	 Caja caja;
 
 	// Proyectil activo de cada bando 
 	// Se usa un puntero para poder tenerlo o no
@@ -59,6 +52,7 @@ public:
 	void desactiva() { activo = false; }
 	bool estaActiva() const { return activo; }
 	void fDatos( Pieza& p1,  Pieza& p2);
+
 	void MoverPiezaPlanta(unsigned char key);
 	void MoverPiezaZombi(int key);
 	

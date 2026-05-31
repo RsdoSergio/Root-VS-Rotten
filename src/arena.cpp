@@ -128,6 +128,8 @@ void arena::dibuja() const
 	dibujaProyectiles();
 }
 
+
+
 void arena::fDatos( Pieza& p1,  Pieza& p2)
 {
 	nombrePieza1 = p1.getNombre();
@@ -151,3 +153,34 @@ void arena::dibujaPiezasArena() const
     pieza1->dibujaTablero(pieza1->getPosArena().getX(), pieza1->getPosArena().getY());
     pieza2->dibujaTablero(pieza2->getPosArena().getX(), pieza2->getPosArena().getY());
 }
+
+
+
+
+void arena::MoverPiezaPlanta(unsigned char key)
+{
+	if (!activo || pieza1 == nullptr) return;
+	if (key == 'w' || key == 'W') pieza1->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == 's' || key == 'S') pieza1->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == 'a' || key == 'A') pieza1->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == 'd' || key == 'D') pieza1->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+}
+
+void arena::MoverPiezaZombi(int key)
+{
+	if (!activo || pieza2 == nullptr) return;
+	if (key == GLUT_KEY_UP)    pieza2->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == GLUT_KEY_DOWN)  pieza2->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == GLUT_KEY_LEFT)  pieza2->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == GLUT_KEY_RIGHT) pieza2->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+}
+
+void arena::mueve(double dt)
+{}
+
+void arena::tecla(unsigned char key)
+{}
+
+
+void arena::dibujaProyectiles() const
+{}
