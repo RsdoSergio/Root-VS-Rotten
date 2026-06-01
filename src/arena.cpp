@@ -14,10 +14,22 @@ void arena::dibujaFondo() const
 
 void arena::dibujaInterior() const
 {
+	const char* fondos[9] = {			//array con las 9 rutas de los fondos
+	   "imagenes/fondo_arena1.png",
+	   "imagenes/fondo_arena2.png",
+	   "imagenes/fondo_arena3.png",
+	   "imagenes/fondo_arena4.png",
+	   "imagenes/fondo_arena5.png",
+	   "imagenes/fondo_arena6.png",
+	   "imagenes/fondo_arena7.png",
+	   "imagenes/fondo_arena8.png",
+	   "imagenes/fondo_arena9.png"
+	};
+
+	const char* ruta = fondos[indiceFondo - 1]; //ojo q es un array (índice 0 = arena1)
+
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_arena1.png").id);
-	// Mejora la calidad de escalado
-	// Forzar máxima calidad
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture(ruta).id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -128,9 +140,7 @@ void arena::dibuja() const
 	dibujaProyectiles();
 }
 
-
-
-void arena::fDatos( Pieza& p1,  Pieza& p2)
+void arena::fDatos(const Pieza& p1, const Pieza& p2)
 {
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
@@ -138,43 +148,17 @@ void arena::fDatos( Pieza& p1,  Pieza& p2)
 	vidaPieza2 = p2.getVida();
 	vidaMaxPieza1 = p1.getVidaMax();
 	vidaMaxPieza2 = p2.getVidaMax();
-    pieza1 = &p1;
-    pieza2 = &p2;
-
-    pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
-    pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
-    activo = true;
+	pieza1 = &p1;
+	pieza2 = &p2;
 }
 
 // Dibuja las dos piezas en sus lados respectivos de la arena
 void arena::dibujaPiezasArena() const
 {
-    if (pieza1 == nullptr || pieza2 == nullptr) return;
-    pieza1->dibujaTablero(pieza1->getPosArena().getX(), pieza1->getPosArena().getY());
-    pieza2->dibujaTablero(pieza2->getPosArena().getX(), pieza2->getPosArena().getY());
+	if (pieza1 == nullptr || pieza2 == nullptr) return;
+	pieza1->dibujaTablero(-SEMIANCHO / 2.0f, 0.0f);  // Para colocar las piezas en su sitio de la arena
+	pieza2->dibujaTablero(+SEMIANCHO / 2.0f, 0.0f);  //
 }
-
-
-
-
-void arena::MoverPiezaPlanta(unsigned char key)
-{
-	if (!activo || pieza1 == nullptr) return;
-	if (key == 'w' || key == 'W') pieza1->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == 's' || key == 'S') pieza1->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == 'a' || key == 'A') pieza1->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == 'd' || key == 'D') pieza1->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-}
-
-void arena::MoverPiezaZombi(int key)
-{
-	if (!activo || pieza2 == nullptr) return;
-	if (key == GLUT_KEY_UP)    pieza2->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == GLUT_KEY_DOWN)  pieza2->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == GLUT_KEY_LEFT)  pieza2->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == GLUT_KEY_RIGHT) pieza2->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-}
-
 
 //SE AÑADEN LOS PROYECTILES EN ARENA PARA PROBAR SU FUNCIONAMIENTO POSTERIORMENTE SE TIENE QUE CAMBIAR
 // CADA PIEZA DEBERÁ GESTIONAR SU PROPIO PROYECTIL
@@ -190,6 +174,9 @@ void arena::mueve(double dt)
 }
 
 
+
+
+
 void arena::tecla(unsigned char key)
 {
 	if (!activo) return;
@@ -203,6 +190,7 @@ void arena::tecla(unsigned char key)
 		Vector2D vel(VEL_PROYECTIL, 0.0);
 		proyectil1 = new Proyectil(pos, vel, 5.0);
 	}
+
 	if (key == 'k' || key == 'K')
 	{
 		delete proyectil2;
@@ -212,7 +200,6 @@ void arena::tecla(unsigned char key)
 		proyectil2 = new Proyectil(pos, vel, 5.0);
 	}
 }
-
 
 // Dibuja los proyectiles activos
 void arena::dibujaProyectiles() const

@@ -10,5 +10,4 @@ public:
     TipoMovimiento getTipoMovimiento() const override {
         return TipoMovimiento::TIERRA;
     }
-    void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) override;
 };

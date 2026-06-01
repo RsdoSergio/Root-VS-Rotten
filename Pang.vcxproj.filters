@@ -25,6 +25,7 @@
     <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\pared.cpp" />
     <ClCompile Include="src\caja.cpp" />
+    <ClCompile Include="src\gestorTexturas.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\ETSIDI.h" />
@@ -53,6 +54,7 @@
     <ClInclude Include="src\menu.h" />
     <ClInclude Include="src\pared.h" />
     <ClInclude Include="src\caja.h" />
+    <ClInclude Include="src\gestorTexturas.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\ETSIDI.lib" />

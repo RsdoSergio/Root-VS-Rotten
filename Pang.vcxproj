@@ -25,6 +25,7 @@
     <ClCompile Include="src\cursor.cpp" />
     <ClCompile Include="src\fenix.cpp" />
     <ClCompile Include="src\genio.cpp" />
+    <ClCompile Include="src\gestorTexturas.cpp" />
     <ClCompile Include="src\golem.cpp" />
     <ClCompile Include="src\mago.cpp" />
     <ClCompile Include="src\audio.cpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="src\cursor.h" />
     <ClInclude Include="src\fenix.h" />
     <ClInclude Include="src\genio.h" />
+    <ClInclude Include="src\gestorTexturas.h" />
     <ClInclude Include="src\golem.h" />
     <ClInclude Include="src\mago.h" />
     <ClInclude Include="src\audio.h" />

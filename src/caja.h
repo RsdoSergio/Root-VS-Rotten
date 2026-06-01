@@ -1,10 +1,9 @@
 #pragma once
 #include "pared.h"
-#include "arena_constantes.h"
+#include "arena.h"
 
 class Caja
 {
-    friend class Arena;
     Pared izq{ {-SEMIANCHO + MARGEN, -SEMIALTO + MARGEN}, {-SEMIANCHO + MARGEN,  HUD_BASE - MARGEN} };
     Pared dcha{ { SEMIANCHO - MARGEN, -SEMIALTO + MARGEN}, { SEMIANCHO - MARGEN,  HUD_BASE - MARGEN} };
     Pared suelo{ {-SEMIANCHO + MARGEN, -SEMIALTO + MARGEN_INF}, { SEMIANCHO - MARGEN, -SEMIALTO + MARGEN_INF} };
@@ -12,9 +11,4 @@ class Caja
 
 public:
     void dibuja() const;
-
-    double getXmin() const { return izq.getLimite1().getX(); }
-    double getXMAX() const { return dcha.getLimite1().getX(); }
-    double getYmin() const { return suelo.getLimite1().getY(); }
-    double getYMAX() const { return techo.getLimite1().getY(); }
 };
