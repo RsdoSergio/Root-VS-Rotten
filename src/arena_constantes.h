@@ -1,5 +1,5 @@
 #pragma once
-//fichero para eliminar dependencia circular entre arena y caja
+
 
 
 
