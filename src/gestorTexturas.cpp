@@ -1,6 +1,7 @@
 #include "gestorTexturas.h"
 #include "ETSIDI.h"
 #include "freeglut.h"
+#include <stdio.h>
 
 void precargarTexturas() {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -9,9 +10,9 @@ void precargarTexturas() {
 	ETSIDI::printxy("Cargando...", -0.5f, 0.0f);
 	glutSwapBuffers();
 
-	ETSIDI::getTexture("imagenes/fondo_menu_inicio.png");
+	ETSIDI::GLTexture t = ETSIDI::getTexture("imagenes/fondo_menu_inicio.png");
+	printf("Dimensiones: %d x %d\n", t.width, t.height);
 	ETSIDI::getTexture("imagenes/fondo_pausa.png");
-	ETSIDI::getTexture("imagenes/fondo_archon.png");
 
 	ETSIDI::getTexture("imagenes/fondo_arena1.png");
 	ETSIDI::getTexture("imagenes/fondo_arena2.png");
