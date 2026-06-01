@@ -140,7 +140,7 @@ void arena::dibuja() const
 	dibujaProyectiles();
 }
 
-void arena::fDatos(const Pieza& p1, const Pieza& p2)
+void arena::fDatos( Pieza& p1,  Pieza& p2)
 {
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
@@ -150,14 +150,18 @@ void arena::fDatos(const Pieza& p1, const Pieza& p2)
 	vidaMaxPieza2 = p2.getVidaMax();
 	pieza1 = &p1;
 	pieza2 = &p2;
+
+	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
+	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
+	activo = true;
 }
 
 // Dibuja las dos piezas en sus lados respectivos de la arena
 void arena::dibujaPiezasArena() const
 {
 	if (pieza1 == nullptr || pieza2 == nullptr) return;
-	pieza1->dibujaTablero(-SEMIANCHO / 2.0f, 0.0f);  // Para colocar las piezas en su sitio de la arena
-	pieza2->dibujaTablero(+SEMIANCHO / 2.0f, 0.0f);  //
+	pieza1->dibujaTablero(pieza1->getPosArena().getX(), pieza1->getPosArena().getY());
+	pieza2->dibujaTablero(pieza2->getPosArena().getX(), pieza2->getPosArena().getY());
 }
 
 //SE AÑADEN LOS PROYECTILES EN ARENA PARA PROBAR SU FUNCIONAMIENTO POSTERIORMENTE SE TIENE QUE CAMBIAR
@@ -202,4 +206,22 @@ void arena::dibujaProyectiles() const
 {
 	if (proyectil1) proyectil1->dibuja();
 	if (proyectil2) proyectil2->dibuja();
+}
+
+void arena::MoverPiezaPlanta(unsigned char key)
+{
+	if (!activo || pieza1 == nullptr) return;
+	if (key == 'w' || key == 'W') pieza1->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == 's' || key == 'S') pieza1->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == 'a' || key == 'A') pieza1->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == 'd' || key == 'D') pieza1->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+}
+
+void arena::MoverPiezaZombi(int key)
+{
+	if (!activo || pieza2 == nullptr) return;
+	if (key == GLUT_KEY_UP)    pieza2->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == GLUT_KEY_DOWN)  pieza2->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == GLUT_KEY_LEFT)  pieza2->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	if (key == GLUT_KEY_RIGHT) pieza2->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
 }

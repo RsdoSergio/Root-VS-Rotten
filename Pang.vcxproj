@@ -49,6 +49,7 @@
     <ClInclude Include="lib\ETSIDI.h" />
     <ClInclude Include="lib\freeglut.h" />
     <ClInclude Include="src\arena.h" />
+    <ClInclude Include="src\arena_constantes.h" />
     <ClInclude Include="src\arquero.h" />
     <ClInclude Include="src\caja.h" />
     <ClInclude Include="src\cursor.h" />

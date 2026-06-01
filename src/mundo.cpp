@@ -43,6 +43,11 @@ void Mundo::tecla(unsigned char key)
 		}
 		return;
 	}
+	if (arena.estaActiva()) {
+		arena.MoverPiezaPlanta(key);
+		arena.tecla(key); // disparos,    q/k disparan en la arena
+		return;
+	}
 
 	// Cada cursor se mueve solo durante su turno
 	if (turno == 0) cursor.mover(key);  // WASD
@@ -57,7 +62,7 @@ void Mundo::tecla(unsigned char key)
 		}
 	}
 
-	if (arena.estaActiva()) arena.tecla(key);  // q/k disparan en la arena
+	
 	if (key == 27) tablero.cancelarSeleccion(); //Escape para cancelar seleccion
 	if (key == 'v') arena.desactiva();
 }
@@ -97,5 +102,10 @@ void Mundo::dibuja()
 void Mundo::teclaEspecial(int key)
 {
 	if (!enPartida) return;
+
+	if (arena.estaActiva()) {
+		arena.MoverPiezaZombi(key);
+		return;
+	}
 	if (turno == 1) cursor2.moverFlechas(key);
 }

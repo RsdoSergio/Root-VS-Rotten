@@ -1,6 +1,7 @@
 #pragma once
 #include "pared.h"
-#include "arena.h"
+
+#include"arena_constantes.h"
 
 class Caja
 {
@@ -11,4 +12,8 @@ class Caja
 
 public:
     void dibuja() const;
+    double getXmin() const { return izq.getLimite1().getX(); }
+    double getXMAX() const { return dcha.getLimite1().getX(); }
+    double getYmin() const { return suelo.getLimite1().getY(); }
+    double getYMAX() const { return techo.getLimite1().getY(); }
 };
