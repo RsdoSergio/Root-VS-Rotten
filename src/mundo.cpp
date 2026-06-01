@@ -5,15 +5,12 @@
 #include <vector>
 #include "audio.h"
 #include "audio.h"
+#include "gestorTexturas.h"
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
-
-	//precargar texturas para evitar freeze al primer uso (igual hay q meterlo en alguna clase o .cpp aparte)
-	ETSIDI::getTexture("imagenes/fondo_menu_inicio.png");
-	ETSIDI::getTexture("imagenes/fondo_pausa.png");
-	ETSIDI::getTexture("imagenes/fondo_arena1.png");
+	precargarTexturas();
 
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda

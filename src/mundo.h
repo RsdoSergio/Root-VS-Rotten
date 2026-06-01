@@ -8,7 +8,8 @@
 #include "pieza.h"
 #include "peon.h"
 #include "menu.h"
-#include "caja.h"	
+#include "caja.h"
+#include "gestorTexturas.h"5
 
 class Mundo
 {
