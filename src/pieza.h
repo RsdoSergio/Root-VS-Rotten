@@ -4,6 +4,12 @@
 #include<iostream>
 
 enum class DirArena { ARRIBA, ABAJO, IZQUIERDA, DERECHA };
+
+constexpr int DIR_ARRIBA = 0;
+constexpr int DIR_ABAJO = 1;
+constexpr int DIR_IZQ = 2;
+constexpr int DIR_DCHA = 3;
+
 enum class TipoMovimiento { TIERRA, VUELO, TELETRANSPORTE };
 constexpr float TAM_PIEZA = 0.9f;//Porvisional para las piezas
 enum  Bando { planta, zombi };
