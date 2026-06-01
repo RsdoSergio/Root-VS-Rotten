@@ -10,6 +10,7 @@
 #include "menu.h"
 #include "caja.h"	
 
+
 class Mundo
 {
 	Tablero tablero;

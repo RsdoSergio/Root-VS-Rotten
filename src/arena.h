@@ -5,7 +5,7 @@
 #include "proyectil.h"
 #include "arena_constantes.h"
 #include"caja.h"
-
+#include <cstdlib> //para el uso de la funcion rand
 
 using namespace std;
 
@@ -26,13 +26,13 @@ class arena
 	// Punteros a las piezas que combaten (para dibujarlas)
 	 Pieza* pieza1 = nullptr;
 	 Pieza* pieza2 = nullptr;
+	 // Se usa un puntero para poder tenerlo o no
+	 Proyectil* proyectil1 = nullptr;  // Q
+	 Proyectil* proyectil2 = nullptr;  // K
 
 	 Caja caja;
 
-	// Proyectil activo de cada bando 
-	// Se usa un puntero para poder tenerlo o no
-	Proyectil* proyectil1 = nullptr;  // Q
-	Proyectil* proyectil2 = nullptr;  // K
+ 
 
 	void dibujaFondo() const;
 	void dibujaInterior() const;
@@ -41,6 +41,8 @@ class arena
 	void dibujaPiezasArena() const;
 	void dibujaProyectiles() const;
 
+	int indiceFondo = 1; //para el fondo
+
 public:
 	arena() {};
 
@@ -48,7 +50,11 @@ public:
 	void mueve(double dt);           // mueve los proyectiles activos
 	void tecla(unsigned char key);   // q dispara pieza1, k dispara pieza2
 
-	void activa() { activo = true; }
+	void activa()
+	{
+		activo = true;
+		indiceFondo = 1 + rand() % 9;
+	}
 	void desactiva() { activo = false; }
 	bool estaActiva() const { return activo; }
 	void fDatos( Pieza& p1,  Pieza& p2);
