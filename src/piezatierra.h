@@ -10,4 +10,14 @@ public:
     TipoMovimiento getTipoMovimiento() const override {
         return TipoMovimiento::TIERRA;
     }
+
+    bool mov_arriba = false;
+    bool mov_abajo = false;
+    bool mov_izq = false;
+    bool mov_dcha = false;
+
+    void setMovimiento(int dir, bool estado);
+    void actualizarArena(double dt, double xMin, double xMax, double yMin, double yMax);
+
+    void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) override;
 };
