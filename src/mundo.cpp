@@ -4,16 +4,13 @@
 #include "tablero.h"
 #include <vector>
 #include "audio.h"
-
+#include "audio.h"
+#include "gestorTexturas.h"
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();
-
-	//precargar texturas para evitar freeze al primer uso (igual hay q meterlo en alguna clase o .cpp aparte)
-	ETSIDI::getTexture("imagenes/fondo_menu_inicio.png");
-	ETSIDI::getTexture("imagenes/fondo_pausa.png");
-	ETSIDI::getTexture("imagenes/fondo_arena1.png");
+	precargarTexturas();
 
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda
@@ -47,12 +44,6 @@ void Mundo::tecla(unsigned char key)
 		return;
 	}
 
-	if (arena.estaActiva()) {
-		arena.MoverPiezaPlanta(key);
-		arena.tecla(key); // disparos,    q/k disparan en la arena
-		return;
-	}
-
 	// Cada cursor se mueve solo durante su turno
 	if (turno == 0) cursor.mover(key);  // WASD
 
@@ -66,7 +57,7 @@ void Mundo::tecla(unsigned char key)
 		}
 	}
 
-	
+	if (arena.estaActiva()) arena.tecla(key);  // q/k disparan en la arena
 	if (key == 27) tablero.cancelarSeleccion(); //Escape para cancelar seleccion
 	if (key == 'v') arena.desactiva();
 }
@@ -106,11 +97,5 @@ void Mundo::dibuja()
 void Mundo::teclaEspecial(int key)
 {
 	if (!enPartida) return;
-
-	if (arena.estaActiva()) {
-		arena.MoverPiezaZombi(key);
-		return;
-	}
-
 	if (turno == 1) cursor2.moverFlechas(key);
 }

@@ -69,18 +69,6 @@ int main(int argc, char* argv[])
 	glutSpecialFunc(OnSpecialKey);    //registrar callback de flechas
 
 	//inicialización de objetos de la simulación
-	// Pantalla de carga simple antes de inicializar
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-1, 1, -1, 1, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	ETSIDI::setFont("fuentes/texto.ttf", 40); //puesto de forma provisional para q le de tiempo a precargar todas las imágenes
-	ETSIDI::setTextColor(1.f, 1.f, 1.f);
-	ETSIDI::printxy("Cargando...", -0.5f, 0.0f);
-	glutSwapBuffers();
 	mundo.inicializa();
 
 	//pasarle el control a GLUT,que llamara a los callbacks
