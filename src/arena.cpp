@@ -128,9 +128,7 @@ void arena::dibuja() const
 	dibujaProyectiles();
 }
 
-
-
-void arena::fDatos( Pieza& p1,  Pieza& p2)
+void arena::fDatos(const Pieza& p1, const Pieza& p2)
 {
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
@@ -138,49 +136,58 @@ void arena::fDatos( Pieza& p1,  Pieza& p2)
 	vidaPieza2 = p2.getVida();
 	vidaMaxPieza1 = p1.getVidaMax();
 	vidaMaxPieza2 = p2.getVidaMax();
-    pieza1 = &p1;
-    pieza2 = &p2;
-
-    pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
-    pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
-    activo = true;
+	pieza1 = &p1;
+	pieza2 = &p2;
 }
 
 // Dibuja las dos piezas en sus lados respectivos de la arena
 void arena::dibujaPiezasArena() const
 {
-    if (pieza1 == nullptr || pieza2 == nullptr) return;
-    pieza1->dibujaTablero(pieza1->getPosArena().getX(), pieza1->getPosArena().getY());
-    pieza2->dibujaTablero(pieza2->getPosArena().getX(), pieza2->getPosArena().getY());
+	if (pieza1 == nullptr || pieza2 == nullptr) return;
+	pieza1->dibujaTablero(-SEMIANCHO / 2.0f, 0.0f);  // Para colocar las piezas en su sitio de la arena
+	pieza2->dibujaTablero(+SEMIANCHO / 2.0f, 0.0f);  //
 }
 
-
-
-
-void arena::MoverPiezaPlanta(unsigned char key)
-{
-	if (!activo || pieza1 == nullptr) return;
-	if (key == 'w' || key == 'W') pieza1->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == 's' || key == 'S') pieza1->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == 'a' || key == 'A') pieza1->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == 'd' || key == 'D') pieza1->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-}
-
-void arena::MoverPiezaZombi(int key)
-{
-	if (!activo || pieza2 == nullptr) return;
-	if (key == GLUT_KEY_UP)    pieza2->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == GLUT_KEY_DOWN)  pieza2->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == GLUT_KEY_LEFT)  pieza2->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == GLUT_KEY_RIGHT) pieza2->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-}
-
+//SE AÑADEN LOS PROYECTILES EN ARENA PARA PROBAR SU FUNCIONAMIENTO POSTERIORMENTE SE TIENE QUE CAMBIAR
+// CADA PIEZA DEBERÁ GESTIONAR SU PROPIO PROYECTIL
+//
+//
+// Mueve los proyectiles activos
+// Sigue el mismo patron que Mundo::mueve en el juego de referencia
 void arena::mueve(double dt)
-{}
+{
+	if (!activo) return;
+	if (proyectil1) proyectil1->mueve(dt);
+	if (proyectil2) proyectil2->mueve(dt);
+}
 
 void arena::tecla(unsigned char key)
-{}
+{
+	if (!activo) return;
 
+	if (key == 'q' || key == 'Q')
+	{
+		delete proyectil1;  // eliminar el anterior si existia
+		// Sale desde la posicion de pieza1, hacia la derecha
+		//se fuerza a salir desde el centro de la pieza, estoy hay q cambiarlo
+		Vector2D pos(-SEMIANCHO / 2.0, 0.0);
+		Vector2D vel(VEL_PROYECTIL, 0.0);
+		proyectil1 = new Proyectil(pos, vel, 5.0);
+	}
 
+	if (key == 'k' || key == 'K')
+	{
+		delete proyectil2;
+		// Sale desde la posicion de pieza2, hacia la izquierda
+		Vector2D pos(+SEMIANCHO / 2.0, 0.0);
+		Vector2D vel(-VEL_PROYECTIL, 0.0);
+		proyectil2 = new Proyectil(pos, vel, 5.0);
+	}
+}
+
+// Dibuja los proyectiles activos
 void arena::dibujaProyectiles() const
-{}
+{
+	if (proyectil1) proyectil1->dibuja();
+	if (proyectil2) proyectil2->dibuja();
+}
