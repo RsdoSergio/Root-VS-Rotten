@@ -64,4 +64,6 @@ public:
 
 	void MoverPiezaZombi(int key);
 	void MoverPiezaPlanta(unsigned char key);
+
+	void recibirMovimiento(int jugador, int dir, bool estado);
 };

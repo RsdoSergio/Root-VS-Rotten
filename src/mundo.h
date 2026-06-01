@@ -32,4 +32,7 @@ public:
 	void mueve();
 	void tecla(unsigned char key);
 	void teclaEspecial(int key);   // flechas del teclado para cursor2
+	//funciones para gestionar el pulsado continuo de tecla
+	void teclaLevantada(unsigned char key);
+	void teclaEspecialLevantada(int key);
 };
