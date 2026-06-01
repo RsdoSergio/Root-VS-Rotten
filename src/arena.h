@@ -3,7 +3,7 @@
 #include <string>
 #include "ETSIDI.h"
 #include "proyectil.h"
-
+#include <cstdlib> //para el uso de la funcion rand
 
 using namespace std;
 
@@ -18,7 +18,6 @@ constexpr double VEL_PROYECTIL = 12.0;
 
 constexpr double MARGEN = 1.5;
 constexpr double MARGEN_INF = 4;
-
 
 class arena
 {
@@ -35,8 +34,7 @@ class arena
 	const Pieza* pieza1 = nullptr;
 	const Pieza* pieza2 = nullptr;
 
-
-	// Proyectil activo de cada bando 
+	// Proyectil activo de cada bando
 	// Se usa un puntero para poder tenerlo o no
 	Proyectil* proyectil1 = nullptr;  // Q
 	Proyectil* proyectil2 = nullptr;  // K
@@ -48,6 +46,8 @@ class arena
 	void dibujaPiezasArena() const;
 	void dibujaProyectiles() const;
 
+	int indiceFondo = 1; //para el fondo
+
 public:
 	arena() {};
 
@@ -55,11 +55,12 @@ public:
 	void mueve(double dt);           // mueve los proyectiles activos
 	void tecla(unsigned char key);   // q dispara pieza1, k dispara pieza2
 
-	void activa() { activo = true; }
+	void activa()
+	{
+		activo = true;
+		indiceFondo = 1 + rand() % 9;
+	}
 	void desactiva() { activo = false; }
 	bool estaActiva() const { return activo; }
 	void fDatos(const Pieza& p1, const Pieza& p2);
-	
-
-
 };

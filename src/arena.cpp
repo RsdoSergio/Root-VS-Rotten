@@ -14,10 +14,22 @@ void arena::dibujaFondo() const
 
 void arena::dibujaInterior() const
 {
+	const char* fondos[9] = {			//array con las 9 rutas de los fondos
+	   "imagenes/fondo_arena1.png",
+	   "imagenes/fondo_arena2.png",
+	   "imagenes/fondo_arena3.png",
+	   "imagenes/fondo_arena4.png",
+	   "imagenes/fondo_arena5.png",
+	   "imagenes/fondo_arena6.png",
+	   "imagenes/fondo_arena7.png",
+	   "imagenes/fondo_arena8.png",
+	   "imagenes/fondo_arena9.png"
+	};
+
+	const char* ruta = fondos[indiceFondo - 1]; //ojo q es un array (índice 0 = arena1)
+
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_arena1.png").id);
-	// Mejora la calidad de escalado
-	// Forzar máxima calidad
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture(ruta).id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
