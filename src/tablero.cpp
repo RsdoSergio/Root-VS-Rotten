@@ -1,3 +1,4 @@
+#pragma once
 #include "tablero.h"
 #include "freeglut.h"
 #include "pos.h"
@@ -11,6 +12,8 @@
 #include "fenix.h"
 #include "mago.h"
 #include "listapieza.h"
+#include"cursor.h"
+
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -35,7 +38,7 @@ void Tablero::inicializaTablero() {
 	byte colores[3][3] = {
 		{220, 255, 220},  // 0: verde muy claro
 		{34,  100,  34},  // 1: verde oscuro
-		{85, 140,  40},  // 2: verde medio  
+		{85, 140,  40},  // 2: verde medio
 	};
 
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
@@ -54,10 +57,8 @@ void Tablero::inicializaTablero() {
 	}
 }
 
-
-
-
-void Tablero::dibujaTablero() {
+void Tablero::dibujaTablero(const Cursor& cursor) {
+	// Dibuja las casillas
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
 			glColor3ub(casillas[i][j].r, casillas[i][j].g, casillas[i][j].b);
@@ -73,53 +74,52 @@ void Tablero::dibujaTablero() {
 			glEnd();
 		}
 	}
-	
-	
+
+	// Dibuja el borde amarillo del cursor encima
+	cursor.dibuja();
 }
 
-void Tablero::colocarPiezasIniciales(listapieza& lista) {
 
-	Pieza* p;
+void Tablero::colocarPiezasIniciales() {
 
 	// --- BANDO LUZ (columna 0 - fila trasera, de esquina a centro) ---
-	p = new Valquiria(Bando::planta, Pos(0, 0)); lista.agregar(p); casillas[0][0].pieza = p; // A1 esquina
-	p = new Golem(Bando::planta, Pos(1, 8));     lista.agregar(p); casillas[1][0].pieza = p;  // A2
-	p = new Unicornio(Bando::planta, Pos(2, 8)); lista.agregar(p); casillas[2][0].pieza = p;  // A3
-	p = new Djinn(Bando::planta, Pos(3, 8));     lista.agregar(p); casillas[3][0].pieza = p;  // A4
-	p = new Mago(Bando::planta, Pos(4, 8));      lista.agregar(p); casillas[4][0].pieza = p;  // A5 centro - lider
-	p = new Fenix(Bando::planta, Pos(5, 8));     lista.agregar(p); casillas[5][0].pieza = p;  // A6
-	p = new Unicornio(Bando::planta, Pos(6, 8)); lista.agregar(p); casillas[6][0].pieza = p;  // A7
-	p = new Golem(Bando::planta, Pos(7, 8));     lista.agregar(p); casillas[7][0].pieza = p;  // A8
-	p = new Valquiria(Bando::planta, Pos(8, 8)); lista.agregar(p); casillas[8][0].pieza = p;  // A9 esquina
-
+	
+	casillas[0][0].pieza = new Valquiria(Bando::planta, Pos(0, 0));  //A1 esquina
+	casillas[1][0].pieza = new Golem(Bando::planta, Pos(1, 0));      //A2
+	casillas[2][0].pieza = new Unicornio(Bando::planta, Pos(2, 0));  //A3
+	casillas[3][0].pieza = new Djinn(Bando::planta, Pos(3, 0));      //A4
+	casillas[4][0].pieza = new Mago(Bando::planta, Pos(4, 0));       //A5 centro - lider
+	casillas[5][0].pieza = new Fenix(Bando::planta, Pos(5, 0));      //A6
+	casillas[6][0].pieza = new Unicornio(Bando::planta, Pos(6, 0));  //A7
+	casillas[7][0].pieza = new Golem(Bando::planta, Pos(7, 0));      //A8
+	casillas[8][0].pieza = new Valquiria(Bando::planta, Pos(8, 0));  //A9 esquina
 
 	// --- BANDO LUZ (columna 1 - fila delantera) ---
 	
-	p = new Arquero(Bando::planta, Pos(0, 1)); lista.agregar(p); casillas[0][1].pieza = p;  // B1 esquina
-	for (int i = 1; i <= 7; i++) {
-		p = new Peon(Bando::planta, Pos(i, 1)); lista.agregar(p); casillas[i][1].pieza = p; // B2-B8 peones
-	}
-	p = new Arquero(Bando::planta, Pos(8, 1)); lista.agregar(p); casillas[8][1].pieza = p;  // B9 esquina
+	casillas[0][1].pieza = new Arquero(Bando::planta, Pos(0, 1));   //B1 esquina
+	for (int i = 1; i <= 7; i++)                      
+		casillas[i][1].pieza = new Peon(Bando::planta, Pos(i, 1));  //B2-B8 peones
+	casillas[8][1].pieza = new Arquero(Bando::planta, Pos(8, 1));   //B9 esquina
 
 	// --- BANDO OSCURIDAD (columna 8 - fila trasera, simétrico) ---
 	
-	p = new Valquiria(Bando::zombi, Pos(0, 8)); lista.agregar(p); casillas[0][8].pieza = p;
-	p = new Golem(Bando::zombi, Pos(1, 8));     lista.agregar(p); casillas[1][8].pieza = p;
-	p = new Unicornio(Bando::zombi, Pos(2, 8)); lista.agregar(p); casillas[2][8].pieza = p;
-	p = new Djinn(Bando::zombi, Pos(3, 8));     lista.agregar(p); casillas[3][8].pieza = p;
-	p = new Mago(Bando::zombi, Pos(4, 8));      lista.agregar(p); casillas[4][8].pieza = p;
-	p = new Fenix(Bando::zombi, Pos(5, 8));     lista.agregar(p); casillas[5][8].pieza = p;
-	p = new Unicornio(Bando::zombi, Pos(6, 8)); lista.agregar(p); casillas[6][8].pieza = p;
-	p = new Golem(Bando::zombi, Pos(7, 8));     lista.agregar(p); casillas[7][8].pieza = p;
-	p = new Valquiria(Bando::zombi, Pos(8, 8)); lista.agregar(p); casillas[8][8].pieza = p;
+
+	casillas[0][8].pieza = new Valquiria(Bando::zombi, Pos(0, 8));
+	casillas[1][8].pieza = new Golem(Bando::zombi, Pos(1, 8));
+	casillas[2][8].pieza = new Unicornio(Bando::zombi, Pos(2, 8));
+	casillas[3][8].pieza = new Djinn(Bando::zombi, Pos(3, 8));
+	casillas[4][8].pieza = new Mago(Bando::zombi, Pos(4, 8));
+	casillas[5][8].pieza = new Fenix(Bando::zombi, Pos(5, 8));
+	casillas[6][8].pieza = new Unicornio(Bando::zombi, Pos(6, 8));
+	casillas[7][8].pieza = new Golem(Bando::zombi, Pos(7, 8));
+	casillas[8][8].pieza = new Valquiria(Bando::zombi, Pos(8, 8));
 
 	// --- BANDO OSCURIDAD (columna 7 - fila delantera, simétrico) ---
 	
-	p = new Arquero(Bando::zombi, Pos(0, 7)); lista.agregar(p); casillas[0][7].pieza = p;
-	for (int i = 1; i <= 7; i++) {
-		p = new Peon(Bando::zombi, Pos(i, 7)); lista.agregar(p); casillas[i][7].pieza = p;
-	}
-	p = new Arquero(Bando::zombi, Pos(8, 7)); lista.agregar(p); casillas[8][7].pieza = p;
+	casillas[0][7].pieza = new Arquero(Bando::zombi, Pos(0, 7));
+	for (int i = 1; i <= 7; i++)
+		casillas[i][7].pieza = new Peon(Bando::zombi, Pos(i, 7));
+	casillas[8][7].pieza = new Arquero(Bando::zombi, Pos(8, 7));
 
 }
 
@@ -138,7 +138,6 @@ void Tablero::dibujaPiezas()
 			}
 		}
 	}
-	
 }
 
 Pieza* Tablero::getPieza(Pos p) const {
@@ -161,7 +160,6 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
 	Bando bandoPieza = p->getBando();
 
 	if (tipo == TipoMovimiento::TIERRA || tipo == TipoMovimiento::VUELO) {
-
 		// Tierra: 4 direcciones. Vuelo: 8 direcciones
 		int dirs[8][2] = {
 			{1,0},{-1,0},{0,1},{0,-1},   // horizontal y vertical
@@ -225,22 +223,32 @@ void Tablero::marcaCasillasValidas() {
 	}
 }
 
-
 bool Tablero::moverPieza(Pos origen, Pos destino) {
 	Pieza* p = casillas[origen.fila][origen.col].pieza;
 	if (p == nullptr) return false;
 
-	bool hayCombate = casillas[destino.fila][destino.col].CasOcupada(); // ¿Hay enemigo?
+	Pieza* d = casillas[destino.fila][destino.col].pieza;
 
-	casillas[destino.fila][destino.col].pieza = p;       // Coloca pieza en destino
-	casillas[origen.fila][origen.col].pieza = nullptr; // Vacía el origen
-	p->setCasilla(destino);                              // La pieza actualiza su posición
+
+	personaje1 = p;
+	personaje2 = d;
+	
+	bool hayCombate = (personaje2 != nullptr); // ¿Hay enemigo?
+
+	if (!hayCombate) { //Movimiento normal
+		casillas[destino.fila][destino.col].pieza = p; 
+		casillas[origen.fila][origen.col].pieza = nullptr;
+		p->setCasilla(destino);
+	}
+	else { //Hay combate, guardo posiciones
+		posOrigen = origen;	
+		posDestino = destino;
+	}
 
 	return hayCombate;
 }
 
-
-void Tablero::gestionarEntrada(Pos cursor, int& turno) {
+bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
 	if (!piezaSeleccionada.esValida()) {
 		// Intentar seleccionar pieza del turno actual
 		Pieza* p = getPieza(cursor);
@@ -260,16 +268,22 @@ void Tablero::gestionarEntrada(Pos cursor, int& turno) {
 
 		if (destinoValido) {
 			bool hayCombate = moverPieza(piezaSeleccionada, cursor);
-			turno = 1 - turno; // Cambia turno
-			// hayCombate → arena de combate, se gestiona más adelante
+			if (!hayCombate) turno = 1 - turno; // turno cambia solo si no hay combate
+			piezaSeleccionada = Pos();
+			casillasValidas.clear();
+			return hayCombate;
 		}
-		piezaSeleccionada = Pos();
-		casillasValidas.clear();
 	}
+	return false; // No se ha movido
 }
-
 
 void Tablero::cancelarSeleccion() {
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
+}
+
+void Tablero::dibuja(const Cursor& cursor) {
+	dibujaTablero(cursor);     // casillas + cursor
+	dibujaPiezas();            // piezas encima
+	marcaCasillasValidas();    // casillas verdes encima de todo
 }

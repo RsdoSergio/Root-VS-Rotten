@@ -1,24 +1,69 @@
 #pragma once
+#include "pieza.h"
+#include <string>
+#include "ETSIDI.h"
+#include "proyectil.h"
+#include <cstdlib> //para el uso de la funcion rand
+#include"caja.h"
+#include"arena_constantes.h"
 
-constexpr double ARENA_ANCHO = 44.0;
-constexpr double ARENA_ALTO = 26.0;
-constexpr double SEMIANCHO = ARENA_ANCHO / 2.0;
-constexpr double SEMIALTO = ARENA_ALTO / 2.0;
+using namespace std;
+
+
+
+
 
 class arena
 {
 	bool activo = false;
 
+	string nombrePieza1{};
+	string nombrePieza2{};
+	double vidaPieza1 = 0.0;
+	double vidaPieza2 = 0.0;
+	double vidaMaxPieza1 = 1.0;
+	double vidaMaxPieza2 = 1.0;
+
+	// Punteros a las piezas que combaten (para dibujarlas)
+	 Pieza* pieza1 = nullptr;
+	 Pieza* pieza2 = nullptr;
+	 
+	 Caja caja;
+
+	// Proyectil activo de cada bando
+	// Se usa un puntero para poder tenerlo o no
+	Proyectil* proyectil1 = nullptr;  // Q
+	Proyectil* proyectil2 = nullptr;  // K
+
 	void dibujaFondo() const;
 	void dibujaInterior() const;
 	void dibujaMarco() const;
+	void dibujaHUD() const;
+	void dibujaPiezasArena() const;
+	void dibujaProyectiles() const;
+
+	
+
+	int indiceFondo = 1; //para el fondo
 
 public:
 	arena() {};
 
 	void dibuja() const;
-	void activa() { activo = true; }
+	void mueve(double dt);           // mueve los proyectiles activos
+	void tecla(unsigned char key);   // q dispara pieza1, k dispara pieza2
+
+	void activa()
+	{
+		activo = true;
+		indiceFondo = 1 + rand() % 9;
+	}
 	void desactiva() { activo = false; }
 	bool estaActiva() const { return activo; }
+	void fDatos( Pieza& p1,  Pieza& p2);
 
+	void MoverPiezaZombi(int key);
+	void MoverPiezaPlanta(unsigned char key);
+
+	void recibirMovimiento(int jugador, int dir, bool estado);
 };

@@ -20,6 +20,12 @@
     <ClCompile Include="src\unicornio.cpp" />
     <ClCompile Include="src\valquiria.cpp" />
     <ClCompile Include="src\vector2d.cpp" />
+    <ClCompile Include="src\arena.cpp" />
+    <ClCompile Include="src\cursor.cpp" />
+    <ClCompile Include="src\menu.cpp" />
+    <ClCompile Include="src\pared.cpp" />
+    <ClCompile Include="src\caja.cpp" />
+    <ClCompile Include="src\gestorTexturas.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\ETSIDI.h" />
@@ -43,6 +49,12 @@
     <ClInclude Include="src\valquiria.h" />
     <ClInclude Include="src\vector2d.h" />
     <ClInclude Include="src\pos.h" />
+    <ClInclude Include="src\arena.h" />
+    <ClInclude Include="src\cursor.h" />
+    <ClInclude Include="src\menu.h" />
+    <ClInclude Include="src\pared.h" />
+    <ClInclude Include="src\caja.h" />
+    <ClInclude Include="src\gestorTexturas.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\ETSIDI.lib" />

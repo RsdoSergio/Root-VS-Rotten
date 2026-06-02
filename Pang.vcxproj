@@ -21,15 +21,19 @@
   <ItemGroup>
     <ClCompile Include="src\arena.cpp" />
     <ClCompile Include="src\arquero.cpp" />
+    <ClCompile Include="src\caja.cpp" />
     <ClCompile Include="src\cursor.cpp" />
     <ClCompile Include="src\fenix.cpp" />
     <ClCompile Include="src\genio.cpp" />
+    <ClCompile Include="src\gestorTexturas.cpp" />
     <ClCompile Include="src\golem.cpp" />
     <ClCompile Include="src\listapieza.cpp" />
     <ClCompile Include="src\mago.cpp" />
     <ClCompile Include="src\audio.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\mundo.cpp" />
+    <ClCompile Include="src\pared.cpp" />
     <ClCompile Include="src\peon.cpp" />
     <ClCompile Include="src\pieza.cpp" />
     <ClCompile Include="src\piezateletransporte.cpp" />
@@ -45,17 +49,21 @@
   <ItemGroup>
     <ClInclude Include="lib\ETSIDI.h" />
     <ClInclude Include="lib\freeglut.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="src\arena.h" />
+    <ClInclude Include="src\arena_constantes.h" />
     <ClInclude Include="src\arquero.h" />
+    <ClInclude Include="src\caja.h" />
     <ClInclude Include="src\cursor.h" />
     <ClInclude Include="src\fenix.h" />
     <ClInclude Include="src\genio.h" />
+    <ClInclude Include="src\gestorTexturas.h" />
     <ClInclude Include="src\golem.h" />
     <ClInclude Include="src\listapieza.h" />
     <ClInclude Include="src\mago.h" />
     <ClInclude Include="src\audio.h" />
+    <ClInclude Include="src\menu.h" />
     <ClInclude Include="src\mundo.h" />
+    <ClInclude Include="src\pared.h" />
     <ClInclude Include="src\peon.h" />
     <ClInclude Include="src\pieza.h" />
     <ClInclude Include="src\piezateletransporte.h" />
