@@ -9,8 +9,22 @@
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
-	tablero.colocarPiezasIniciales();
+//<<<<<<< HEAD
+	tablero.colocarPiezasIniciales();  //inicializacion de piezas para el juego
+
+//=======
+
+	for (int i = 0; i < FILAS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = tablero.getPieza(Pos(i, j));
+			if (p != nullptr)
+				ListaPieza.agregar(p);
+		}
+
+	}
+
 	precargarTexturas();
+//>>>>>>> desarrollo
 
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda
@@ -75,8 +89,12 @@ void Mundo::tecla(unsigned char key)
 
 void Mundo::mueve()
 {
+//<<<<<<< HEAD
+	ListaPieza.eliminarMuertas(); // de momento vacía
+//=======
 	if (!enPartida || enPausa) return;
 	if (arena.estaActiva()) arena.mueve(0.025); // para no mover los poryectiles si no estan en la arena
+//>>>>>>> desarrollo
 }
 
 //Metodo que gestiona el dibujo de la simulacion
