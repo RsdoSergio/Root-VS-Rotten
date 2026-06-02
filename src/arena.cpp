@@ -186,39 +186,42 @@ void arena::mueve(double dt)
 	mover(pieza1);
 	mover(pieza2);
 
-	if (proyectil1) proyectil1->mueve(dt);
-	if (proyectil2) proyectil2->mueve(dt);
+	// Actualizar timers de cooldown
+	tiempoDisparo1 += dt;
+	tiempoDisparo2 += dt;
+
+	// Mover todos los proyectiles activos
+	for (Proyectil* p : proyectil1) p->mueve(dt);
+	for (Proyectil* p : proyectil2) p->mueve(dt);
+
+
+
 }
 
 void arena::tecla(unsigned char key)
 {
 	if (!activo) return;
-
-	if (key == 'q' || key == 'Q')
+	if ((key == 'q' || key == 'Q') && tiempoDisparo1 >= pieza1->getIntervaloAtaque())//SE AÑADE UN TIEMPO DE COOLDOWN PARA CADA PIEZA
 	{
-		delete proyectil1;  // eliminar el anterior si existia
-		// Sale desde la posicion de pieza1, hacia la derecha
-		//se fuerza a salir desde el centro de la pieza, estoy hay q cambiarlo
 		Vector2D pos(-SEMIANCHO / 2.0, 0.0);
 		Vector2D vel(VEL_PROYECTIL, 0.0);
-		proyectil1 = new Proyectil(pos, vel, 5.0);
+		proyectil1.push_back(new Proyectil(pos, vel, 5.0));
+		tiempoDisparo1 = 0.0;
 	}
-
-	if (key == 'k' || key == 'K')
+	if ((key == 'k' || key == 'K') && tiempoDisparo2 >= pieza2->getIntervaloAtaque())
 	{
-		delete proyectil2;
-		// Sale desde la posicion de pieza2, hacia la izquierda
 		Vector2D pos(+SEMIANCHO / 2.0, 0.0);
 		Vector2D vel(-VEL_PROYECTIL, 0.0);
-		proyectil2 = new Proyectil(pos, vel, 5.0);
+		proyectil2.push_back(new Proyectil(pos, vel, 5.0));
+		tiempoDisparo2 = 0.0;
 	}
 }
 
 // Dibuja los proyectiles activos
 void arena::dibujaProyectiles() const
 {
-	if (proyectil1) proyectil1->dibuja();
-	if (proyectil2) proyectil2->dibuja();
+	for (Proyectil* p : proyectil1) p->dibuja();
+	for (Proyectil* p : proyectil2) p->dibuja();
 }
 
 void arena::MoverPiezaPlanta(unsigned char key)
