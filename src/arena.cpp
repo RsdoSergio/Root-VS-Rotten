@@ -1,5 +1,7 @@
 #include "arena.h"
 #include "freeglut.h"
+#include "piezatierra.h"
+
 
 void arena::dibujaFondo() const
 {
@@ -173,6 +175,17 @@ void arena::dibujaPiezasArena() const
 void arena::mueve(double dt)
 {
 	if (!activo) return;
+
+	auto mover = [&](Pieza* p) 
+		{
+		if (!p) return;
+		PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
+		if (pt) pt->actualizarArena(dt, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+		};
+
+	mover(pieza1);
+	mover(pieza2);
+
 	if (proyectil1) proyectil1->mueve(dt);
 	if (proyectil2) proyectil2->mueve(dt);
 }
@@ -210,18 +223,21 @@ void arena::dibujaProyectiles() const
 
 void arena::MoverPiezaPlanta(unsigned char key)
 {
-	if (!activo || pieza1 == nullptr) return;
-	if (key == 'w' || key == 'W') pieza1->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == 's' || key == 'S') pieza1->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == 'a' || key == 'A') pieza1->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == 'd' || key == 'D') pieza1->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	
 }
 
 void arena::MoverPiezaZombi(int key)
 {
-	if (!activo || pieza2 == nullptr) return;
-	if (key == GLUT_KEY_UP)    pieza2->moverArena(DirArena::ARRIBA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == GLUT_KEY_DOWN)  pieza2->moverArena(DirArena::ABAJO, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == GLUT_KEY_LEFT)  pieza2->moverArena(DirArena::IZQUIERDA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
-	if (key == GLUT_KEY_RIGHT) pieza2->moverArena(DirArena::DERECHA, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+	
+}
+
+void arena::recibirMovimiento(int jugador, int dir, bool estado)
+{
+	if (!activo) return;
+	Pieza* p = (jugador == 0) ? pieza1 : pieza2;
+	if (!p) return;
+
+	//solo PiezaTierra tiene setMovimiento por ahora
+	PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);//transformar pieza de clase pieza a clase Piezatierra
+	if (pt) pt->setMovimiento(dir, estado);
 }

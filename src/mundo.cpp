@@ -44,8 +44,14 @@ void Mundo::tecla(unsigned char key)
 		return;
 	}
 	if (arena.estaActiva()) {
-		arena.MoverPiezaPlanta(key);
+		
+		if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, true);
+		if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, true);
+		if (key == 'a' || key == 'A') arena.recibirMovimiento(0, DIR_IZQ, true);
+		if (key == 'd' || key == 'D') arena.recibirMovimiento(0, DIR_DCHA, true);
+			
 		arena.tecla(key); // disparos,    q/k disparan en la arena
+		
 		return;
 	}
 
@@ -104,8 +110,29 @@ void Mundo::teclaEspecial(int key)
 	if (!enPartida) return;
 
 	if (arena.estaActiva()) {
-		arena.MoverPiezaZombi(key);
+		if (key == GLUT_KEY_UP)    arena.recibirMovimiento(1, DIR_ARRIBA, true);
+		if (key == GLUT_KEY_DOWN)  arena.recibirMovimiento(1, DIR_ABAJO, true);
+		if (key == GLUT_KEY_LEFT)  arena.recibirMovimiento(1, DIR_IZQ, true);
+		if (key == GLUT_KEY_RIGHT) arena.recibirMovimiento(1, DIR_DCHA, true);
 		return;
 	}
 	if (turno == 1) cursor2.moverFlechas(key);
+}
+
+void Mundo::teclaLevantada(unsigned char key)
+{
+	if (!arena.estaActiva()) return;
+	if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, false);
+	if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, false);
+	if (key == 'a' || key == 'A') arena.recibirMovimiento(0, DIR_IZQ, false);
+	if (key == 'd' || key == 'D') arena.recibirMovimiento(0, DIR_DCHA, false);
+}
+
+void Mundo::teclaEspecialLevantada(int key)
+{
+	if (!arena.estaActiva()) return;
+	if (key == GLUT_KEY_UP)    arena.recibirMovimiento(1, DIR_ARRIBA, false);
+	if (key == GLUT_KEY_DOWN)  arena.recibirMovimiento(1, DIR_ABAJO, false);
+	if (key == GLUT_KEY_LEFT)  arena.recibirMovimiento(1, DIR_IZQ, false);
+	if (key == GLUT_KEY_RIGHT) arena.recibirMovimiento(1, DIR_DCHA, false);
 }
