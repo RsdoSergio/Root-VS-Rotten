@@ -201,16 +201,17 @@ void arena::mueve(double dt)
 void arena::tecla(unsigned char key)
 {
 	if (!activo) return;
-	if ((key == 'q' || key == 'Q') && tiempoDisparo1 >= pieza1->getIntervaloAtaque())//SE AÑADE UN TIEMPO DE COOLDOWN PARA CADA PIEZA
+
+	if ((key == 'q' || key == 'Q') && tiempoDisparo1 >= pieza1->getIntervaloAtaque())
 	{
-		Vector2D pos(-SEMIANCHO / 2.0, 0.0);
+		Vector2D pos = pieza1->getPosArena();
 		Vector2D vel(VEL_PROYECTIL, 0.0);
 		proyectil1.push_back(new Proyectil(pos, vel, 5.0));
 		tiempoDisparo1 = 0.0;
 	}
 	if ((key == 'k' || key == 'K') && tiempoDisparo2 >= pieza2->getIntervaloAtaque())
 	{
-		Vector2D pos(+SEMIANCHO / 2.0, 0.0);
+		Vector2D pos = pieza2->getPosArena();
 		Vector2D vel(-VEL_PROYECTIL, 0.0);
 		proyectil2.push_back(new Proyectil(pos, vel, 5.0));
 		tiempoDisparo2 = 0.0;
