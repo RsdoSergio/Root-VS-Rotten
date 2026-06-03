@@ -2,6 +2,7 @@
 #include "casilla.h"
 #include"pos.h"
 #include<vector>
+#include "listapieza.h"
 
 class Cursor;
 
@@ -11,9 +12,10 @@ constexpr float TAM_CELDA = 2.8f;
 
 class Tablero {
 public:
-	void inicializaTablero();
 
-	void colocarPiezasIniciales();
+    void inicializaTablero();
+    void colocarPiezasIniciales();
+
 
 	 //recibe un cursor para poder dibujar el cursor. las casillas se siguen dibujando de igual manera
 	

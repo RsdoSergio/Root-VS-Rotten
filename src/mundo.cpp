@@ -5,15 +5,26 @@
 #include <vector>
 #include "audio.h"
 #include "audio.h"
+#include "gestorTexturas.h"
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
-	tablero.colocarPiezasIniciales();
+//<<<<<<< HEAD
+	tablero.colocarPiezasIniciales();  //inicializacion de piezas para el juego
 
-	//precargar texturas para evitar freeze al primer uso (igual hay q meterlo en alguna clase o .cpp aparte)
-	ETSIDI::getTexture("imagenes/fondo_menu_inicio.png");
-	ETSIDI::getTexture("imagenes/fondo_pausa.png");
-	ETSIDI::getTexture("imagenes/fondo_arena1.png");
+//=======
+
+	for (int i = 0; i < FILAS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = tablero.getPieza(Pos(i, j));
+			if (p != nullptr)
+				ListaPieza.agregar(p);
+		}
+
+	}
+
+	precargarTexturas();
+//>>>>>>> desarrollo
 
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda
@@ -46,6 +57,17 @@ void Mundo::tecla(unsigned char key)
 		}
 		return;
 	}
+	if (arena.estaActiva()) {
+		
+		if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, true);
+		if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, true);
+		if (key == 'a' || key == 'A') arena.recibirMovimiento(0, DIR_IZQ, true);
+		if (key == 'd' || key == 'D') arena.recibirMovimiento(0, DIR_DCHA, true);
+			
+		arena.tecla(key); // disparos,    q/k disparan en la arena
+		
+		return;
+	}
 
 	// Cada cursor se mueve solo durante su turno
 	if (turno == 0) cursor.mover(key);  // WASD
@@ -60,15 +82,19 @@ void Mundo::tecla(unsigned char key)
 		}
 	}
 
-	if (arena.estaActiva()) arena.tecla(key);  // q/k disparan en la arena
+	
 	if (key == 27) tablero.cancelarSeleccion(); //Escape para cancelar seleccion
 	if (key == 'v') arena.desactiva();
 }
 
 void Mundo::mueve()
 {
+//<<<<<<< HEAD
+	ListaPieza.eliminarMuertas(); // de momento vacía
+//=======
 	if (!enPartida || enPausa) return;
 	if (arena.estaActiva()) arena.mueve(0.025); // para no mover los poryectiles si no estan en la arena
+//>>>>>>> desarrollo
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -100,5 +126,31 @@ void Mundo::dibuja()
 void Mundo::teclaEspecial(int key)
 {
 	if (!enPartida) return;
+
+	if (arena.estaActiva()) {
+		if (key == GLUT_KEY_UP)    arena.recibirMovimiento(1, DIR_ARRIBA, true);
+		if (key == GLUT_KEY_DOWN)  arena.recibirMovimiento(1, DIR_ABAJO, true);
+		if (key == GLUT_KEY_LEFT)  arena.recibirMovimiento(1, DIR_IZQ, true);
+		if (key == GLUT_KEY_RIGHT) arena.recibirMovimiento(1, DIR_DCHA, true);
+		return;
+	}
 	if (turno == 1) cursor2.moverFlechas(key);
+}
+
+void Mundo::teclaLevantada(unsigned char key)
+{
+	if (!arena.estaActiva()) return;
+	if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, false);
+	if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, false);
+	if (key == 'a' || key == 'A') arena.recibirMovimiento(0, DIR_IZQ, false);
+	if (key == 'd' || key == 'D') arena.recibirMovimiento(0, DIR_DCHA, false);
+}
+
+void Mundo::teclaEspecialLevantada(int key)
+{
+	if (!arena.estaActiva()) return;
+	if (key == GLUT_KEY_UP)    arena.recibirMovimiento(1, DIR_ARRIBA, false);
+	if (key == GLUT_KEY_DOWN)  arena.recibirMovimiento(1, DIR_ABAJO, false);
+	if (key == GLUT_KEY_LEFT)  arena.recibirMovimiento(1, DIR_IZQ, false);
+	if (key == GLUT_KEY_RIGHT) arena.recibirMovimiento(1, DIR_DCHA, false);
 }

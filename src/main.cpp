@@ -7,6 +7,8 @@ void OnDraw(void); //esta funcion sera llamada para dibujar
 void OnTimer(int value); //esta funcion sera llamada cuando transcurra una temporizacion
 void OnKeyboardDown(unsigned char key, int x, int y); //cuando se pulse una tecla
 void OnSpecialKey(int key, int x, int y);//flechas del teclado
+void OnKeyboardUp(unsigned char key, int x, int y);    
+void OnSpecialKeyUp(int key, int x, int y);            
 
 // Variables globales accesibles desde cualquier .cpp
 float G_XMAX = 26.67f;  // valor por defecto 16:9
@@ -67,20 +69,9 @@ int main(int argc, char* argv[])
 	glutTimerFunc(25, OnTimer, 0);//le decimos que dentro de 25ms llame 1 vez a la funcion OnTimer()
 	glutKeyboardFunc(OnKeyboardDown);
 	glutSpecialFunc(OnSpecialKey);    //registrar callback de flechas
-
+	glutKeyboardUpFunc(OnKeyboardUp);
+	glutSpecialUpFunc(OnSpecialKeyUp);
 	//inicialización de objetos de la simulación
-	// Pantalla de carga simple antes de inicializar
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-1, 1, -1, 1, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	ETSIDI::setFont("fuentes/texto.ttf", 40); //puesto de forma provisional para q le de tiempo a precargar todas las imágenes
-	ETSIDI::setTextColor(1.f, 1.f, 1.f);
-	ETSIDI::printxy("Cargando...", -0.5f, 0.0f);
-	glutSwapBuffers();
 	mundo.inicializa();
 
 	//pasarle el control a GLUT,que llamara a los callbacks
@@ -124,5 +115,17 @@ void OnTimer(int value)
 void OnSpecialKey(int key, int x, int y)
 {
 	mundo.teclaEspecial(key);
+	glutPostRedisplay();
+}
+
+void OnKeyboardUp(unsigned char key, int x, int y)
+{
+	mundo.teclaLevantada(key);
+	glutPostRedisplay();
+}
+
+void OnSpecialKeyUp(int key, int x, int y)
+{
+	mundo.teclaEspecialLevantada(key);
 	glutPostRedisplay();
 }

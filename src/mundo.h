@@ -5,17 +5,20 @@
 #include "cursor.h"
 #include "pos.h"
 #include "arena.h"
+#include "listapieza.h"
 #include "pieza.h"
 #include "peon.h"
 #include "menu.h"
-#include "caja.h"	
+#include "caja.h"
+#include "gestorTexturas.h"5
+
 
 class Mundo
 {
 	Tablero tablero;
-
 	Cursor cursor{ 4, 4, 255, 220,   0 };  // amarillo
 	Cursor cursor2{ 4, 4, 180,   0, 255 };  //morado
+	listapieza ListaPieza;
 	int     turno = 0;
 	std::vector<Pos> casillasValidas;
 	arena arena;
@@ -31,4 +34,7 @@ public:
 	void mueve();
 	void tecla(unsigned char key);
 	void teclaEspecial(int key);   // flechas del teclado para cursor2
+	//funciones para gestionar el pulsado continuo de tecla
+	void teclaLevantada(unsigned char key);
+	void teclaEspecialLevantada(int key);
 };

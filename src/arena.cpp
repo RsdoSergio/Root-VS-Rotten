@@ -1,5 +1,7 @@
 #include "arena.h"
 #include "freeglut.h"
+#include "piezatierra.h"
+
 
 void arena::dibujaFondo() const
 {
@@ -14,10 +16,22 @@ void arena::dibujaFondo() const
 
 void arena::dibujaInterior() const
 {
+	const char* fondos[9] = {			//array con las 9 rutas de los fondos
+	   "imagenes/fondo_arena1.png",
+	   "imagenes/fondo_arena2.png",
+	   "imagenes/fondo_arena3.png",
+	   "imagenes/fondo_arena4.png",
+	   "imagenes/fondo_arena5.png",
+	   "imagenes/fondo_arena6.png",
+	   "imagenes/fondo_arena7.png",
+	   "imagenes/fondo_arena8.png",
+	   "imagenes/fondo_arena9.png"
+	};
+
+	const char* ruta = fondos[indiceFondo - 1]; //ojo q es un array (índice 0 = arena1)
+
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_arena1.png").id);
-	// Mejora la calidad de escalado
-	// Forzar máxima calidad
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture(ruta).id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -128,7 +142,7 @@ void arena::dibuja() const
 	dibujaProyectiles();
 }
 
-void arena::fDatos(const Pieza& p1, const Pieza& p2)
+void arena::fDatos( Pieza& p1,  Pieza& p2)
 {
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
@@ -138,14 +152,18 @@ void arena::fDatos(const Pieza& p1, const Pieza& p2)
 	vidaMaxPieza2 = p2.getVidaMax();
 	pieza1 = &p1;
 	pieza2 = &p2;
+
+	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
+	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
+	activo = true;
 }
 
 // Dibuja las dos piezas en sus lados respectivos de la arena
 void arena::dibujaPiezasArena() const
 {
 	if (pieza1 == nullptr || pieza2 == nullptr) return;
-	pieza1->dibujaTablero(-SEMIANCHO / 2.0f, 0.0f);  // Para colocar las piezas en su sitio de la arena
-	pieza2->dibujaTablero(+SEMIANCHO / 2.0f, 0.0f);  //
+	pieza1->dibujaTablero(pieza1->getPosArena().getX(), pieza1->getPosArena().getY());
+	pieza2->dibujaTablero(pieza2->getPosArena().getX(), pieza2->getPosArena().getY());
 }
 
 //SE AÑADEN LOS PROYECTILES EN ARENA PARA PROBAR SU FUNCIONAMIENTO POSTERIORMENTE SE TIENE QUE CAMBIAR
@@ -157,37 +175,73 @@ void arena::dibujaPiezasArena() const
 void arena::mueve(double dt)
 {
 	if (!activo) return;
-	if (proyectil1) proyectil1->mueve(dt);
-	if (proyectil2) proyectil2->mueve(dt);
+
+	auto mover = [&](Pieza* p) 
+		{
+		if (!p) return;
+		PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
+		if (pt) pt->actualizarArena(dt, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+		};
+
+	mover(pieza1);
+	mover(pieza2);
+
+	// Actualizar timers de cooldown
+	tiempoDisparo1 += dt;
+	tiempoDisparo2 += dt;
+
+	// Mover todos los proyectiles activos
+	for (Proyectil* p : proyectil1) p->mueve(dt);
+	for (Proyectil* p : proyectil2) p->mueve(dt);
+
+
+
 }
 
 void arena::tecla(unsigned char key)
 {
 	if (!activo) return;
 
-	if (key == 'q' || key == 'Q')
+	if ((key == 'q' || key == 'Q') && tiempoDisparo1 >= pieza1->getIntervaloAtaque())
 	{
-		delete proyectil1;  // eliminar el anterior si existia
-		// Sale desde la posicion de pieza1, hacia la derecha
-		//se fuerza a salir desde el centro de la pieza, estoy hay q cambiarlo
-		Vector2D pos(-SEMIANCHO / 2.0, 0.0);
+		Vector2D pos = pieza1->getPosArena();
 		Vector2D vel(VEL_PROYECTIL, 0.0);
-		proyectil1 = new Proyectil(pos, vel, 5.0);
+		proyectil1.push_back(new Proyectil(pos, vel, 5.0));
+		tiempoDisparo1 = 0.0;
 	}
-
-	if (key == 'k' || key == 'K')
+	if ((key == 'k' || key == 'K') && tiempoDisparo2 >= pieza2->getIntervaloAtaque())
 	{
-		delete proyectil2;
-		// Sale desde la posicion de pieza2, hacia la izquierda
-		Vector2D pos(+SEMIANCHO / 2.0, 0.0);
+		Vector2D pos = pieza2->getPosArena();
 		Vector2D vel(-VEL_PROYECTIL, 0.0);
-		proyectil2 = new Proyectil(pos, vel, 5.0);
+		proyectil2.push_back(new Proyectil(pos, vel, 5.0));
+		tiempoDisparo2 = 0.0;
 	}
 }
 
 // Dibuja los proyectiles activos
 void arena::dibujaProyectiles() const
 {
-	if (proyectil1) proyectil1->dibuja();
-	if (proyectil2) proyectil2->dibuja();
+	for (Proyectil* p : proyectil1) p->dibuja();
+	for (Proyectil* p : proyectil2) p->dibuja();
+}
+
+void arena::MoverPiezaPlanta(unsigned char key)
+{
+	
+}
+
+void arena::MoverPiezaZombi(int key)
+{
+	
+}
+
+void arena::recibirMovimiento(int jugador, int dir, bool estado)
+{
+	if (!activo) return;
+	Pieza* p = (jugador == 0) ? pieza1 : pieza2;
+	if (!p) return;
+
+	//solo PiezaTierra tiene setMovimiento por ahora
+	PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);//transformar pieza de clase pieza a clase Piezatierra
+	if (pt) pt->setMovimiento(dir, estado);
 }
