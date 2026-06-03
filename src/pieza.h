@@ -36,6 +36,7 @@ public:
     Bando  getBando()     const { return bando; }
     Pos    getCasilla()   const { return casilla; }
     bool   estaViva()     const { return vida > 0; }
+	double getIntervaloAtaque() const { return intervaloAtaque; }//nuevo para el cooldown de ataque
 
     Vector2D getPosArena() const { return posArena; }
 

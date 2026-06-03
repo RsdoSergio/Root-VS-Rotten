@@ -6,7 +6,7 @@
 #include <cstdlib> //para el uso de la funcion rand
 #include"caja.h"
 #include"arena_constantes.h"
-
+#include<vector>
 using namespace std;
 
 
@@ -30,10 +30,10 @@ class arena
 	 
 	 Caja caja;
 
-	// Proyectil activo de cada bando
-	// Se usa un puntero para poder tenerlo o no
-	Proyectil* proyectil1 = nullptr;  // Q
-	Proyectil* proyectil2 = nullptr;  // K
+	 std::vector<Proyectil*> proyectil1;  // proyectiles del jugador 1
+	 std::vector<Proyectil*> proyectil2;  // proyectiles del jugador 2
+	 double tiempoDisparo1 = 0.0;        // tiempo acumulado desde ultimo disparo J1
+	 double tiempoDisparo2 = 0.0;        // tiempo acumulado desde ultimo disparo J2
 
 	void dibujaFondo() const;
 	void dibujaInterior() const;
