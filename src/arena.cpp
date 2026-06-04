@@ -1,6 +1,7 @@
 #include "arena.h"
 #include "freeglut.h"
 #include "piezatierra.h"
+#include"piezavuelo.h"
 
 
 void arena::dibujaFondo() const
@@ -181,6 +182,8 @@ void arena::mueve(double dt)
 		if (!p) return;
 		PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
 		if (pt) pt->actualizarArena(dt, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+		PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
+		if (pv) pv->actualizarArena(dt, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
 		};
 
 	mover(pieza1);
@@ -244,4 +247,7 @@ void arena::recibirMovimiento(int jugador, int dir, bool estado)
 	//solo PiezaTierra tiene setMovimiento por ahora
 	PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);//transformar pieza de clase pieza a clase Piezatierra
 	if (pt) pt->setMovimiento(dir, estado);
+
+	PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
+	if (pv) pv->setMovimiento(dir, estado);
 }

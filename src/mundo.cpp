@@ -135,7 +135,7 @@ void Mundo::teclaEspecial(int key)
 		return;
 	}
 	if (turno == 1) cursor2.moverFlechas(key);
-}
+}	
 
 void Mundo::teclaLevantada(unsigned char key)
 {
