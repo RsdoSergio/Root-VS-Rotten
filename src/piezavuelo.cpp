@@ -45,16 +45,9 @@ void PiezaVuelo::setMovimiento(int dir, bool estado)
     if (dir == DIR_ARRIBA || dir == DIR_ABAJO) ultimo_eje_reciente = 1;
 }
 
-void PiezaVuelo::actualizarArena(double dt, double xMin, double xMax, double yMin, double yMax)
+void PiezaVuelo::actualizarArena(double dt)
 {
-    constexpr double margen = 1.2;
-
-  
     double dirX = 0, dirY = 0;
-
-
-
-   
 
     if (ultimo_eje_x != 0 && ultimo_eje_y != 0) {
 
@@ -71,12 +64,8 @@ void PiezaVuelo::actualizarArena(double dt, double xMin, double xMax, double yMi
     double x = posArena.getX() + dirX * velocidad * dt;
     double y = posArena.getY() + dirY * velocidad * dt;
 
-    if (x < xMin + margen) x = xMin + margen;
-    if (x > xMax - margen) x = xMax - margen;
-    if (y < yMin + margen) y = yMin + margen;
-    if (y > yMax - margen) y = yMax - margen;
-
     posArena.setValores(x, y);
 }
+
 
 

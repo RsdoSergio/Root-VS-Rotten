@@ -45,27 +45,20 @@ void PiezaTierra::setMovimiento(int dir, bool estado)
     if (dir == DIR_ARRIBA || dir == DIR_ABAJO) ultimo_eje_reciente = 1;
 }
 
-void PiezaTierra::actualizarArena(double dt, double xMin, double xMax,double yMin, double yMax)
+void PiezaTierra::actualizarArena(double dt)
 {
-    constexpr double margen = 1.2;
-
     // ultimo eje x/y ya tienen en cuenta cuál es la tecla en ese momento
-    // Si hay movimiento en X e Y a la vez, solo se aplica el último eje pulsado.
-    // Para eso nos movemos en el eje pulsado mas reciente
-    // Como los ejes son independientes, usamos una variable para saber cuál fue el último eje modificado.
-     double dirX = 0, dirY = 0;
-
-   
+     // Si hay movimiento en X e Y a la vez, solo se aplica el último eje pulsado.
+     // Para eso nos movemos en el eje pulsado mas reciente
+     // Como los ejes son independientes, usamos una variable para saber cuál fue el último eje modificado.
+    double dirX = 0, dirY = 0;
 
     // si hay movimiento en ambos ejes, solo el más reciente
-
     if (ultimo_eje_x != 0 && ultimo_eje_y != 0) {// Ambos activos
-     
         if (ultimo_eje_reciente == 0) dirX = ultimo_eje_x;
-        else  dirY = ultimo_eje_y;                        
+        else  dirY = ultimo_eje_y;
     }
-
-    else 
+    else
     {
         dirX = ultimo_eje_x;
         dirY = ultimo_eje_y;
@@ -74,13 +67,9 @@ void PiezaTierra::actualizarArena(double dt, double xMin, double xMax,double yMi
     double x = posArena.getX() + dirX * velocidad * dt;
     double y = posArena.getY() + dirY * velocidad * dt;
 
-    if (x < xMin + margen) x = xMin + margen;
-    if (x > xMax - margen) x = xMax - margen;
-    if (y < yMin + margen) y = yMin + margen;
-    if (y > yMax - margen) y = yMax - margen;
-
     posArena.setValores(x, y);
 }
+
 
 void PiezaTierra::moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}//se ha eliminado pero no borrado 
 //para evitar problemas de compatibilidad
