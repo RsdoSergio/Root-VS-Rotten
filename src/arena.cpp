@@ -146,14 +146,25 @@ void arena::dibuja() const
 
 void arena::fDatos( Pieza& p1,  Pieza& p2)
 {
+	if (p1.getBando() == Bando::planta) //esto hará que la pieza a la izquierda siempre sea planta
+	{
+		pieza1 = &p1;
+		pieza2 = &p2;
+	}
+	else {
+
+		pieza1 = &p2;
+		pieza2 = &p1;
+	}
+	
+	
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
 	vidaPieza1 = p1.getVida();
 	vidaPieza2 = p2.getVida();
 	vidaMaxPieza1 = p1.getVidaMax();
 	vidaMaxPieza2 = p2.getVidaMax();
-	pieza1 = &p1;
-	pieza2 = &p2;
+	
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
