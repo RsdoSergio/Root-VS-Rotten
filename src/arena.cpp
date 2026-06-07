@@ -2,6 +2,7 @@
 #include "freeglut.h"
 #include "piezatierra.h"
 #include"piezavuelo.h"
+#include "interaccion.h"
 
 
 void arena::dibujaFondo() const
@@ -181,13 +182,15 @@ void arena::mueve(double dt)
 		{
 		if (!p) return;
 		PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
-		if (pt) pt->actualizarArena(dt, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+		if (pt) pt->actualizarArena(dt);
 		PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
-		if (pv) pv->actualizarArena(dt, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+		if (pv) pv->actualizarArena(dt);
 		};
 
 	mover(pieza1);
+	Interaccion::choque(*pieza1, caja);
 	mover(pieza2);
+	Interaccion::choque(*pieza2, caja);
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;

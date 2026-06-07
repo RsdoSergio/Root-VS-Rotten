@@ -5,6 +5,7 @@
 
 class Caja
 {
+	friend class Interaccion; 
     Pared izq{ {-SEMIANCHO + MARGEN, -SEMIALTO + MARGEN}, {-SEMIANCHO + MARGEN,  HUD_BASE - MARGEN} };
     Pared dcha{ { SEMIANCHO - MARGEN, -SEMIALTO + MARGEN}, { SEMIANCHO - MARGEN,  HUD_BASE - MARGEN} };
     Pared suelo{ {-SEMIANCHO + MARGEN, -SEMIALTO + MARGEN_INF}, { SEMIANCHO - MARGEN, -SEMIALTO + MARGEN_INF} };

@@ -3,6 +3,7 @@
 
 class Pared
 {
+    friend class Interaccion;
     Vector2D limite1_, limite2_;
 
 public:
