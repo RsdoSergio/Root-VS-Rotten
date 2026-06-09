@@ -76,6 +76,11 @@ void Mundo::tecla(unsigned char key)
 		// El cursor activo depende del turno
 		Pos posActiva = (turno == 0) ? cursor.getPosicion() : cursor2.getPosicion();
 		bool combate = tablero.gestionarEntrada(posActiva, turno);
+		if (turno == 0)
+			cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
+		else
+			cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
+
 		if (combate) {
 			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
 			arena.activa();
@@ -83,8 +88,12 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	
-	if (key == 27) tablero.cancelarSeleccion(); //Escape para cancelar seleccion
-	if (key == 'v') arena.desactiva();
+	if (key == 27) {
+		tablero.cancelarSeleccion(); //Escape para cancelar seleccion
+		cursor.setBloqueado(false);
+		cursor2.setBloqueado(false);
+		if (key == 'v') arena.desactiva();
+	}
 }
 
 void Mundo::mueve()

@@ -6,6 +6,7 @@ class Cursor
 {
 	Pos posicion;   // casilla donde se encuentra el cursor ahora mismo
 	unsigned char cr, cg, cb;
+	bool bloqueado = false;
 
 public:
 	friend class Tablero;
@@ -17,4 +18,5 @@ public:
 	void moverFlechas(int key);          // flechas del teclado 
 	void dibuja() const;
 	Pos  getPosicion() const { return posicion; }
+	void setBloqueado(bool b) { bloqueado = b; }
 };

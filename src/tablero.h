@@ -21,6 +21,7 @@ public:
 	
 	Pieza* getPieza(Pos p) const;
 	bool   estaOcupada(Pos p) const;
+	bool piezaBloqueada(Pos p);
 
 	bool gestionarEntrada(Pos cursor, int& turno);
 	void cancelarSeleccion();
