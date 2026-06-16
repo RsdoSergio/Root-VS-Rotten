@@ -24,7 +24,11 @@ void Cursor::dibuja() const
 	float x = posicion.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
 	float y = posicion.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
 
+	if (bloqueado)
+		glColor3ub(255, 0, 0);
+	else
 	glColor3ub(cr, cg, cb);
+
 	glLineWidth(3.5f);
 	glBegin(GL_LINE_LOOP);
 	glVertex3f(x, y, 0);

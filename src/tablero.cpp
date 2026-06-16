@@ -277,6 +277,12 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
 	return false; // No se ha movido
 }
 
+bool Tablero::piezaBloqueada(Pos p) {
+	Pieza* pieza = getPieza(p);
+	if (pieza == nullptr) return false;
+	return movimientosValidos(p).empty();
+}
+
 void Tablero::cancelarSeleccion() {
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
