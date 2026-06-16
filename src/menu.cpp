@@ -119,28 +119,28 @@ static void dibujaCreditos()
 
 	ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
 	ETSIDI::setFont("fuentes/texto.ttf", 64);
-	ETSIDI::printxy("CREDITOS", -7.5f, 10.5f);
+	ETSIDI::printxy("CREDITOS", -8.5f, 10.5f);
 
 	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
-	ETSIDI::setFont("fuentes/texto.ttf", 30);
-	ETSIDI::printxy("Desarrollo:", -18.0f, 7.5f);
+	ETSIDI::setFont("fuentes/texto.ttf", 35);
+	ETSIDI::printxy("Desarrollo:", -6.0f, 7.5f);
 
 	ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
 	ETSIDI::setFont("fuentes/texto.ttf", 24);
-	ETSIDI::printxy("Emmanuel Molina", -18.0f, 5.5f);
-	ETSIDI::printxy("Mauricio Quinchuela", -18.0f, 3.5f);
-	ETSIDI::printxy("Pablo Paz", -18.0f, 1.5f);
-	ETSIDI::printxy("Tomás Estevez", -18.0f, -1.5f);
-	ETSIDI::printxy("Sergio Rosado", -18.0f, -3.5f);
+	ETSIDI::printxy("Emmanuel Molina", -6.0f, 5.5f);
+	ETSIDI::printxy("Mauricio Quinchuela", -8.0f, 2.5f);
+	ETSIDI::printxy("Pablo Paz", -4.0f, -1.5f);
+	ETSIDI::printxy("Tomas Estevez", -5.0f, -4.5f);
+	ETSIDI::printxy("Sergio Rosado", -5.0f, -7.5f);
 
 	ETSIDI::setTextColor(0.4f, 0.6f, 1.0f);
 	ETSIDI::setFont("fuentes/texto.ttf", 22);
-	ETSIDI::printxy("ETSIDI - UPM  |  Informatica Industrial", -11.0f, -10.5f);
+	ETSIDI::printxy("ETSIDI - UPM  |  Informatica Industrial", -12.0f, -10.5f);
 
 	// Volver
 	ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
 	ETSIDI::setFont("fuentes/texto.ttf", 20);
-	ETSIDI::printxy("ESC - Volver al menu", -5.0f, -14.5f);
+	ETSIDI::printxy("ESC - Volver al menu", -6.0f, -14.5f);
 
 	glColor3ub(255, 255, 255);
 }
