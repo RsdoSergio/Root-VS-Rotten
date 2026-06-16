@@ -186,31 +186,23 @@ void Menu::dibujaPausa(int opcion) const
 	ETSIDI::setTextColor(1.f, 1.f, 1.f);
 	ETSIDI::printxy("PAUSA", -7.0f, 4.0f);
 
-	if (opcion == 0)
-	{
-		ETSIDI::setTextColor(0.85f, 0.85f, 0.f);  // amarillo = seleccionado
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-	}
-	else
-	{
-		ETSIDI::setTextColor(1.f, 1.f, 1.f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-	}
+	OpcionMenu opciones[] = {
+		{ "CONTINUAR", -7.6f, -3.0f },
+		{ "SALIR",     -4.2f, -6.5f }
+	};
+	int numOpciones = 2;
 
-	ETSIDI::printxy("CONTINUAR", -7.6f, -3.f);
-
-	if (opcion == 1)
-	{
-		ETSIDI::setTextColor(0.85f, 0.85f, 0.f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
+	for (int i = 0; i < numOpciones; i++) {
+		if (i == opcion) {
+			ETSIDI::setTextColor(0.85f, 0.85f, 0.f);
+			ETSIDI::setFont("fuentes/texto.ttf", 48);
+		}
+		else {
+			ETSIDI::setTextColor(1.f, 1.f, 1.f);
+			ETSIDI::setFont("fuentes/texto.ttf", 44);
+		}
+		ETSIDI::printxy(opciones[i].texto, opciones[i].x, opciones[i].y);
 	}
-	else
-	{
-		ETSIDI::setTextColor(1.f, 1.f, 1.f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-	}
-
-	ETSIDI::printxy("SALIR", -4.2f, -6.5f);
 }
 
 void Menu::tecla(unsigned char key)
