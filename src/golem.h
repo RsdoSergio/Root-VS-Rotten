@@ -10,7 +10,7 @@ public:
             10.0,  // fuerza alta
             3.0,   // velocidad baja
            1.2,   // recarga lenta
-            2, //rad de mov
+            1, //rad de mov
             b, pos) {}
 
     void dibujaTablero(float x, float y) const override {

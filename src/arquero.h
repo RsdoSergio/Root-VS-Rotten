@@ -13,7 +13,7 @@ public:
             5.0,   // Daño medio
             4.5,   // Vel. movimiento media
             0.6,   // Enfriamiento bajo
-            3, //rad de mov
+            2, //rad de mov
             b, pos),
         velocidadProyectil(8.0) {} // El proyectil viaja más rápido que la propia pieza
 
@@ -35,4 +35,5 @@ public:
         return bando == Bando::planta ? "Guisantralladora" : "Pertigador";
     }
     void usarAtaqueSecundario() override {};
+    bool puedeDiagonal() const override { return true; };
 };

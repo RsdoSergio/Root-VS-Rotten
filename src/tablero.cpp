@@ -165,7 +165,7 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
 			{1,0},{-1,0},{0,1},{0,-1},   // horizontal y vertical
 			{1,1},{1,-1},{-1,1},{-1,-1}  // diagonales (solo vuelo)
 		};
-		int numDirs = (tipo == TipoMovimiento::TIERRA) ? 4 : 8;
+		int numDirs = (tipo == TipoMovimiento::VUELO || p->puedeDiagonal()) ? 8 : 4; //numero de direcciones ahora depende tambien de puede diagonal
 
 		for (int d = 0; d < numDirs; d++) {
 			for (int i = 1; i <= radio; i++) {

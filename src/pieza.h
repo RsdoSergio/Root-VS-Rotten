@@ -57,6 +57,8 @@ public:
 
     virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
 
+    virtual bool puedeDiagonal() const { return false; } //implementado para que las piezas de tierra se puedan mover en diagonales
+
     virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 
     virtual ~Pieza() {} // Imprescindible en jerarquías
