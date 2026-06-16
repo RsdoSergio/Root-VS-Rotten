@@ -4,6 +4,12 @@
 extern float G_XMAX;
 extern float G_YMAX;
 
+struct OpcionMenu {
+	const char* texto;
+	float x;
+	float y;
+};
+
 static void dibujaPrincipal(int opcion)
 {
 	glEnable(GL_TEXTURE_2D);
@@ -28,52 +34,24 @@ static void dibujaPrincipal(int opcion)
 	ETSIDI::setFont("fuentes/titulo.ttf", 85);
 	ETSIDI::printxy("Root VS Rotten", -21.5f, 8.0f);
 
-	//JUGAR
-	if (opcion == 0) {
-		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("JUGAR", -4.5f, 1.5f);
-	}
-	else {
-		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("JUGAR", -4.f, 1.5f);
-	}
+	OpcionMenu opciones[] = {
+		{ "JUGAR",         -4.5f,  1.5f },
+		{ "INSTRUCCIONES", -9.5f, -2.5f },
+		{ "CREDITOS",      -6.0f, -5.5f },
+		{ "SALIR",         -4.0f, -8.0f }
+	};
+	int numOpciones = 4;
 
-	//INSTRUCCIONES
-	if (opcion == 1) {
-		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("INSTRUCCIONES", -9.5f, -2.5f);
-	}
-	else {
-		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("INSTRUCCIONES", -9.0f, -2.5f);
-	}
-
-	//CREDITOS
-	if (opcion == 2) {
-		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("CREDITOS", -6.f, -5.5f);
-	}
-	else {
-		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("CREDITOS", -6.f, -5.5f);
-	}
-
-	//SALIR
-	if (opcion == 3) {
-		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("SALIR", -4.f, -8.f);
-	}
-	else {
-		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("SALIR", -4.f, -8.f);
+	for (int i = 0; i < numOpciones; i++) {
+		if (i == opcion) {
+			ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
+			ETSIDI::setFont("fuentes/texto.ttf", 48);
+		}
+		else {
+			ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
+			ETSIDI::setFont("fuentes/texto.ttf", 44);
+		}
+		ETSIDI::printxy(opciones[i].texto, opciones[i].x, opciones[i].y);
 	}
 
 	ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
