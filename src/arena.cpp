@@ -91,8 +91,8 @@ void arena::dibujaHUD() const
 	glVertex2d(0.0, HUD_TECHO);
 	glEnd();
 
-	double prop1 = (vidaMaxPieza1 > 0.0) ? (vidaPieza1 / vidaMaxPieza1) : 0.0;
-	double prop2 = (vidaMaxPieza2 > 0.0) ? (vidaPieza2 / vidaMaxPieza2) : 0.0;
+	double prop1 = (pieza1 && pieza1->getVidaMax() > 0.0) ? (pieza1->getVida() / pieza1->getVidaMax()) : 0.0;
+	double prop2 = (pieza2 && pieza2->getVidaMax() > 0.0) ? (pieza2->getVida() / pieza2->getVidaMax()) : 0.0;
 
 	const double margen = 0.3;
 	const double barAncho = SEMIANCHO - margen * 2.0;
@@ -185,34 +185,44 @@ void arena::dibujaPiezasArena() const
 //
 // Mueve los proyectiles activos
 // Sigue el mismo patron que Mundo::mueve en el juego de referencia
+
 void arena::mueve(double dt)
 {
 	if (!activo) return;
 
-	auto mover = [&](Pieza* p) 
+	auto mover = [&](Pieza* p)
 		{
-		if (!p) return;
-		PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
-		if (pt) pt->actualizarArena(dt);
-		PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
-		if (pv) pv->actualizarArena(dt);
+			if (!p) return;
+			PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
+			if (pt) pt->actualizarArena(dt);
+			PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
+			if (pv) pv->actualizarArena(dt);
 		};
 
 	mover(pieza1);
-	Interaccion::choque(*pieza1, caja);
+	if (pieza1) Interaccion::choque(*pieza1, caja);
 	mover(pieza2);
-	Interaccion::choque(*pieza2, caja);
+	if (pieza2) Interaccion::choque(*pieza2, caja);
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
 	tiempoDisparo2 += dt;
 
-	// Mover todos los proyectiles activos
-	for (Proyectil* p : proyectil1) p->mueve(dt);
-	for (Proyectil* p : proyectil2) p->mueve(dt);
+	// Mueve los proyectiles y comprueba colisión con la pieza contraria
+	for (Proyectil* pr : proyectil1) {
+		pr->mueve(dt);
+		if (pieza2 && pieza2->estaViva())
+			Interaccion::choque(*pr, *pieza2);
+	}
+	for (Proyectil* pr : proyectil2) {
+		pr->mueve(dt);
+		if (pieza1 && pieza1->estaViva())
+			Interaccion::choque(*pr, *pieza1);
+	}
 
-
-
+	// Fin de combate
+	if (pieza1 && !pieza1->estaViva()) desactiva();
+	if (pieza2 && !pieza2->estaViva()) desactiva();
 }
 
 void arena::tecla(unsigned char key)
@@ -223,14 +233,14 @@ void arena::tecla(unsigned char key)
 	{
 		Vector2D pos = pieza1->getPosArena();
 		Vector2D vel(VEL_PROYECTIL, 0.0);
-		proyectil1.push_back(new Proyectil(pos, vel, 5.0));
+		proyectil1.push_back(new Proyectil(pos, vel, pieza1->getFuerza()));
 		tiempoDisparo1 = 0.0;
 	}
 	if ((key == 'k' || key == 'K') && tiempoDisparo2 >= pieza2->getIntervaloAtaque())
 	{
 		Vector2D pos = pieza2->getPosArena();
 		Vector2D vel(-VEL_PROYECTIL, 0.0);
-		proyectil2.push_back(new Proyectil(pos, vel, 5.0));
+		proyectil2.push_back(new Proyectil(pos, vel, pieza2->getFuerza()));
 		tiempoDisparo2 = 0.0;
 	}
 }

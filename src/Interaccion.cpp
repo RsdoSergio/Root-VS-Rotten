@@ -14,3 +14,19 @@ void Interaccion::choque(Pieza& p, const Caja& c)
 
     p.posArena.setValores(x, y);
 }
+
+void Interaccion::choque(Proyectil& pr, Pieza& p)
+{
+    if (!pr.getEstado()) return; // ya desactivado, ignorar
+
+    constexpr double radioPieza = TAM_PIEZA / 2.0;
+    constexpr double radioProyectil = 0.1;
+    double dx = pr.getPosProyectil().getX() - p.posArena.getX();
+    double dy = pr.getPosProyectil().getY() - p.posArena.getY();
+    double distancia = std::sqrt(dx * dx + dy * dy);
+    if (distancia < (radioPieza + radioProyectil))
+    {
+        p.recibirDanio(pr.getDamageProyectil());
+        pr.desactivar();
+    }
+}

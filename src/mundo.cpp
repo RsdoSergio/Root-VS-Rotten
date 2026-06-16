@@ -99,11 +99,12 @@ void Mundo::tecla(unsigned char key)
 void Mundo::mueve()
 {
 //<<<<<<< HEAD
-	ListaPieza.eliminarMuertas(); // de momento vacía
+	
 //=======
 	if (!enPartida || enPausa) return;
 	if (arena.estaActiva()) arena.mueve(0.025); // para no mover los poryectiles si no estan en la arena
 //>>>>>>> desarrollo
+	//ListaPieza.eliminarMuertas(); // de momento vacía //no llamar. borra de memoria la pieza. Pero el tablero sigue teniendo un puntero a esa misma memoria, y cuando intenta dibujarla, crashea. 
 }
 
 //Metodo que gestiona el dibujo de la simulacion
