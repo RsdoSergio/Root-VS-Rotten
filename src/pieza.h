@@ -63,6 +63,8 @@ public:
     virtual std::string getNombre() const { return "Pieza"; }
     virtual void usarAtaqueSecundario() {};
 
+    virtual std::string getRutaSprite() const { return ""; }
+
     virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
 
     virtual bool puedeDiagonal() const { return false; } //implementado para que las piezas de tierra se puedan mover en diagonales
