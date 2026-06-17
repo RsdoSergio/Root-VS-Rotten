@@ -3,6 +3,7 @@
 #include<cstdbool>
 class Proyectil
 {
+	friend class Interaccion; 
     Vector2D posicion;
     Vector2D velocidad;
     double damage;

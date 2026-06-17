@@ -92,7 +92,7 @@ void Mundo::tecla(unsigned char key)
 
 void Mundo::mueve()
 {
-	ListaPieza.eliminarMuertas(); // de momento vacía
+	// ListaPieza.eliminarMuertas(); // de momento vacía (PABLO HA PUESTO: no llamar. borra de memoria la pieza. Pero el tablero sigue teniendo un puntero a esa misma memoria, y cuando intenta dibujarla, crashea.)
 	if (!enPartida || enPausa) return;
 	if (arena.estaActiva()) arena.mueve(0.025); // para no mover los poryectiles si no estan en la arena
 
