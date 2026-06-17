@@ -58,7 +58,11 @@ public:
 		activo = true;
 		indiceFondo = 1 + rand() % 9;
 	}
-	void desactiva() { activo = false; }
+	void desactiva() {
+		activo = false;
+		pieza1 = nullptr;
+		pieza2 = nullptr;
+	}
 	bool estaActiva() const { return activo; }
 	void fDatos( Pieza& p1,  Pieza& p2);
 
