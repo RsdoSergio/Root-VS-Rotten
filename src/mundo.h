@@ -27,7 +27,7 @@ class Mundo
 	bool    enPausa = false;
 	Caja caja;
 	int opcionPausa = 0;
-
+	
 public:
 	void inicializa();
 	void dibuja();

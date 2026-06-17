@@ -353,3 +353,25 @@ bool Tablero::actualizarAnimacion(double dt)
 	}
 	return false;
 }
+
+void Tablero::resolverCombate(bool plantaGana)
+{
+	Pieza* atacante = casillas[posOrigen.fila][posOrigen.col].pieza;
+	Pieza* defensor = casillas[posDestino.fila][posDestino.col].pieza;
+
+	bool atacanteEsPlanta = (atacante && atacante->getBando() == Bando::planta);
+	bool ganadorEsAtacante = (plantaGana == atacanteEsPlanta);
+
+	if (ganadorEsAtacante)
+	{
+		// Gana el atacante: ocupa la casilla del defensor
+		casillas[posDestino.fila][posDestino.col].pieza = atacante;
+		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
+		atacante->setCasilla(posDestino);
+	}
+	else
+	{
+		// Gana el defensor: el atacante desaparece, defensor se queda
+		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
+	}
+}

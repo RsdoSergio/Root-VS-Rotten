@@ -33,6 +33,7 @@ public:
 	bool estaAnimando() const { return animando; }
 	bool actualizarAnimacion(double dt);  // llamada en mueve()
 	bool combatePendiente = false;
+	void resolverCombate(bool atacanteGana); 
 
 private:
 
