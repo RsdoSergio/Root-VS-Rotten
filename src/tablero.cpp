@@ -233,28 +233,31 @@ bool Tablero::moverPieza(Pos origen, Pos destino) {
 
 	bool hayCombate = (personaje2 != nullptr); // ¿Hay enemigo?
 
-	if (!hayCombate) { //Movimiento normal
+	//posición visual de casilla de inicio (convierte fila y columna del tablero a coordenadas de pantalla)
+	animX = origen.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+	animY = origen.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+
+	//posición visual de casilla de destino
+	destX = destino.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+	destY = destino.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+
+	piezaAnimando = p;
+	animando = true;
+
+	if (hayCombate) { //Hay combate, guardo posiciones
+		posOrigen = origen;
+		posDestino = destino;
+		combatePendiente = true;
+		return false;
+	}
+	else
+	{
 		casillas[destino.fila][destino.col].pieza = p;
 		casillas[origen.fila][origen.col].pieza = nullptr;
 		p->setCasilla(destino);
-
-		//posición visual de casilla de inicio (convierte fila y columna del tablero a coordenadas de pantalla)
-		animX = origen.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
-		animY = origen.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
-
-		//posición visual de casilla de destino
-		destX = destino.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
-		destY = destino.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
-
-		piezaAnimando = p;
-		animando = true;
+		combatePendiente = false;
+		return false;
 	}
-	else { //Hay combate, guardo posiciones
-		posOrigen = origen;
-		posDestino = destino;
-	}
-
-	return hayCombate;
 }
 
 bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
@@ -305,9 +308,9 @@ void Tablero::dibuja(const Cursor& cursor) {
 
 constexpr float VEL_ANIMACION = 3.0f; // movimiento casillas por segundo
 
-void Tablero::actualizarAnimacion(double dt)
+bool Tablero::actualizarAnimacion(double dt)
 {
-	if (!animando || piezaAnimando == nullptr) return;
+	if (!animando || piezaAnimando == nullptr) return false;
 
 	float dx = destX - animX;
 	float dy = destY - animY;
@@ -327,7 +330,14 @@ void Tablero::actualizarAnimacion(double dt)
 	}
 	else
 	{
+		//animacion terminada
 		animando = false;
 		piezaAnimando = nullptr;
+		if (combatePendiente)
+		{
+			combatePendiente = false;
+			return true; //empieza el combate
+		}
 	}
+	return false;
 }

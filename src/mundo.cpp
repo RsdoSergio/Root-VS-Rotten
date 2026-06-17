@@ -95,7 +95,10 @@ void Mundo::mueve()
 	ListaPieza.eliminarMuertas(); // de momento vacía
 	if (!enPartida || enPausa) return;
 	if (arena.estaActiva()) arena.mueve(0.025); // para no mover los poryectiles si no estan en la arena
-	tablero.actualizarAnimacion(0.025);
+
+	bool iniciarCombate = tablero.actualizarAnimacion(0.025); //si la animación termina y habia combate pendiente -> iniciarlo ahora
+	if (iniciarCombate)
+		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
 }
 
 //Metodo que gestiona el dibujo de la simulacion

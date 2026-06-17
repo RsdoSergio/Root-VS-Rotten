@@ -31,7 +31,8 @@ public:
 	Pieza* getPersonaje2() const { return personaje2; }
 
 	bool estaAnimando() const { return animando; }
-	void actualizarAnimacion(double dt);  // llamada en mueve()
+	bool actualizarAnimacion(double dt);  // llamada en mueve()
+	bool combatePendiente = false;
 
 private:
 
