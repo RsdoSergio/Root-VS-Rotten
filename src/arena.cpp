@@ -221,8 +221,8 @@ void arena::mueve(double dt)
 	}
 
 	// Fin de combate
-	if (pieza1 && !pieza1->estaViva()) desactiva();
-	if (pieza2 && !pieza2->estaViva()) desactiva();
+	if (pieza1 && !pieza1->estaViva()) { plantaGano = false;  desactiva(); } // murió pieza1, ganó pieza2
+	if (pieza2 && !pieza2->estaViva()) { plantaGano = true; desactiva(); } // murió pieza2, ganó pieza1
 }
 
 void arena::tecla(unsigned char key)
