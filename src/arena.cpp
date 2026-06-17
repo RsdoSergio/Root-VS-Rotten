@@ -175,8 +175,8 @@ void arena::fDatos( Pieza& p1,  Pieza& p2)
 void arena::dibujaPiezasArena() const
 {
 	if (pieza1 == nullptr || pieza2 == nullptr) return;
-	pieza1->dibujaTablero(pieza1->getPosArena().getX(), pieza1->getPosArena().getY());
-	pieza2->dibujaTablero(pieza2->getPosArena().getX(), pieza2->getPosArena().getY());
+	pieza1->dibujaArena(pieza1->getPosArena().getX(), pieza1->getPosArena().getY());
+	pieza2->dibujaArena(pieza2->getPosArena().getX(), pieza2->getPosArena().getY());
 }
 
 //SE AÑADEN LOS PROYECTILES EN ARENA PARA PROBAR SU FUNCIONAMIENTO POSTERIORMENTE SE TIENE QUE CAMBIAR
