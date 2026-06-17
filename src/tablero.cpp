@@ -41,7 +41,9 @@ void Tablero::inicializaTablero() {
 	};
 
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
-		for (int j = 0; j < COLS; j++) {
+		for (int j = 0; j < COLS; j++) 
+		 {
+			patronOriginal[i][j] = patron[i][j];
 			Casilla::TipoCasilla tipo;
 
 			if (((i + 1 == 1 || i + 1 == 9) && j + 1 == 5) || ((i + 1 == 1 || i + 1 == 5 || i + 1 == 9) && i + 1 == 5))
@@ -373,5 +375,41 @@ void Tablero::resolverCombate(bool plantaGana)
 	{
 		// Gana el defensor: el atacante desaparece, defensor se queda
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
+	}
+}
+
+void Tablero::avanzarCiclo() {
+	using byte = unsigned char;
+
+	// Colores base
+	byte colorPlanta[3] = { 90, 180, 80 };   // verde
+	byte colorZombi[3] = { 90, 30, 120 };   // morado
+	byte colorNeutral[3] = { 200, 200, 200 }; // gris
+
+	// Intercambia: casillas 0 (plantas) pasan a ser 1 (zombis) y viceversa
+	// Las casillas 2 (neutral) no cambian
+	haciaPlanta = !haciaPlanta;
+
+	for (int i = 0; i < FILAS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			if (casillas[i][j].tipo == Casilla::PODER) continue; // las power squares no cambian
+
+			int p = patronOriginal[i][j];
+			if (p == 2) continue; // las neutrales no cambian
+
+			if (haciaPlanta) {
+				// las que eran de zombi pasan a planta y viceversa
+				if (p == 0)
+					casillas[i][j].setColor(colorZombi[0], colorZombi[1], colorZombi[2]);
+				else
+					casillas[i][j].setColor(colorPlanta[0], colorPlanta[1], colorPlanta[2]);
+			}
+			else {
+				if (p == 0)
+					casillas[i][j].setColor(colorPlanta[0], colorPlanta[1], colorPlanta[2]);
+				else
+					casillas[i][j].setColor(colorZombi[0], colorZombi[1], colorZombi[2]);
+			}
+		}
 	}
 }

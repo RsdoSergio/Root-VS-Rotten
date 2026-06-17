@@ -80,6 +80,8 @@ void Mundo::tecla(unsigned char key)
 			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
 			arena.activa();
 		}
+		if (turno % 5 == 0)
+			tablero.avanzarCiclo();
 	}
 
 	if (key == 27) {

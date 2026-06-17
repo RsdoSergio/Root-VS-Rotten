@@ -34,6 +34,7 @@ public:
 	bool actualizarAnimacion(double dt);  // llamada en mueve()
 	bool combatePendiente = false;
 	void resolverCombate(bool atacanteGana); 
+	void avanzarCiclo(); // llamar cada 5 turnos
 
 private:
 
@@ -62,4 +63,8 @@ private:
 	float animY = 0.0f;
 	float destX = 0.0f;
 	float destY = 0.0f;
+	int ciclo = 0;        // contador de turnos
+	bool haciaPlanta = true; // dirección del ciclo
+	int patronOriginal[FILAS][COLS]; // guardamos el patrón inicial
+
 };
