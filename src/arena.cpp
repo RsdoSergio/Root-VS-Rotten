@@ -4,7 +4,6 @@
 #include"piezavuelo.h"
 #include "interaccion.h"
 
-
 void arena::dibujaFondo() const
 {
 	glColor3ub(0, 0, 0);
@@ -133,6 +132,12 @@ void arena::dibujaHUD() const
 	glEnd();
 }
 
+void arena::dibujaObstaculos() const
+{
+	for (int i = 0; i < NUM_OBSTACULOS; i++)
+		obstaculos[i].dibuja();
+}
+
 void arena::dibuja() const
 {
 	if (!activo) return;
@@ -140,11 +145,12 @@ void arena::dibuja() const
 	dibujaInterior();
 	dibujaMarco();
 	dibujaHUD();
+	dibujaObstaculos();
 	dibujaPiezasArena();
 	dibujaProyectiles();
 }
 
-void arena::fDatos( Pieza& p1,  Pieza& p2)
+void arena::fDatos(Pieza& p1, Pieza& p2)
 {
 	if (p1.getBando() == Bando::planta) //esto hará que la pieza a la izquierda siempre sea planta
 	{
@@ -152,19 +158,16 @@ void arena::fDatos( Pieza& p1,  Pieza& p2)
 		pieza2 = &p2;
 	}
 	else {
-
 		pieza1 = &p2;
 		pieza2 = &p1;
 	}
-	
-	
+
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
 	vidaPieza1 = p1.getVida();
 	vidaPieza2 = p2.getVida();
 	vidaMaxPieza1 = p1.getVidaMax();
 	vidaMaxPieza2 = p2.getVidaMax();
-	
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
@@ -203,6 +206,13 @@ void arena::mueve(double dt)
 	if (pieza1) Interaccion::choque(*pieza1, caja);
 	mover(pieza2);
 	if (pieza2) Interaccion::choque(*pieza2, caja);
+
+	for (int i = 0; i < NUM_OBSTACULOS; i++)
+	{
+		obstaculos[i].update(dt);
+		if (obstaculos[i].listo())
+			reposicionarObstaculo(obstaculos[i]);
+	}
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
@@ -252,14 +262,30 @@ void arena::dibujaProyectiles() const
 	for (Proyectil* p : proyectil2) p->dibuja();
 }
 
+void arena::reposicionarObstaculo(Obstaculo& o)
+{
+	double margenX = OBS_ANCHO / 2.0 + 1.0;
+	double margenY = OBS_ALTO / 2.0 + 1.0;
+	double xMin = caja.getXmin() + margenX;
+	double xMax = caja.getXMAX() - margenX;
+	double yMin = caja.getYmin() + margenY;
+	double yMax = caja.getYMAX() - margenY;
+
+	double x = xMin + (double)rand() / RAND_MAX * (xMax - xMin);
+	double y = yMin + (double)rand() / RAND_MAX * (yMax - yMin);
+
+	double vida = OBS_VIDA_MIN + (double)rand() / RAND_MAX * (OBS_VIDA_MAX - OBS_VIDA_MIN);
+	double espera = OBS_ESPERA_MIN + (double)rand() / RAND_MAX * (OBS_ESPERA_MAX - OBS_ESPERA_MIN);
+
+	o.activar(x, y, vida, espera);
+}
+
 void arena::MoverPiezaPlanta(unsigned char key)
 {
-	
 }
 
 void arena::MoverPiezaZombi(int key)
 {
-	
 }
 
 void arena::recibirMovimiento(int jugador, int dir, bool estado)

@@ -34,6 +34,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\mundo.cpp" />
+    <ClCompile Include="src\obstaculo.cpp" />
     <ClCompile Include="src\pared.cpp" />
     <ClCompile Include="src\peon.cpp" />
     <ClCompile Include="src\pieza.cpp" />
@@ -65,6 +66,7 @@
     <ClInclude Include="src\audio.h" />
     <ClInclude Include="src\menu.h" />
     <ClInclude Include="src\mundo.h" />
+    <ClInclude Include="src\obstaculo.h" />
     <ClInclude Include="src\pared.h" />
     <ClInclude Include="src\peon.h" />
     <ClInclude Include="src\pieza.h" />
