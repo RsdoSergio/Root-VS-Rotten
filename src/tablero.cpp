@@ -41,18 +41,27 @@ void Tablero::inicializaTablero() {
 		{85, 140,  40},  // 2: verde medio
 	};
 
+	byte colorPoder[3] = { 255, 215, 0 };
+
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
 		for (int j = 0; j < COLS; j++) {
 			Casilla::TipoCasilla tipo;
 
-			if (((i + 1 == 1 || i + 1 == 9) && j + 1 == 5) || ((i + 1 == 1 || i + 1 == 5 || i + 1 == 9) && i + 1 == 5))
+			if ((i == 4 && j == 4) ||  // centro del tablero
+				(i == 0 && j == 4) ||  // arriba centro
+				(i == 8 && j == 4) ||  // abajo centro
+				(i == 4 && j == 0) ||  // izquierda centro
+				(i == 4 && j == 8))    // derecha centro
 				tipo = Casilla::PODER;
 			else
 				tipo = Casilla::NORMAL;
 
 			// Guardar color según patrón (dentro de casilla)
 			int p = patron[i][j];
-			casillas[i][j].inicializa(i, j, tipo, colores[p][0], colores[p][1], colores[p][2]);
+			if (tipo == Casilla::PODER)
+				casillas[i][j].inicializa(i, j, tipo, colorPoder[0], colorPoder[1], colorPoder[2]);
+			else
+				casillas[i][j].inicializa(i, j, tipo, colores[p][0], colores[p][1], colores[p][2]);
 		}
 	}
 }
