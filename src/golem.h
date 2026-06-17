@@ -8,26 +8,19 @@ public:
         : PiezaTierra(
             24.0, // vida muy alta
             10.0,  // fuerza alta
-            3.0,   // velocidad baja
+            4.0,   // velocidad baja
            1.2,   // recarga lenta
             1, //rad de mov
             b, pos) {}
 
-    void dibujaTablero(float x, float y) const override {
-        // Marrón claro para LUZ, marrón oscuro para OSCURIDAD
-        if (bando == Bando::planta) glColor3f(0.8f, 0.6f, 0.3f);
-        else                     glColor3f(0.5f, 0.3f, 0.1f);
-        glBegin(GL_POLYGON);
-        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
-        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
-        glEnd();
-    }
-
+    void dibujaTablero(float x, float y) const override;
+    void dibujaArena(float x, float y) const override;
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Bonk Choy" : "Yeti";
     }
     void usarAtaqueSecundario() override {};
+    
+    std::string getRutaSprite() const override;
+
 };

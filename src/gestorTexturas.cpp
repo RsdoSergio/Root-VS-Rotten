@@ -1,6 +1,7 @@
 #include "gestorTexturas.h"
 #include "ETSIDI.h"
 #include "freeglut.h"
+#include"pieza.h"
 
 void precargarTexturas() {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -63,4 +64,37 @@ void precargarTexturas() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	ETSIDI::printxy("Cargando... 100%", -10.0f, 0.0f);
 	glutSwapBuffers();
+}
+
+
+void dibujarSprite(const std::string& ruta, float x, float y, float tam,
+	DirMovimiento dir, int totalFrames)
+{
+	if (ruta.empty()) return;
+
+	int frame = 0;
+	switch (dir) {
+	case DirMovimiento::ESTE:  frame = 1; break;
+	case DirMovimiento::OESTE: frame = 2; break;
+	case DirMovimiento::NORTE: frame = 3; break;
+	case DirMovimiento::SUR:   frame = 4; break;
+	default:                   frame = 0; break;
+	}
+
+	float u0 = frame / (float)totalFrames;
+	float u1 = (frame + 1) / (float)totalFrames;
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture(ruta.c_str()).id);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(u0, 1.0f); glVertex3f(x - tam, y - tam, 0);
+	glTexCoord2f(u1, 1.0f); glVertex3f(x + tam, y - tam, 0);
+	glTexCoord2f(u1, 0.0f); glVertex3f(x + tam, y + tam, 0);
+	glTexCoord2f(u0, 0.0f); glVertex3f(x - tam, y + tam, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
 }

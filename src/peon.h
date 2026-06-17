@@ -1,6 +1,7 @@
 #pragma once
 #include "piezaTierra.h"
 #include<ETSIDI.h>
+#include"gestorTexturas.h"
 
 // Pieza básica: rápida pero débil. Bando LUZ = Planta, Bando OSCURIDAD = Zombi
 class Peon : public PiezaTierra {
@@ -12,12 +13,14 @@ public:
             7.0,   // velocidad alta
             0.4,   // recarga rápida
             1, //rad de mov
-            b, pos) {}
+            b, pos) {};
 
+    std::string getRutaSprite() const override;
     void dibujaTablero(float x, float y) const override;
     void dibujaArena(float x, float y) const override;
 
-    std::string getNombre() const override {
+    std::string getNombre() const override 
+    {
         return bando == Bando::planta ? "Seta Solar" : "Zombi";
     }
     void usarAtaqueSecundario() override {};
