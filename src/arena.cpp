@@ -1,6 +1,8 @@
 #include "arena.h"
 #include "freeglut.h"
 #include "piezatierra.h"
+#include"piezavuelo.h"
+#include "interaccion.h"
 
 
 void arena::dibujaFondo() const
@@ -89,8 +91,8 @@ void arena::dibujaHUD() const
 	glVertex2d(0.0, HUD_TECHO);
 	glEnd();
 
-	double prop1 = (vidaMaxPieza1 > 0.0) ? (vidaPieza1 / vidaMaxPieza1) : 0.0;
-	double prop2 = (vidaMaxPieza2 > 0.0) ? (vidaPieza2 / vidaMaxPieza2) : 0.0;
+	double prop1 = (pieza1 && pieza1->getVidaMax() > 0.0) ? (pieza1->getVida() / pieza1->getVidaMax()) : 0.0;
+	double prop2 = (pieza2 && pieza2->getVidaMax() > 0.0) ? (pieza2->getVida() / pieza2->getVidaMax()) : 0.0;
 
 	const double margen = 0.3;
 	const double barAncho = SEMIANCHO - margen * 2.0;
@@ -144,14 +146,25 @@ void arena::dibuja() const
 
 void arena::fDatos( Pieza& p1,  Pieza& p2)
 {
+	if (p1.getBando() == Bando::planta) //esto hará que la pieza a la izquierda siempre sea planta
+	{
+		pieza1 = &p1;
+		pieza2 = &p2;
+	}
+	else {
+
+		pieza1 = &p2;
+		pieza2 = &p1;
+	}
+	
+	
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
 	vidaPieza1 = p1.getVida();
 	vidaPieza2 = p2.getVida();
 	vidaMaxPieza1 = p1.getVidaMax();
 	vidaMaxPieza2 = p2.getVidaMax();
-	pieza1 = &p1;
-	pieza2 = &p2;
+	
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
@@ -172,30 +185,44 @@ void arena::dibujaPiezasArena() const
 //
 // Mueve los proyectiles activos
 // Sigue el mismo patron que Mundo::mueve en el juego de referencia
+
 void arena::mueve(double dt)
 {
 	if (!activo) return;
 
-	auto mover = [&](Pieza* p) 
+	auto mover = [&](Pieza* p)
 		{
-		if (!p) return;
-		PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
-		if (pt) pt->actualizarArena(dt, caja.getXmin(), caja.getXMAX(), caja.getYmin(), caja.getYMAX());
+			if (!p) return;
+			PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
+			if (pt) pt->actualizarArena(dt);
+			PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
+			if (pv) pv->actualizarArena(dt);
 		};
 
 	mover(pieza1);
+	if (pieza1) Interaccion::choque(*pieza1, caja);
 	mover(pieza2);
+	if (pieza2) Interaccion::choque(*pieza2, caja);
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
 	tiempoDisparo2 += dt;
 
-	// Mover todos los proyectiles activos
-	for (Proyectil* p : proyectil1) p->mueve(dt);
-	for (Proyectil* p : proyectil2) p->mueve(dt);
+	// Mueve los proyectiles y comprueba colisión con la pieza contraria
+	for (Proyectil* pr : proyectil1) {
+		pr->mueve(dt);
+		if (pieza2 && pieza2->estaViva())
+			Interaccion::choque(*pr, *pieza2);
+	}
+	for (Proyectil* pr : proyectil2) {
+		pr->mueve(dt);
+		if (pieza1 && pieza1->estaViva())
+			Interaccion::choque(*pr, *pieza1);
+	}
 
-
-
+	// Fin de combate
+	if (pieza1 && !pieza1->estaViva()) desactiva();
+	if (pieza2 && !pieza2->estaViva()) desactiva();
 }
 
 void arena::tecla(unsigned char key)
@@ -206,14 +233,14 @@ void arena::tecla(unsigned char key)
 	{
 		Vector2D pos = pieza1->getPosArena();
 		Vector2D vel(VEL_PROYECTIL, 0.0);
-		proyectil1.push_back(new Proyectil(pos, vel, 5.0));
+		proyectil1.push_back(new Proyectil(pos, vel, pieza1->getFuerza()));
 		tiempoDisparo1 = 0.0;
 	}
 	if ((key == 'k' || key == 'K') && tiempoDisparo2 >= pieza2->getIntervaloAtaque())
 	{
 		Vector2D pos = pieza2->getPosArena();
 		Vector2D vel(-VEL_PROYECTIL, 0.0);
-		proyectil2.push_back(new Proyectil(pos, vel, 5.0));
+		proyectil2.push_back(new Proyectil(pos, vel, pieza2->getFuerza()));
 		tiempoDisparo2 = 0.0;
 	}
 }
@@ -244,4 +271,7 @@ void arena::recibirMovimiento(int jugador, int dir, bool estado)
 	//solo PiezaTierra tiene setMovimiento por ahora
 	PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);//transformar pieza de clase pieza a clase Piezatierra
 	if (pt) pt->setMovimiento(dir, estado);
+
+	PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
+	if (pv) pv->setMovimiento(dir, estado);
 }

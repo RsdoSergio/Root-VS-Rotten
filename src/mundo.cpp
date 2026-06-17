@@ -9,10 +9,7 @@
 
 void Mundo::inicializa() {
 	tablero.inicializaTablero();
-//<<<<<<< HEAD
 	tablero.colocarPiezasIniciales();  //inicializacion de piezas para el juego
-
-//=======
 
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
@@ -20,11 +17,9 @@ void Mundo::inicializa() {
 			if (p != nullptr)
 				ListaPieza.agregar(p);
 		}
-
 	}
 
 	precargarTexturas();
-//>>>>>>> desarrollo
 
 	//inicializacion de peones para ambos bandos
 	const float TAM = 2.8f; //tener presente el tamaño de cada celda
@@ -58,17 +53,17 @@ void Mundo::tecla(unsigned char key)
 		return;
 	}
 	if (arena.estaActiva()) {
-		
 		if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, true);
 		if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, true);
 		if (key == 'a' || key == 'A') arena.recibirMovimiento(0, DIR_IZQ, true);
 		if (key == 'd' || key == 'D') arena.recibirMovimiento(0, DIR_DCHA, true);
-			
+
 		arena.tecla(key); // disparos,    q/k disparan en la arena
-		
+
 		return;
 	}
 
+	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
 	// Cada cursor se mueve solo durante su turno
 	if (turno == 0) cursor.mover(key);  // WASD
 
@@ -76,25 +71,34 @@ void Mundo::tecla(unsigned char key)
 		// El cursor activo depende del turno
 		Pos posActiva = (turno == 0) ? cursor.getPosicion() : cursor2.getPosicion();
 		bool combate = tablero.gestionarEntrada(posActiva, turno);
+		if (turno == 0)
+			cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
+		else
+			cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
+
 		if (combate) {
 			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
 			arena.activa();
 		}
 	}
 
-	
-	if (key == 27) tablero.cancelarSeleccion(); //Escape para cancelar seleccion
-	if (key == 'v') arena.desactiva();
+	if (key == 27) {
+		tablero.cancelarSeleccion(); //Escape para cancelar seleccion
+		cursor.setBloqueado(false);
+		cursor2.setBloqueado(false);
+		if (key == 'v') arena.desactiva();
+	}
 }
 
 void Mundo::mueve()
 {
-//<<<<<<< HEAD
-	ListaPieza.eliminarMuertas(); // de momento vacía
-//=======
+	// ListaPieza.eliminarMuertas(); // de momento vacía (PABLO HA PUESTO: no llamar. borra de memoria la pieza. Pero el tablero sigue teniendo un puntero a esa misma memoria, y cuando intenta dibujarla, crashea.)
 	if (!enPartida || enPausa) return;
 	if (arena.estaActiva()) arena.mueve(0.025); // para no mover los poryectiles si no estan en la arena
-//>>>>>>> desarrollo
+
+	bool iniciarCombate = tablero.actualizarAnimacion(0.025); //si la animación termina y habia combate pendiente -> iniciarlo ahora
+	if (iniciarCombate)
+		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -134,6 +138,7 @@ void Mundo::teclaEspecial(int key)
 		if (key == GLUT_KEY_RIGHT) arena.recibirMovimiento(1, DIR_DCHA, true);
 		return;
 	}
+	if (tablero.estaAnimando()) return;
 	if (turno == 1) cursor2.moverFlechas(key);
 }
 

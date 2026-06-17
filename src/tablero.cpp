@@ -14,7 +14,6 @@
 #include "listapieza.h"
 #include"cursor.h"
 
-
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
 	// 0 = verde muy claro
@@ -79,11 +78,9 @@ void Tablero::dibujaTablero(const Cursor& cursor) {
 	cursor.dibuja();
 }
 
-
 void Tablero::colocarPiezasIniciales() {
-
 	// --- BANDO LUZ (columna 0 - fila trasera, de esquina a centro) ---
-	
+
 	casillas[0][0].pieza = new Valquiria(Bando::planta, Pos(0, 0));  //A1 esquina
 	casillas[1][0].pieza = new Golem(Bando::planta, Pos(1, 0));      //A2
 	casillas[2][0].pieza = new Unicornio(Bando::planta, Pos(2, 0));  //A3
@@ -95,14 +92,13 @@ void Tablero::colocarPiezasIniciales() {
 	casillas[8][0].pieza = new Valquiria(Bando::planta, Pos(8, 0));  //A9 esquina
 
 	// --- BANDO LUZ (columna 1 - fila delantera) ---
-	
+
 	casillas[0][1].pieza = new Arquero(Bando::planta, Pos(0, 1));   //B1 esquina
-	for (int i = 1; i <= 7; i++)                      
+	for (int i = 1; i <= 7; i++)
 		casillas[i][1].pieza = new Peon(Bando::planta, Pos(i, 1));  //B2-B8 peones
 	casillas[8][1].pieza = new Arquero(Bando::planta, Pos(8, 1));   //B9 esquina
 
 	// --- BANDO OSCURIDAD (columna 8 - fila trasera, simétrico) ---
-	
 
 	casillas[0][8].pieza = new Valquiria(Bando::zombi, Pos(0, 8));
 	casillas[1][8].pieza = new Golem(Bando::zombi, Pos(1, 8));
@@ -115,26 +111,29 @@ void Tablero::colocarPiezasIniciales() {
 	casillas[8][8].pieza = new Valquiria(Bando::zombi, Pos(8, 8));
 
 	// --- BANDO OSCURIDAD (columna 7 - fila delantera, simétrico) ---
-	
+
 	casillas[0][7].pieza = new Arquero(Bando::zombi, Pos(0, 7));
 	for (int i = 1; i <= 7; i++)
 		casillas[i][7].pieza = new Peon(Bando::zombi, Pos(i, 7));
 	casillas[8][7].pieza = new Arquero(Bando::zombi, Pos(8, 7));
-
 }
-
-
 
 void Tablero::dibujaPiezas()
 {
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
 			Pieza* p = casillas[i][j].pieza;
-			if (p != nullptr) {
-				// Centro de la casilla en coordenadas OpenGL
-				float x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
-				float y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
-				p->dibujaTablero(x, y); // Polimorfismo: cada pieza sabe cómo dibujarse
+			if (p != nullptr)
+			{
+				if (animando && p == piezaAnimando) // si es la pieza que se está animando -> usar posición visual
+					p->dibujaTablero(animX, animY);// Polimorfismo: cada pieza sabe cómo dibujarse
+				else
+				{
+					// Centro de la casilla en coordenadas OpenGL
+					float x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+					float y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+					p->dibujaTablero(x, y); // Polimorfismo: cada pieza sabe cómo dibujarse
+				}
 			}
 		}
 	}
@@ -165,7 +164,7 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
 			{1,0},{-1,0},{0,1},{0,-1},   // horizontal y vertical
 			{1,1},{1,-1},{-1,1},{-1,-1}  // diagonales (solo vuelo)
 		};
-		int numDirs = (tipo == TipoMovimiento::TIERRA) ? 4 : 8;
+		int numDirs = (tipo == TipoMovimiento::VUELO || p->puedeDiagonal()) ? 8 : 4; //numero de direcciones ahora depende tambien de puede diagonal
 
 		for (int d = 0; d < numDirs; d++) {
 			for (int i = 1; i <= radio; i++) {
@@ -229,23 +228,36 @@ bool Tablero::moverPieza(Pos origen, Pos destino) {
 
 	Pieza* d = casillas[destino.fila][destino.col].pieza;
 
-
 	personaje1 = p;
 	personaje2 = d;
-	
+
 	bool hayCombate = (personaje2 != nullptr); // ¿Hay enemigo?
 
-	if (!hayCombate) { //Movimiento normal
-		casillas[destino.fila][destino.col].pieza = p; 
+	//posición visual de casilla de inicio (convierte fila y columna del tablero a coordenadas de pantalla)
+	animX = origen.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+	animY = origen.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+
+	//posición visual de casilla de destino
+	destX = destino.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+	destY = destino.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+
+	piezaAnimando = p;
+	animando = true;
+
+	if (hayCombate) { //Hay combate, guardo posiciones
+		posOrigen = origen;
+		posDestino = destino;
+		combatePendiente = true;
+		return false;
+	}
+	else
+	{
+		casillas[destino.fila][destino.col].pieza = p;
 		casillas[origen.fila][origen.col].pieza = nullptr;
 		p->setCasilla(destino);
+		combatePendiente = false;
+		return false;
 	}
-	else { //Hay combate, guardo posiciones
-		posOrigen = origen;	
-		posDestino = destino;
-	}
-
-	return hayCombate;
 }
 
 bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
@@ -277,6 +289,12 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
 	return false; // No se ha movido
 }
 
+bool Tablero::piezaBloqueada(Pos p) {
+	Pieza* pieza = getPieza(p);
+	if (pieza == nullptr) return false;
+	return movimientosValidos(p).empty();
+}
+
 void Tablero::cancelarSeleccion() {
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
@@ -286,4 +304,40 @@ void Tablero::dibuja(const Cursor& cursor) {
 	dibujaTablero(cursor);     // casillas + cursor
 	dibujaPiezas();            // piezas encima
 	marcaCasillasValidas();    // casillas verdes encima de todo
+}
+
+constexpr float VEL_ANIMACION = 3.0f; // movimiento casillas por segundo
+
+bool Tablero::actualizarAnimacion(double dt)
+{
+	if (!animando || piezaAnimando == nullptr) return false;
+
+	float dx = destX - animX;
+	float dy = destY - animY;
+	float paso = VEL_ANIMACION * TAM_CELDA * (float)dt;
+
+	if (std::abs(dx) > 0.01f)
+	{
+		float moveX = (dx > 0) ? paso : -paso;
+		if (std::abs(moveX) > std::abs(dx)) moveX = dx;
+		animX += moveX;
+	}
+	else if (std::abs(dy) > 0.01f)
+	{
+		float moveY = (dy > 0) ? paso : -paso;
+		if (std::abs(moveY) > std::abs(dy)) moveY = dy;
+		animY += moveY;
+	}
+	else
+	{
+		//animacion terminada
+		animando = false;
+		piezaAnimando = nullptr;
+		if (combatePendiente)
+		{
+			combatePendiente = false;
+			return true; //empieza el combate
+		}
+	}
+	return false;
 }

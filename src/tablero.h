@@ -13,14 +13,14 @@ constexpr float TAM_CELDA = 2.8f;
 class Tablero {
 public:
 
-    void inicializaTablero();
-    void colocarPiezasIniciales();
+	void inicializaTablero();
+	void colocarPiezasIniciales();
 
+	//recibe un cursor para poder dibujar el cursor. las casillas se siguen dibujando de igual manera
 
-	 //recibe un cursor para poder dibujar el cursor. las casillas se siguen dibujando de igual manera
-	
 	Pieza* getPieza(Pos p) const;
 	bool   estaOcupada(Pos p) const;
+	bool piezaBloqueada(Pos p);
 
 	bool gestionarEntrada(Pos cursor, int& turno);
 	void cancelarSeleccion();
@@ -29,6 +29,10 @@ public:
 	// Getters para que Mundo pueda acceder a los combatientes
 	Pieza* getPersonaje1() const { return personaje1; }
 	Pieza* getPersonaje2() const { return personaje2; }
+
+	bool estaAnimando() const { return animando; }
+	bool actualizarAnimacion(double dt);  // llamada en mueve()
+	bool combatePendiente = false;
 
 private:
 
@@ -50,4 +54,11 @@ private:
 
 	std::vector<Pos> movimientosValidos(Pos origen);
 	bool moverPieza(Pos origen, Pos destino);
+
+	bool animando = false; // si hay alguna pieza moviéndose
+	Pieza* piezaAnimando = nullptr; // pieza q se está moviendo
+	float animX = 0.0f;
+	float animY = 0.0f;
+	float destX = 0.0f;
+	float destY = 0.0f;
 };

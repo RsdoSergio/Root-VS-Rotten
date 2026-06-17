@@ -14,7 +14,10 @@ enum class TipoMovimiento { TIERRA, VUELO, TELETRANSPORTE };
 constexpr float TAM_PIEZA = 0.9f;//Porvisional para las piezas
 enum  Bando { planta, zombi };
 
-class Pieza {
+class Pieza
+{
+    friend class Interaccion; // <-- aquí, fuera de cualquier sección
+
 protected:
     double   vida;
     double   vidaMax;
@@ -36,7 +39,7 @@ public:
     Bando  getBando()     const { return bando; }
     Pos    getCasilla()   const { return casilla; }
     bool   estaViva()     const { return vida > 0; }
-	double getIntervaloAtaque() const { return intervaloAtaque; }//nuevo para el cooldown de ataque
+    double getIntervaloAtaque() const { return intervaloAtaque; }//nuevo para el cooldown de ataque
 
     Vector2D getPosArena() const { return posArena; }
 
@@ -47,12 +50,14 @@ public:
     void setPosArena(double x, double y) { posArena.setValores(x, y); }
 
     int getRadioMovimiento() const { return radioMovimiento; }
-    
+
     virtual void dibujaTablero(float x, float y) const {};
     virtual std::string getNombre() const { return "Pieza"; }
     virtual void usarAtaqueSecundario() {};
 
     virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
+
+    virtual bool puedeDiagonal() const { return false; } //implementado para que las piezas de tierra se puedan mover en diagonales
 
     virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 

@@ -22,7 +22,6 @@ public:
     int  ultimo_eje_y = 0;   // -1 abajo, 0 nada, +1 arriba — última tecla Y pulsada
 
     void setMovimiento(int dir, bool estado);
-    void actualizarArena(double dt, double xMin, double xMax, double yMin, double yMax);
-
+    void actualizarArena(double dt);
     void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) override;
 };
