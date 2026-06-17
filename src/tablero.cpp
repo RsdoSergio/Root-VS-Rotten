@@ -139,17 +139,20 @@ void Tablero::dibujaPiezas()
 	}
 }
 
-Pieza* Tablero::getPieza(Pos p) const {
+Pieza* Tablero::getPieza(Pos p) const 
+{
 	if (p.fila < 0 || p.fila >= FILAS || p.col < 0 || p.col >= COLS)
 		return nullptr; // Fuera del tablero
 	return casillas[p.fila][p.col].pieza;
 }
 
-bool Tablero::estaOcupada(Pos p) const {
+bool Tablero::estaOcupada(Pos p) const 
+{
 	return casillas[p.fila][p.col].CasOcupada(); // ya tiene Casilla
 }
 
-std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
+std::vector<Pos> Tablero::movimientosValidos(Pos origen)
+{
 	std::vector<Pos> validos;
 	Pieza* p = getPieza(origen);
 	if (p == nullptr) return validos; // Sin pieza, sin movimientos
@@ -206,7 +209,8 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
 	return validos;
 }
 
-void Tablero::marcaCasillasValidas() {
+void Tablero::marcaCasillasValidas() 
+{
 	for (Pos& p : casillasValidas) { // Usa el vector interno
 		float x = p.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
 		float y = p.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
@@ -222,7 +226,8 @@ void Tablero::marcaCasillasValidas() {
 	}
 }
 
-bool Tablero::moverPieza(Pos origen, Pos destino) {
+bool Tablero::moverPieza(Pos origen, Pos destino) 
+{
 	Pieza* p = casillas[origen.fila][origen.col].pieza;
 	if (p == nullptr) return false;
 
@@ -260,7 +265,8 @@ bool Tablero::moverPieza(Pos origen, Pos destino) {
 	}
 }
 
-bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
+bool Tablero::gestionarEntrada(Pos cursor, int& turno) 
+{
 	if (!piezaSeleccionada.esValida()) {
 		// Intentar seleccionar pieza del turno actual
 		Pieza* p = getPieza(cursor);
@@ -289,18 +295,21 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
 	return false; // No se ha movido
 }
 
-bool Tablero::piezaBloqueada(Pos p) {
+bool Tablero::piezaBloqueada(Pos p) 
+{
 	Pieza* pieza = getPieza(p);
 	if (pieza == nullptr) return false;
 	return movimientosValidos(p).empty();
 }
 
-void Tablero::cancelarSeleccion() {
+void Tablero::cancelarSeleccion() 
+{
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
 }
 
-void Tablero::dibuja(const Cursor& cursor) {
+void Tablero::dibuja(const Cursor& cursor) 
+{
 	dibujaTablero(cursor);     // casillas + cursor
 	dibujaPiezas();            // piezas encima
 	marcaCasillasValidas();    // casillas verdes encima de todo
@@ -321,16 +330,19 @@ bool Tablero::actualizarAnimacion(double dt)
 		float moveX = (dx > 0) ? paso : -paso;
 		if (std::abs(moveX) > std::abs(dx)) moveX = dx;
 		animX += moveX;
+		piezaAnimando->setDireccion(dx > 0 ? DirMovimiento::ESTE : DirMovimiento::OESTE);
 	}
 	else if (std::abs(dy) > 0.01f)
 	{
 		float moveY = (dy > 0) ? paso : -paso;
 		if (std::abs(moveY) > std::abs(dy)) moveY = dy;
 		animY += moveY;
+		piezaAnimando->setDireccion(dy > 0 ? DirMovimiento::NORTE : DirMovimiento::SUR);
 	}
 	else
 	{
 		//animacion terminada
+		piezaAnimando->setDireccion(DirMovimiento::IDLE);
 		animando = false;
 		piezaAnimando = nullptr;
 		if (combatePendiente)

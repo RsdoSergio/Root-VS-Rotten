@@ -65,6 +65,12 @@ void PiezaVuelo::actualizarArena(double dt)
     double y = posArena.getY() + dirY * velocidad * dt;
 
     posArena.setValores(x, y);
+
+    if (dirX > 0) setDireccion(DirMovimiento::ESTE);
+    else if (dirX < 0) setDireccion(DirMovimiento::OESTE);
+    else if (dirY > 0) setDireccion(DirMovimiento::NORTE);
+    else if (dirY < 0) setDireccion(DirMovimiento::SUR);
+    else               setDireccion(DirMovimiento::IDLE);
 }
 
 
