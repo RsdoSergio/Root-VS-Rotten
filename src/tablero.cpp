@@ -14,6 +14,7 @@
 #include "mago.h"
 #include "listapieza.h"
 #include"cursor.h"
+#include <iostream>
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -380,16 +381,28 @@ void Tablero::resolverCombate(bool plantaGana)
 	bool atacanteEsPlanta = (atacante && atacante->getBando() == Bando::planta);
 	bool ganadorEsAtacante = (plantaGana == atacanteEsPlanta);
 
+	// Mete la pieza en su lista según bando y confirma por consola
+	auto eliminar = [&](Pieza* p) {
+		if (p->getBando() == Bando::planta) 
+			eliminadasPlanta.push_back(p);
+		
+		else 
+			eliminadasZombi.push_back(p);
+		
+		};
+
 	if (ganadorEsAtacante)
 	{
-		// Gana el atacante: ocupa la casilla del defensor
+		// Gana el atacante: el defensor va a su lista, atacante ocupa su casilla
+		eliminar(defensor);
 		casillas[posDestino.fila][posDestino.col].pieza = atacante;
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
 		atacante->setCasilla(posDestino);
 	}
 	else
 	{
-		// Gana el defensor: el atacante desaparece, defensor se queda
+		// Gana el defensor: el atacante va a su lista, defensor se queda
+		eliminar(atacante);
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
 	}
 }

@@ -10,7 +10,7 @@
 #include"arena_constantes.h"
 #include "obstaculo.h"
 #include<vector>
-using namespace std;
+
 
 constexpr int MAX_OBSTACULOS = 6;
 
@@ -18,8 +18,8 @@ class arena
 {
 	bool activo = false;
 
-	string nombrePieza1{};
-	string nombrePieza2{};
+	std::string nombrePieza1{};
+	std::string nombrePieza2{};
 	double vidaPieza1 = 0.0;
 	double vidaPieza2 = 0.0;
 	double vidaMaxPieza1 = 1.0;

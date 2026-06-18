@@ -41,6 +41,9 @@ public:
 	bool combatePendiente = false;
 	void resolverCombate(bool atacanteGana); 
 
+	std::vector<Pieza*>& getEliminadasPlanta() { return eliminadasPlanta; }
+	std::vector<Pieza*>& getEliminadasZombi() { return eliminadasZombi; }
+
 private:
 
 	void dibujaTablero(const Cursor& cursor);
@@ -68,4 +71,7 @@ private:
 	float animY = 0.0f;
 	float destX = 0.0f;
 	float destY = 0.0f;
+
+	std::vector<Pieza*> eliminadasPlanta;
+	std::vector<Pieza*> eliminadasZombi;
 };
