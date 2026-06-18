@@ -23,6 +23,8 @@ public:
 	double getXmax() const { return pos.getX() + OBS_ANCHO / 2.0; }
 	double getYmin() const { return pos.getY() - OBS_ALTO / 2.0; }
 	double getYmax() const { return pos.getY() + OBS_ALTO / 2.0; }
+	double getPosX() const { return pos.getX(); }
+	double getPosY() const { return pos.getY(); }
 
 	void dibuja() const
 	{

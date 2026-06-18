@@ -5,6 +5,7 @@
 #include "proyectil.h"
 #include <cstdlib> //para el uso de la funcion rand
 #include <ctime>
+#include <cmath>
 #include"caja.h"
 #include"arena_constantes.h"
 #include "obstaculo.h"
@@ -44,8 +45,7 @@ class arena
 	void dibujaPiezasArena() const;
 	void dibujaProyectiles() const;
 	void dibujaObstaculos()  const;
-	void colocarObstaculoAleatorio(Obstaculo& o);
-
+	void colocarObstaculoAleatorio(Obstaculo& o, int i);
 	int indiceFondo = 1; //para el fondo
 
 public:
@@ -61,7 +61,7 @@ public:
 		indiceFondo = 1 + rand() % 9;
 
 		for (int i = 0; i < NUM_OBSTACULOS; i++)
-			colocarObstaculoAleatorio(obstaculos[i]);
+			colocarObstaculoAleatorio(obstaculos[i], i);
 	}
 
 	void desactiva()
@@ -73,9 +73,6 @@ public:
 
 	bool estaActiva() const { return activo; }
 	void fDatos(Pieza& p1, Pieza& p2);
-
-	void MoverPiezaZombi(int key);
-	void MoverPiezaPlanta(unsigned char key);
 
 	void recibirMovimiento(int jugador, int dir, bool estado);
 };
