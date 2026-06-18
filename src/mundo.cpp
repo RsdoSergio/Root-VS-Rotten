@@ -6,8 +6,10 @@
 #include "audio.h"
 #include "audio.h"
 #include "gestorTexturas.h"
+#include <ctime>
 
 void Mundo::inicializa() {
+	srand((unsigned int)time(nullptr));
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();  //inicializacion de piezas para el juego
 

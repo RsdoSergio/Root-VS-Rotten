@@ -4,7 +4,6 @@
 #include"piezavuelo.h"
 #include "interaccion.h"
 
-
 void arena::dibujaFondo() const
 {
 	glColor3ub(0, 0, 0);
@@ -133,6 +132,12 @@ void arena::dibujaHUD() const
 	glEnd();
 }
 
+void arena::dibujaObstaculos() const
+{
+	for (int i = 0; i < MAX_OBSTACULOS; i++)
+		obstaculos[i].dibuja();
+}
+
 void arena::dibuja() const
 {
 	if (!activo) return;
@@ -140,11 +145,12 @@ void arena::dibuja() const
 	dibujaInterior();
 	dibujaMarco();
 	dibujaHUD();
+	dibujaObstaculos();
 	dibujaPiezasArena();
 	dibujaProyectiles();
 }
 
-void arena::fDatos( Pieza& p1,  Pieza& p2)
+void arena::fDatos(Pieza& p1, Pieza& p2)
 {
 	if (p1.getBando() == Bando::planta) //esto hará que la pieza a la izquierda siempre sea planta
 	{
@@ -152,23 +158,19 @@ void arena::fDatos( Pieza& p1,  Pieza& p2)
 		pieza2 = &p2;
 	}
 	else {
-
 		pieza1 = &p2;
 		pieza2 = &p1;
 	}
-	
-	
+
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
 	vidaPieza1 = p1.getVida();
 	vidaPieza2 = p2.getVida();
 	vidaMaxPieza1 = p1.getVidaMax();
 	vidaMaxPieza2 = p2.getVidaMax();
-	
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
-	activo = true;
 }
 
 // Dibuja las dos piezas en sus lados respectivos de la arena
@@ -252,14 +254,52 @@ void arena::dibujaProyectiles() const
 	for (Proyectil* p : proyectil2) p->dibuja();
 }
 
-void arena::MoverPiezaPlanta(unsigned char key)
+void arena::colocarObstaculoAleatorio(int idx)
 {
-	
-}
+	constexpr double OBS_MIN = 1.0;
+	constexpr double OBS_MAX = 5.0;
+	constexpr double HOLGURA = 0.8;
+	constexpr double MARGEN_PIEZA = TAM_PIEZA + 1.5;
 
-void arena::MoverPiezaZombi(int key)
-{
-	
+	double x = 0.0, y = 0.0, w = OBS_MIN, h = OBS_MIN;
+	int intentos = 0;
+
+	while (intentos < 200)
+	{
+		intentos++;
+
+		w = OBS_MIN + (double)rand() / RAND_MAX * (OBS_MAX - OBS_MIN);
+		h = OBS_MIN + (double)rand() / RAND_MAX * (OBS_MAX - OBS_MIN);
+
+		double xMin = caja.getXmin() + w / 2.0 + HOLGURA;
+		double xMax = caja.getXMAX() - w / 2.0 - HOLGURA;
+		double yMin = caja.getYmin() + h / 2.0 + HOLGURA;
+		double yMax = caja.getYMAX() - h / 2.0 - HOLGURA;
+
+		x = xMin + (double)rand() / RAND_MAX * (xMax - xMin);
+		y = yMin + (double)rand() / RAND_MAX * (yMax - yMin);
+
+		bool solapaPieza1 = pieza1 && (std::abs(x - pieza1->getPosArena().getX()) < (w / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza1->getPosArena().getY()) < (h / 2.0 + MARGEN_PIEZA));
+
+		bool solapaPieza2 = pieza2 && (std::abs(x - pieza2->getPosArena().getX()) < (w / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza2->getPosArena().getY()) < (h / 2.0 + MARGEN_PIEZA));
+
+		bool solapaObs = false;
+		for (int j = 0; j < idx; j++)
+		{
+			double minDistX = (w + obstaculos[j].getAncho()) / 2.0 + HOLGURA;
+			double minDistY = (h + obstaculos[j].getAlto()) / 2.0 + HOLGURA;
+			if (std::abs(x - obstaculos[j].getPosX()) < minDistX && std::abs(y - obstaculos[j].getPosY()) < minDistY)
+			{
+				solapaObs = true;
+				break;
+			}
+		}
+
+		if (!solapaPieza1 && !solapaPieza2 && !solapaObs)
+			break;
+	}
+
+	obstaculos[idx].colocar(x, y, w, h);
 }
 
 void arena::recibirMovimiento(int jugador, int dir, bool estado)
