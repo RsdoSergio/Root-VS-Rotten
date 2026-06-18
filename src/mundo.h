@@ -10,7 +10,7 @@
 #include "peon.h"
 #include "menu.h"
 #include "caja.h"
-#include "gestorTexturas.h"5
+#include "gestorTexturas.h"
 
 
 class Mundo

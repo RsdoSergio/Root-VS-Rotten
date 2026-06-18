@@ -2,7 +2,9 @@
 #include "freeglut.h"
 #include "piezatierra.h"
 #include"piezavuelo.h"
+#include"piezateletransporte.h"
 #include "interaccion.h"
+#include"pieza.h"
 
 void arena::dibujaFondo() const
 {
@@ -171,6 +173,9 @@ void arena::fDatos(Pieza& p1, Pieza& p2)
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
+	pieza1->resetEjes();
+	pieza2->resetEjes();
+	activo = true;
 }
 
 // Dibuja las dos piezas en sus lados respectivos de la arena
@@ -233,15 +238,39 @@ void arena::tecla(unsigned char key)
 
 	if ((key == 'q' || key == 'Q') && tiempoDisparo1 >= pieza1->getIntervaloAtaque())
 	{
+		int dirX = 0, dirY = 0;
+		if (pieza1->getUltimoEjeX() != 0 && pieza1->getUltimoEjeY() != 0) 
+		{
+			if (pieza1->getUltimoEjeReciente() == 0) dirX = pieza1->getUltimoEjeX();
+			else dirY = pieza1->getUltimoEjeY();
+		}
+		else 
+		{
+			dirX = pieza1->getUltimoEjeX();
+			dirY = pieza1->getUltimoEjeY();
+		}
 		Vector2D pos = pieza1->getPosArena();
-		Vector2D vel(VEL_PROYECTIL, 0.0);
+		if (dirX == 0 && dirY == 0)dirX = 1;
+		Vector2D vel(dirX * VEL_PROYECTIL, dirY * VEL_PROYECTIL);
 		proyectil1.push_back(new Proyectil(pos, vel, pieza1->getFuerza()));
 		tiempoDisparo1 = 0.0;
 	}
 	if ((key == 'k' || key == 'K') && tiempoDisparo2 >= pieza2->getIntervaloAtaque())
 	{
+		int dirX = 0, dirY = 0;
+		if (pieza2->getUltimoEjeX() != 0 && pieza2->getUltimoEjeY() != 0) 
+		{
+			if (pieza2->getUltimoEjeReciente() == 0) dirX = pieza2->getUltimoEjeX();
+			else   dirY = pieza2->getUltimoEjeY();
+		}                                   
+		else 
+		{
+			dirX = pieza2->getUltimoEjeX();
+			dirY = pieza2->getUltimoEjeY();
+		}
 		Vector2D pos = pieza2->getPosArena();
-		Vector2D vel(-VEL_PROYECTIL, 0.0);
+		if (dirX == 0 && dirY == 0)dirX = -1;
+		Vector2D vel(dirX * VEL_PROYECTIL, dirY * VEL_PROYECTIL);
 		proyectil2.push_back(new Proyectil(pos, vel, pieza2->getFuerza()));
 		tiempoDisparo2 = 0.0;
 	}
@@ -314,4 +343,7 @@ void arena::recibirMovimiento(int jugador, int dir, bool estado)
 
 	PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
 	if (pv) pv->setMovimiento(dir, estado);
+
+	PiezaTeletransporte* pte = dynamic_cast<PiezaTeletransporte*>(p);
+	if (pte) pte->setMovimiento(dir, estado);
 }
