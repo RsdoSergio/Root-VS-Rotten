@@ -68,9 +68,11 @@ void Mundo::tecla(unsigned char key)
 	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
-		// El cursor activo depende del turno
 		Pos posActiva = (turno == 0) ? cursor.getPosicion() : cursor2.getPosicion();
+
+		int turnoAntes = turno; // ← guardar turno antes
 		bool combate = tablero.gestionarEntrada(posActiva, turno);
+
 		if (turno == 0)
 			cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
 		else
@@ -80,8 +82,7 @@ void Mundo::tecla(unsigned char key)
 			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
 			arena.activa();
 		}
-		if (turno % 5 == 0)
-			tablero.avanzarCiclo();
+
 	}
 
 	if (key == 27) {
@@ -100,8 +101,10 @@ void Mundo::mueve()
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (estabaActiva && !arena.estaActiva())
+	if (estabaActiva && !arena.estaActiva()) {
 		tablero.resolverCombate(arena.getPlantaGano());
+		tablero.avanzarCiclo();
+	}
 
 	bool iniciarCombate = tablero.actualizarAnimacion(0.025);
 	if (iniciarCombate) {

@@ -64,7 +64,7 @@ private:
 	float destX = 0.0f;
 	float destY = 0.0f;
 	int ciclo = 0;        // contador de turnos
-	bool haciaPlanta = true; // dirección del ciclo
+	int indiceCiclo = 0;
 	int patronOriginal[FILAS][COLS]; // guardamos el patrón inicial
 
 };

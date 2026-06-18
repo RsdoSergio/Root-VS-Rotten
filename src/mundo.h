@@ -27,6 +27,7 @@ class Mundo
 	bool    enPausa = false;
 	Caja caja;
 	int opcionPausa = 0;
+	int ronda = 0;
 	
 public:
 	void inicializa();

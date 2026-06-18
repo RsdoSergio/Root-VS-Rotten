@@ -46,7 +46,11 @@ void Tablero::inicializaTablero() {
 			patronOriginal[i][j] = patron[i][j];
 			Casilla::TipoCasilla tipo;
 
-			if (((i + 1 == 1 || i + 1 == 9) && j + 1 == 5) || ((i + 1 == 1 || i + 1 == 5 || i + 1 == 9) && i + 1 == 5))
+			if ((i == 4 && j == 4) ||  // centro
+				(i == 0 && j == 4) ||  // arriba
+				(i == 8 && j == 4) ||  // abajo
+				(i == 4 && j == 0) ||  // izquierda
+				(i == 4 && j == 8))    // derecha
 				tipo = Casilla::PODER;
 			else
 				tipo = Casilla::NORMAL;
@@ -381,35 +385,25 @@ void Tablero::resolverCombate(bool plantaGana)
 void Tablero::avanzarCiclo() {
 	using byte = unsigned char;
 
-	// Colores base
-	byte colorPlanta[3] = { 90, 180, 80 };   // verde
-	byte colorZombi[3] = { 90, 30, 120 };   // morado
-	byte colorNeutral[3] = { 200, 200, 200 }; // gris
+	byte ciclos[5][3] = {
+		{200, 200, 200},  // gris (inicial)
+		{0,   0,   139},  // azul marino
+		{0,   191, 255},  // azul claro
+		{128, 128, 128},  // gris medio
+		{255, 255, 255},  // blanco
+	};
 
-	// Intercambia: casillas 0 (plantas) pasan a ser 1 (zombis) y viceversa
-	// Las casillas 2 (neutral) no cambian
-	haciaPlanta = !haciaPlanta;
+	indiceCiclo = (indiceCiclo + 1) % 5;
 
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
-			if (casillas[i][j].tipo == Casilla::PODER) continue; // las power squares no cambian
-
+			//if (casillas[i][j].tipo == Casilla::PODER) continue;
 			int p = patronOriginal[i][j];
-			if (p == 2) continue; // las neutrales no cambian
-
-			if (haciaPlanta) {
-				// las que eran de zombi pasan a planta y viceversa
-				if (p == 0)
-					casillas[i][j].setColor(colorZombi[0], colorZombi[1], colorZombi[2]);
-				else
-					casillas[i][j].setColor(colorPlanta[0], colorPlanta[1], colorPlanta[2]);
-			}
-			else {
-				if (p == 0)
-					casillas[i][j].setColor(colorPlanta[0], colorPlanta[1], colorPlanta[2]);
-				else
-					casillas[i][j].setColor(colorZombi[0], colorZombi[1], colorZombi[2]);
-			}
+			if (p == 2) // solo las neutrales cambian
+				casillas[i][j].setColor(
+					ciclos[indiceCiclo][0],
+					ciclos[indiceCiclo][1],
+					ciclos[indiceCiclo][2]);
 		}
 	}
 }
