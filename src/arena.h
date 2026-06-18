@@ -4,17 +4,14 @@
 #include "ETSIDI.h"
 #include "proyectil.h"
 #include <cstdlib> //para el uso de la funcion rand
+#include <ctime>
 #include"caja.h"
 #include"arena_constantes.h"
 #include "obstaculo.h"
 #include<vector>
 using namespace std;
 
-constexpr int NUM_OBSTACULOS = 3;
-constexpr double OBS_VIDA_MIN = 4.0;
-constexpr double OBS_VIDA_MAX = 8.0;
-constexpr double OBS_ESPERA_MIN = 2.0;
-constexpr double OBS_ESPERA_MAX = 5.0;
+constexpr int NUM_OBSTACULOS = 5;
 
 class arena
 {
@@ -47,7 +44,7 @@ class arena
 	void dibujaPiezasArena() const;
 	void dibujaProyectiles() const;
 	void dibujaObstaculos()  const;
-	void reposicionarObstaculo(Obstaculo& o);
+	void colocarObstaculoAleatorio(Obstaculo& o);
 
 	int indiceFondo = 1; //para el fondo
 
@@ -64,7 +61,7 @@ public:
 		indiceFondo = 1 + rand() % 9;
 
 		for (int i = 0; i < NUM_OBSTACULOS; i++)
-			reposicionarObstaculo(obstaculos[i]);
+			colocarObstaculoAleatorio(obstaculos[i]);
 	}
 
 	void desactiva()

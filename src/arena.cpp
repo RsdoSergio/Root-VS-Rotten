@@ -171,7 +171,6 @@ void arena::fDatos(Pieza& p1, Pieza& p2)
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
-	activo = true;
 }
 
 // Dibuja las dos piezas en sus lados respectivos de la arena
@@ -206,13 +205,6 @@ void arena::mueve(double dt)
 	if (pieza1) Interaccion::choque(*pieza1, caja);
 	mover(pieza2);
 	if (pieza2) Interaccion::choque(*pieza2, caja);
-
-	for (int i = 0; i < NUM_OBSTACULOS; i++)
-	{
-		obstaculos[i].update(dt);
-		if (obstaculos[i].listo())
-			reposicionarObstaculo(obstaculos[i]);
-	}
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
@@ -262,7 +254,7 @@ void arena::dibujaProyectiles() const
 	for (Proyectil* p : proyectil2) p->dibuja();
 }
 
-void arena::reposicionarObstaculo(Obstaculo& o)
+void arena::colocarObstaculoAleatorio(Obstaculo& o)
 {
 	double margenX = OBS_ANCHO / 2.0 + 1.0;
 	double margenY = OBS_ALTO / 2.0 + 1.0;
@@ -274,19 +266,14 @@ void arena::reposicionarObstaculo(Obstaculo& o)
 	double x = xMin + (double)rand() / RAND_MAX * (xMax - xMin);
 	double y = yMin + (double)rand() / RAND_MAX * (yMax - yMin);
 
-	double vida = OBS_VIDA_MIN + (double)rand() / RAND_MAX * (OBS_VIDA_MAX - OBS_VIDA_MIN);
-	double espera = OBS_ESPERA_MIN + (double)rand() / RAND_MAX * (OBS_ESPERA_MAX - OBS_ESPERA_MIN);
-
-	o.activar(x, y, vida, espera);
+	o.colocar(x, y);
 }
 
 void arena::MoverPiezaPlanta(unsigned char key)
-{
-}
+{}
 
 void arena::MoverPiezaZombi(int key)
-{
-}
+{}
 
 void arena::recibirMovimiento(int jugador, int dir, bool estado)
 {

@@ -6,8 +6,10 @@
 #include "audio.h"
 #include "audio.h"
 #include "gestorTexturas.h"
+#include <ctime>
 
 void Mundo::inicializa() {
+	srand((unsigned int)time(nullptr));
 	tablero.inicializaTablero();
 	tablero.colocarPiezasIniciales();  //inicializacion de piezas para el juego
 
@@ -98,7 +100,10 @@ void Mundo::mueve()
 
 	bool iniciarCombate = tablero.actualizarAnimacion(0.025); //si la animación termina y habia combate pendiente -> iniciarlo ahora
 	if (iniciarCombate)
+	{
 		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+		arena.activa();
+	}
 }
 
 //Metodo que gestiona el dibujo de la simulacion
