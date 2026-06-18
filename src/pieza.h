@@ -10,6 +10,8 @@ constexpr int DIR_ABAJO = 1;
 constexpr int DIR_IZQ = 2;
 constexpr int DIR_DCHA = 3;
 
+enum class DirMovimiento { IDLE, NORTE, SUR, ESTE, OESTE };
+
 enum class TipoMovimiento { TIERRA, VUELO, TELETRANSPORTE };
 constexpr float TAM_PIEZA = 0.9f;//Porvisional para las piezas
 enum  Bando { planta, zombi };
@@ -28,6 +30,8 @@ protected:
     Bando    bando;
     Pos      casilla;
     Vector2D posArena;
+    DirMovimiento dirActual = DirMovimiento::IDLE;
+
 
 public:
     Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos);
@@ -51,9 +55,15 @@ public:
 
     int getRadioMovimiento() const { return radioMovimiento; }
 
+    DirMovimiento getDireccion() const { return dirActual; }//usado para obtener en que direccion se esta moviendo la pieza en ese momento
+    void setDireccion(DirMovimiento d) { dirActual = d; }//luego usarlo para los sprites
+
     virtual void dibujaTablero(float x, float y) const {};
+    virtual void dibujaArena(float x, float y) const {};
     virtual std::string getNombre() const { return "Pieza"; }
     virtual void usarAtaqueSecundario() {};
+
+    virtual std::string getRutaSprite() const { return ""; }
 
     virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
 
@@ -61,5 +71,5 @@ public:
 
     virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 
-    virtual ~Pieza() {} // Imprescindible en jerarquías
+    virtual ~Pieza() {} 
 };
