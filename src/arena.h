@@ -12,7 +12,7 @@
 #include<vector>
 using namespace std;
 
-constexpr int NUM_OBSTACULOS = 5;
+constexpr int MAX_OBSTACULOS = 6;
 
 class arena
 {
@@ -36,7 +36,8 @@ class arena
 	double tiempoDisparo1 = 0.0;        // tiempo acumulado desde ultimo disparo J1
 	double tiempoDisparo2 = 0.0;        // tiempo acumulado desde ultimo disparo J2
 
-	Obstaculo obstaculos[NUM_OBSTACULOS];
+	Obstaculo obstaculos[MAX_OBSTACULOS];
+	int numObstaculos = 0;
 
 	void dibujaFondo() const;
 	void dibujaInterior() const;
@@ -45,7 +46,7 @@ class arena
 	void dibujaPiezasArena() const;
 	void dibujaProyectiles() const;
 	void dibujaObstaculos()  const;
-	void colocarObstaculoAleatorio(Obstaculo& o, int i);
+	void colocarObstaculoAleatorio(int indice);
 	int indiceFondo = 1; //para el fondo
 
 public:
@@ -59,9 +60,13 @@ public:
 	{
 		activo = true;
 		indiceFondo = 1 + rand() % 9;
+		numObstaculos = 3 + rand() % 4;
 
-		for (int i = 0; i < NUM_OBSTACULOS; i++)
-			colocarObstaculoAleatorio(obstaculos[i], i);
+		for (int i = 0; i < MAX_OBSTACULOS; i++)
+			obstaculos[i].desactivar();
+
+		for (int i = 0; i < numObstaculos; i++)
+			colocarObstaculoAleatorio(i);
 	}
 
 	void desactiva()

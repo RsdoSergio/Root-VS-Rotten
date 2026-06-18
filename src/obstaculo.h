@@ -2,29 +2,35 @@
 #include "freeglut.h"
 #include "vector2d.h"
 
-constexpr double OBS_ANCHO = 4.0;
-constexpr double OBS_ALTO = 2.0;
-
 class Obstaculo
 {
 	Vector2D pos;
 	bool activo = false;
+	double ancho = 3.0;
+	double alto = 2.0;
 
 public:
 	Obstaculo() = default;
 
-	void colocar(double x, double y)
+	void colocar(double x, double y, double w, double h)
 	{
 		pos.setValores(x, y);
+		ancho = w;
+		alto = h;
 		activo = true;
 	}
 
-	double getXmin() const { return pos.getX() - OBS_ANCHO / 2.0; }
-	double getXmax() const { return pos.getX() + OBS_ANCHO / 2.0; }
-	double getYmin() const { return pos.getY() - OBS_ALTO / 2.0; }
-	double getYmax() const { return pos.getY() + OBS_ALTO / 2.0; }
+	void desactivar() { activo = false; }
+
 	double getPosX() const { return pos.getX(); }
 	double getPosY() const { return pos.getY(); }
+	double getAncho() const { return ancho; }
+	double getAlto() const { return alto; }
+	double getXmin() const { return pos.getX() - ancho / 2.0; }
+	double getXmax() const { return pos.getX() + ancho / 2.0; }
+	double getYmin() const { return pos.getY() - alto / 2.0; }
+	double getYmax()  const { return pos.getY() + alto / 2.0; }
+	bool   estaActivo() const { return activo; }
 
 	void dibuja() const
 	{

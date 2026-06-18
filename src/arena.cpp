@@ -134,7 +134,7 @@ void arena::dibujaHUD() const
 
 void arena::dibujaObstaculos() const
 {
-	for (int i = 0; i < NUM_OBSTACULOS; i++)
+	for (int i = 0; i < MAX_OBSTACULOS; i++)
 		obstaculos[i].dibuja();
 }
 
@@ -254,44 +254,52 @@ void arena::dibujaProyectiles() const
 	for (Proyectil* p : proyectil2) p->dibuja();
 }
 
-void arena::colocarObstaculoAleatorio(Obstaculo& o, int i)
+void arena::colocarObstaculoAleatorio(int idx)
 {
-	double margenX = OBS_ANCHO / 2.0 + 1.0;
-	double margenY = OBS_ALTO / 2.0 + 1.0;
-	double xMin = caja.getXmin() + margenX;
-	double xMax = caja.getXMAX() - margenX;
-	double yMin = caja.getYmin() + margenY;
-	double yMax = caja.getYMAX() - margenY;
+	constexpr double OBS_MIN = 1.0;
+	constexpr double OBS_MAX = 5.0;
+	constexpr double HOLGURA = 0.8;
+	constexpr double MARGEN_PIEZA = TAM_PIEZA + 1.5;
 
-	constexpr double MARGEN_PIEZA = TAM_PIEZA + OBS_ANCHO / 2.0 + 0.5; 	//margen de separación con las piezas (TAM_PIEZA + semianchura obstáculo + holgura)
-	constexpr double MARGEN_OBS = OBS_ANCHO + 0.5;  // separación mínima entre obstáculos
-
-	double x, y;
+	double x = 0.0, y = 0.0, w = OBS_MIN, h = OBS_MIN;
 	int intentos = 0;
-	do {
-		x = xMin + (double)rand() / RAND_MAX * (xMax - xMin);
-		y = yMin + (double)rand() / RAND_MAX * (yMax - yMin);
+
+	while (intentos < 200)
+	{
 		intentos++;
 
-		bool solapaPieza1 = pieza1 && (std::abs(x - pieza1->getPosArena().getX()) < MARGEN_PIEZA &&
-			std::abs(y - pieza1->getPosArena().getY()) < MARGEN_PIEZA);
-		bool solapaPieza2 = pieza2 && (std::abs(x - pieza2->getPosArena().getX()) < MARGEN_PIEZA &&
-			std::abs(y - pieza2->getPosArena().getY()) < MARGEN_PIEZA);
+		w = OBS_MIN + (double)rand() / RAND_MAX * (OBS_MAX - OBS_MIN);
+		h = OBS_MIN + (double)rand() / RAND_MAX * (OBS_MAX - OBS_MIN);
+
+		double xMin = caja.getXmin() + w / 2.0 + HOLGURA;
+		double xMax = caja.getXMAX() - w / 2.0 - HOLGURA;
+		double yMin = caja.getYmin() + h / 2.0 + HOLGURA;
+		double yMax = caja.getYMAX() - h / 2.0 - HOLGURA;
+
+		x = xMin + (double)rand() / RAND_MAX * (xMax - xMin);
+		y = yMin + (double)rand() / RAND_MAX * (yMax - yMin);
+
+		bool solapaPieza1 = pieza1 && (std::abs(x - pieza1->getPosArena().getX()) < (w / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza1->getPosArena().getY()) < (h / 2.0 + MARGEN_PIEZA));
+
+		bool solapaPieza2 = pieza2 && (std::abs(x - pieza2->getPosArena().getX()) < (w / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza2->getPosArena().getY()) < (h / 2.0 + MARGEN_PIEZA));
 
 		bool solapaObs = false;
-		for (int j = 0; j < i; j++)
+		for (int j = 0; j < idx; j++)
 		{
-			if (std::abs(x - obstaculos[j].getPosX()) < MARGEN_OBS &&
-				std::abs(y - obstaculos[j].getPosY()) < MARGEN_OBS)
+			double minDistX = (w + obstaculos[j].getAncho()) / 2.0 + HOLGURA;
+			double minDistY = (h + obstaculos[j].getAlto()) / 2.0 + HOLGURA;
+			if (std::abs(x - obstaculos[j].getPosX()) < minDistX && std::abs(y - obstaculos[j].getPosY()) < minDistY)
 			{
 				solapaObs = true;
 				break;
 			}
 		}
-		if (!solapaPieza1 && !solapaPieza2) break;
-	} while (intentos < 100);
 
-	o.colocar(x, y);
+		if (!solapaPieza1 && !solapaPieza2 && !solapaObs)
+			break;
+	}
+
+	obstaculos[idx].colocar(x, y, w, h);
 }
 
 void arena::recibirMovimiento(int jugador, int dir, bool estado)
