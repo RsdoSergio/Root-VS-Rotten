@@ -9,6 +9,7 @@ void OnKeyboardDown(unsigned char key, int x, int y); //cuando se pulse una tecl
 void OnSpecialKey(int key, int x, int y);//flechas del teclado
 void OnKeyboardUp(unsigned char key, int x, int y);    
 void OnSpecialKeyUp(int key, int x, int y);            
+void OnMouseClick(int button, int state, int x, int y); //clic de raton
 
 // Variables globales accesibles desde cualquier .cpp
 float G_XMAX = 26.67f;  // valor por defecto 16:9
@@ -71,6 +72,7 @@ int main(int argc, char* argv[])
 	glutSpecialFunc(OnSpecialKey);    //registrar callback de flechas
 	glutKeyboardUpFunc(OnKeyboardUp);
 	glutSpecialUpFunc(OnSpecialKeyUp);
+	glutMouseFunc(OnMouseClick);      //registrar callback de raton
 	//inicialización de objetos de la simulación
 	mundo.inicializa();
 
@@ -127,5 +129,14 @@ void OnKeyboardUp(unsigned char key, int x, int y)
 void OnSpecialKeyUp(int key, int x, int y)
 {
 	mundo.teclaEspecialLevantada(key);
+	glutPostRedisplay();
+}
+
+void OnMouseClick(int button, int state, int x, int y)
+{
+	//codigo de gestion de raton
+	mundo.clicRaton(button, state, x, y);
+
+	//indicamos que se vuelva a dibujar la pantalla, para que se vean los cambios
 	glutPostRedisplay();
 }

@@ -39,6 +39,14 @@ void Cursor::dibuja() const
 	glLineWidth(1.0f);
 }
 
+// Coloca el cursor directamente en la casilla indicada (usado por el raton)
+// Misma comprobacion de limites que mover()/moverFlechas()
+void Cursor::setPosicion(Pos p)
+{
+	if (p.fila < 0 || p.fila >= FILAS || p.col < 0 || p.col >= COLS) return;
+	posicion = p;
+}
+
 //Cursos con las flechas
 void Cursor::moverFlechas(int key)
 {
