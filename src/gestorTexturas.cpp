@@ -67,9 +67,9 @@ void precargarTexturas() {
 }
 
 
-void dibujarSprite(const std::string& ruta, float x, float y, float tam,
-	DirMovimiento dir, int totalFrames)
+void dibujarSprite(const std::string& ruta, float x, float y, float tam,DirMovimiento dir, int totalFrames)
 {
+	
 	if (ruta.empty()) return;
 
 	int frame = 0;

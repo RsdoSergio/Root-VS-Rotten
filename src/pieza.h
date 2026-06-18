@@ -18,7 +18,8 @@ enum  Bando { planta, zombi };
 
 class Pieza
 {
-    friend class Interaccion; // <-- aquí, fuera de cualquier sección
+    friend class Interaccion; 
+    
 
 protected:
     double   vida;
@@ -31,6 +32,10 @@ protected:
     Pos      casilla;
     Vector2D posArena;
     DirMovimiento dirActual = DirMovimiento::IDLE;
+    DirMovimiento ultimaDir = DirMovimiento::ESTE;
+    int ultimo_eje_x = 0;  // -1 izq, 0 nada, +1 dcha
+    int ultimo_eje_y = 0;  // -1 abajo, 0 nada, +1 arriba
+    int ultimo_eje_reciente = 0;
 
 
 public:
@@ -47,6 +52,12 @@ public:
 
     Vector2D getPosArena() const { return posArena; }
 
+    DirMovimiento getUltimaDir() const { return ultimaDir; } //
+
+    int getUltimoEjeX() const { return ultimo_eje_x; }
+    int getUltimoEjeY() const { return ultimo_eje_y; }
+    int getUltimoEjeReciente() const { return ultimo_eje_reciente; }
+
     void setCasilla(Pos p) { casilla = p; }
     void recibirDanio(double d);
     void curar(double cantidad);
@@ -56,7 +67,11 @@ public:
     int getRadioMovimiento() const { return radioMovimiento; }
 
     DirMovimiento getDireccion() const { return dirActual; }//usado para obtener en que direccion se esta moviendo la pieza en ese momento
-    void setDireccion(DirMovimiento d) { dirActual = d; }//luego usarlo para los sprites
+                                                            //luego usarlo para los sprites
+    void setDireccion(DirMovimiento d);
+
+    void resetEjes();//puesto para resetear el movimiento al iniciar el combate
+    
 
     virtual void dibujaTablero(float x, float y) const {};
     virtual void dibujaArena(float x, float y) const {};

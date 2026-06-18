@@ -77,6 +77,3 @@ void PiezaTierra::actualizarArena(double dt)
 }
 
 
-void PiezaTierra::moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}//se ha eliminado pero no borrado 
-//para evitar problemas de compatibilidad
-   

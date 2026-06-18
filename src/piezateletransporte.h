@@ -10,4 +10,13 @@ public:
     TipoMovimiento getTipoMovimiento() const override {
         return TipoMovimiento::TELETRANSPORTE;
     }
+
+    bool tecla_arriba = false;
+    bool tecla_abajo = false;
+    bool tecla_izq = false;
+    bool tecla_dcha = false;
+
+    void setMovimiento(int dir, bool estado);
+    void actualizarArena(double dt);
+    
 };

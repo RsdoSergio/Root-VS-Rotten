@@ -17,5 +17,5 @@ void Peon :: dibujaTablero(float x, float y) const
 
 void Peon :: dibujaArena(float x, float y) const  
 {
-    dibujarSprite(getRutaSprite(), x, y, 2.5f, getDireccion(), 6);
+    dibujarSprite(getRutaSprite(), x, y, 2.0f, getDireccion(), 6);
 }
