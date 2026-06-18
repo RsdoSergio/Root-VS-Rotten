@@ -81,9 +81,6 @@ public:
 	bool estaActiva() const { return activo; }
 	void fDatos(Pieza& p1, Pieza& p2);
 
-	bool estaActiva() const { return activo; }
-	void fDatos(Pieza& p1, Pieza& p2);
-
 	void recibirMovimiento(int jugador, int dir, bool estado);
 	bool getPlantaGano() const { return plantaGano; } // getter para mundo
 };
