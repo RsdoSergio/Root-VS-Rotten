@@ -17,17 +17,11 @@ public:
 
     double getVelocidadProyectil() const { return velocidadProyectil; }
 
-    void dibujaTablero(float x, float y) const override {
-        // Cian para LUZ, azul oscuro para OSCURIDAD
-        if (bando == Bando::planta) glColor3f(0.2f, 0.9f, 0.9f);
-        else                     glColor3f(0.1f, 0.3f, 0.7f);
-        glBegin(GL_POLYGON);
-        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
-        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
-        glEnd();
-    }
+    // Antes se dibujaba como cuadrado de color (cian LUZ / azul oscuro OSCURIDAD);
+    // ahora usa sprite, ver Valquiria::getRutaSprite() en valquiria.cpp
+    std::string getRutaSprite() const override;
+    void dibujaTablero(float x, float y) const override;
+    void dibujaArena(float x, float y) const override;
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Rotinabo" : "Globador";
