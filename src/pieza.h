@@ -15,6 +15,7 @@ enum class DirMovimiento { IDLE, NORTE, SUR, ESTE, OESTE };
 enum class TipoMovimiento { TIERRA, VUELO, TELETRANSPORTE };
 constexpr float TAM_PIEZA = 0.9f;//Porvisional para las piezas
 enum  Bando { planta, zombi };
+enum class BandoVentaja { PLANTA, ZOMBI };
 
 class Pieza
 {
@@ -72,4 +73,6 @@ public:
     virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 
     virtual ~Pieza() {} 
+
+    
 };

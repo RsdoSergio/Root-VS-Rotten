@@ -144,7 +144,7 @@ void arena::dibuja() const
 	dibujaProyectiles();
 }
 
-void arena::fDatos( Pieza& p1,  Pieza& p2)
+void arena::fDatos( Pieza& p1,  Pieza& p2, BandoVentaja ventaja)
 {
 	if (p1.getBando() == Bando::planta) //esto hará que la pieza a la izquierda siempre sea planta
 	{
@@ -164,6 +164,18 @@ void arena::fDatos( Pieza& p1,  Pieza& p2)
 	vidaPieza2 = p2.getVida();
 	vidaMaxPieza1 = p1.getVidaMax();
 	vidaMaxPieza2 = p2.getVidaMax();
+
+	float bonus = 1.3f; // 30% más de vida
+	if (ventaja == BandoVentaja::PLANTA) {
+		vidaPieza1 *= bonus;
+		vidaMaxPieza1 *= bonus;
+		pieza1->curar(pieza1->getVidaMax() * (bonus - 1.0f));
+	}
+	else if (ventaja == BandoVentaja::ZOMBI) {
+		vidaPieza2 *= bonus;
+		vidaMaxPieza2 *= bonus;
+		pieza2->curar(pieza2->getVidaMax() * (bonus - 1.0f));
+	}
 	
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);

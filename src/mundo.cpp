@@ -79,7 +79,8 @@ void Mundo::tecla(unsigned char key)
 			cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
 
 		if (combate) {
-			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+			BandoVentaja ventaja = tablero.getBandoVentaja();
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(),ventaja);
 			arena.activa();
 		}
 
@@ -108,7 +109,8 @@ void Mundo::mueve()
 
 	bool iniciarCombate = tablero.actualizarAnimacion(0.025);
 	if (iniciarCombate) {
-		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+		BandoVentaja ventaja = tablero.getBandoVentaja();
+		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), ventaja);
 		arena.activa();
 	}
 }

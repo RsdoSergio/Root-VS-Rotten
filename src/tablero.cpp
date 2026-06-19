@@ -374,11 +374,13 @@ void Tablero::resolverCombate(bool plantaGana)
 		casillas[posDestino.fila][posDestino.col].pieza = atacante;
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
 		atacante->setCasilla(posDestino);
+		atacante->curar(atacante->getVidaMax());
 	}
 	else
 	{
 		// Gana el defensor: el atacante desaparece, defensor se queda
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
+		defensor->curar(defensor->getVidaMax());
 	}
 }
 
@@ -406,4 +408,10 @@ void Tablero::avanzarCiclo() {
 					ciclos[indiceCiclo][2]);
 		}
 	}
+}
+BandoVentaja Tablero::getBandoVentaja() const {
+	if (indiceCiclo == 0 || indiceCiclo == 2)
+		return BandoVentaja::ZOMBI;
+	else
+		return BandoVentaja::PLANTA;
 }

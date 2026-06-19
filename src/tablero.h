@@ -4,6 +4,7 @@
 #include<vector>
 #include "listapieza.h"
 
+
 class Cursor;
 
 constexpr int FILAS = 9;
@@ -35,6 +36,8 @@ public:
 	bool combatePendiente = false;
 	void resolverCombate(bool atacanteGana); 
 	void avanzarCiclo(); // llamar cada 5 turnos
+	BandoVentaja getBandoVentaja() const;
+	
 
 private:
 

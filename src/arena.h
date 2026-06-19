@@ -43,6 +43,8 @@ class arena
 	int indiceFondo = 1; //para el fondo
 
 public:
+
+
 	arena() {};
 
 	void dibuja() const;
@@ -60,11 +62,12 @@ public:
 		pieza2 = nullptr;
 	}
 	bool estaActiva() const { return activo; }
-	void fDatos(Pieza& p1, Pieza& p2);
+	void fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja);
 
 	void MoverPiezaZombi(int key);
 	void MoverPiezaPlanta(unsigned char key);
 
 	void recibirMovimiento(int jugador, int dir, bool estado);
 	bool getPlantaGano() const { return plantaGano; } // getter para mundo
+	
 };
