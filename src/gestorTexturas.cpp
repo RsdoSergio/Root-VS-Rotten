@@ -67,19 +67,10 @@ void precargarTexturas() {
 }
 
 
-void dibujarSprite(const std::string& ruta, float x, float y, float tam,DirMovimiento dir, int totalFrames)
+void dibujarSprite(const std::string& ruta, float x, float y, float tam, int frame, int totalFrames)
 {
 	
 	if (ruta.empty()) return;
-
-	int frame = 0;
-	switch (dir) {
-	case DirMovimiento::ESTE:  frame = 1; break;
-	case DirMovimiento::OESTE: frame = 2; break;
-	case DirMovimiento::NORTE: frame = 3; break;
-	case DirMovimiento::SUR:   frame = 4; break;
-	default:                   frame = 0; break;
-	}
 
 	float u0 = frame / (float)totalFrames;
 	float u1 = (frame + 1) / (float)totalFrames;

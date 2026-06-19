@@ -47,6 +47,7 @@ class arena
 	void dibujaProyectiles() const;
 	void dibujaObstaculos()  const;
 	void colocarObstaculoAleatorio(int indice);
+	bool ataqueMeleeActivo(Pieza* p, const std::vector<Proyectil*>& proyectiles) const;
 
 	bool plantaGano = false; // true si ganó la planta, false si ganó el zombi
 
@@ -82,5 +83,6 @@ public:
 	void fDatos(Pieza& p1, Pieza& p2);
 
 	void recibirMovimiento(int jugador, int dir, bool estado);
+	void procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto);
 	bool getPlantaGano() const { return plantaGano; } // getter para mundo
 };

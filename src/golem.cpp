@@ -13,10 +13,12 @@ std::string Golem::getRutaSprite() const
 
 void Golem::dibujaTablero(float x, float y) const
 {
-    dibujarSprite(getRutaSprite(), x, y, 1.4f, getDireccion(), 6);
+    int frame = getFrame(getDireccion(), getAccion());
+    dibujarSprite(getRutaSprite(), x, y, 1.4f, frame, 6);
 }
 
 void Golem::dibujaArena(float x, float y) const
 {
-    dibujarSprite(getRutaSprite(), x, y, 2.0f, getDireccion(), 6);
+    int frame = getFrame(getDireccion(), getAccion());
+    dibujarSprite(getRutaSprite(), x, y, 2.0f, frame, 6);
 }
