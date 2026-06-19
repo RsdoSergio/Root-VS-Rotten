@@ -1,7 +1,7 @@
 #pragma once
 #include "hechizo.h"
 
-class hechizoRevive : public Hechizo
+class hechizoRevive : public HechizoBase
 {
 public:
 	bool ejecutar(Tablero& tablero, Pieza* caster, Pos objetivo) override;

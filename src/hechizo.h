@@ -5,9 +5,11 @@
 class Tablero;
 class Pieza;
 
-class Hechizo
+class HechizoBase
 {
-	virtual ~Hechizo() {}
+public:
+	virtual ~HechizoBase() {}
 
 	virtual bool ejecutar(Tablero& tablero, Pieza* caster, Pos objetivo) = 0;
+	virtual std::string getNombre() const = 0;
 };

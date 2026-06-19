@@ -1,10 +1,10 @@
 #pragma once
 #include "hechizo.h"
 
-class hechizoHeal : public Hechizo
+class hechizoHeal : public HechizoBase
 {
 public:
+    virtual ~hechizoHeal() override = default;
     bool ejecutar(Tablero& tablero, Pieza* caster, Pos objetivo) override;
-	std::string getNombre() const { return "HEAL"; }
+    std::string getNombre() const override { return "HEAL"; }
 };
-
