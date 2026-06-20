@@ -34,7 +34,7 @@ public:
 	double getXmax() const { return pos.getX() + ancho / 2.0; }
 	double getYmin() const { return pos.getY() - alto / 2.0; }
 	double getYmax()  const { return pos.getY() + alto / 2.0; }
-	bool   estaActivo() const { return activo; }
+	bool estaActivo() const { return activo; }
 
 	void dibuja() const
 	{

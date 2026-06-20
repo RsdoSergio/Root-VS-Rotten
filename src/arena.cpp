@@ -326,7 +326,7 @@ void arena::colocarObstaculoAleatorio(int idx)
 {
 	constexpr double OBS_MIN = 2.0;
 	constexpr double OBS_MAX = 6.0;
-	constexpr double HOLGURA = 0.8;
+	constexpr double HOLGURA = 2.0;
 	constexpr double MARGEN_PIEZA = TAM_PIEZA + 1.5;
 
 	double x = 0.0, y = 0.0, lado = OBS_MIN;
