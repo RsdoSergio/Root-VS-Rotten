@@ -406,3 +406,19 @@ void Tablero::resolverCombate(bool plantaGana)
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
 	}
 }
+
+void Tablero::activarHechizo(Pieza* mago, HechizoBase* hechizo)
+{
+	magoLanzando = mago;
+	hechizoActivo = hechizo;
+}
+
+bool Tablero::aplicarHechizo(Pos destino)
+{
+	if (hechizoActivo == nullptr || magoLanzando == nullptr) return false;
+
+	bool exito = hechizoActivo->ejecutar(*this, magoLanzando, destino);
+
+	if (exito) { hechizoActivo = nullptr; magoLanzando = nullptr; }
+	return exito;
+}
