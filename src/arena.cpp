@@ -321,38 +321,37 @@ void arena::dibujaProyectiles() const
 
 void arena::colocarObstaculoAleatorio(int idx)
 {
-	constexpr double OBS_MIN = 1.0;
-	constexpr double OBS_MAX = 5.0;
+	constexpr double OBS_MIN = 2.0;
+	constexpr double OBS_MAX = 6.0;
 	constexpr double HOLGURA = 0.8;
 	constexpr double MARGEN_PIEZA = TAM_PIEZA + 1.5;
 
-	double x = 0.0, y = 0.0, w = OBS_MIN, h = OBS_MIN;
+	double x = 0.0, y = 0.0, lado = OBS_MIN;
 	int intentos = 0;
 
 	while (intentos < 200)
 	{
 		intentos++;
 
-		w = OBS_MIN + (double)rand() / RAND_MAX * (OBS_MAX - OBS_MIN);
-		h = OBS_MIN + (double)rand() / RAND_MAX * (OBS_MAX - OBS_MIN);
+		lado = OBS_MIN + (double)rand() / RAND_MAX * (OBS_MAX - OBS_MIN);
 
-		double xMin = caja.getXmin() + w / 2.0 + HOLGURA;
-		double xMax = caja.getXMAX() - w / 2.0 - HOLGURA;
-		double yMin = caja.getYmin() + h / 2.0 + HOLGURA;
-		double yMax = caja.getYMAX() - h / 2.0 - HOLGURA;
+		double xMin = caja.getXmin() + lado / 2.0 + HOLGURA;
+		double xMax = caja.getXMAX() - lado / 2.0 - HOLGURA;
+		double yMin = caja.getYmin() + lado / 2.0 + HOLGURA;
+		double yMax = caja.getYMAX() - lado / 2.0 - HOLGURA;
 
 		x = xMin + (double)rand() / RAND_MAX * (xMax - xMin);
 		y = yMin + (double)rand() / RAND_MAX * (yMax - yMin);
 
-		bool solapaPieza1 = pieza1 && (std::abs(x - pieza1->getPosArena().getX()) < (w / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza1->getPosArena().getY()) < (h / 2.0 + MARGEN_PIEZA));
+		bool solapaPieza1 = pieza1 && (std::abs(x - pieza1->getPosArena().getX()) < (lado / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza1->getPosArena().getY()) < (lado / 2.0 + MARGEN_PIEZA));
 
-		bool solapaPieza2 = pieza2 && (std::abs(x - pieza2->getPosArena().getX()) < (w / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza2->getPosArena().getY()) < (h / 2.0 + MARGEN_PIEZA));
+		bool solapaPieza2 = pieza2 && (std::abs(x - pieza2->getPosArena().getX()) < (lado / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza2->getPosArena().getY()) < (lado / 2.0 + MARGEN_PIEZA));
 
 		bool solapaObs = false;
 		for (int j = 0; j < idx; j++)
 		{
-			double minDistX = (w + obstaculos[j].getAncho()) / 2.0 + HOLGURA;
-			double minDistY = (h + obstaculos[j].getAlto()) / 2.0 + HOLGURA;
+			double minDistX = (lado + obstaculos[j].getAncho()) / 2.0 + HOLGURA;
+			double minDistY = (lado + obstaculos[j].getAlto()) / 2.0 + HOLGURA;
 			if (std::abs(x - obstaculos[j].getPosX()) < minDistX && std::abs(y - obstaculos[j].getPosY()) < minDistY)
 			{
 				solapaObs = true;
@@ -364,7 +363,18 @@ void arena::colocarObstaculoAleatorio(int idx)
 			break;
 	}
 
-	obstaculos[idx].colocar(x, y, w, h);
+	static const std::string spritesObstaculo[] = {
+		"imagenes/obstaculos/obs1.png",
+		"imagenes/obstaculos/obs2.png",
+		"imagenes/obstaculos/obs3.png",
+		"imagenes/obstaculos/obs4.png",
+		"imagenes/obstaculos/obs5.png",
+		"imagenes/obstaculos/obs6.png"
+	};
+	constexpr int NUM_SPRITES_OBS = 6;
+	const std::string& sprite = spritesObstaculo[rand() % NUM_SPRITES_OBS];
+
+	obstaculos[idx].colocar(x, y, lado, lado, sprite);
 }
 
 bool arena::ataqueMeleeActivo(Pieza* p, const std::vector<Proyectil*>& proyectiles) const
