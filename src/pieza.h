@@ -40,6 +40,9 @@ protected:
     double radioGolpe = 1.5;
     double tiempoAnimAtaque = 0.3;
     AccionPieza accionActual = AccionPieza::IDLE;
+    //para poder ajustar los tamaños de piezas a gusto
+    
+
 
 
 public:
