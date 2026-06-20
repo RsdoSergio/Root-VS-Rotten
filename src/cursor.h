@@ -16,6 +16,7 @@ public:
 
 	void mover(unsigned char key);        // WASD 
 	void moverFlechas(int key);          // flechas del teclado 
+	void setPosicion(Pos p);             // coloca el cursor directamente en una casilla (uso: raton)
 	void dibuja() const;
 	Pos  getPosicion() const { return posicion; }
 	void setBloqueado(bool b) { bloqueado = b; }

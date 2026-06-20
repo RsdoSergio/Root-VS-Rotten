@@ -68,9 +68,15 @@ void PiezaTierra::actualizarArena(double dt)
     double y = posArena.getY() + dirY * velocidad * dt;
 
     posArena.setValores(x, y);
-}
+    //para el uso de sprites
+    if (dirX > 0) setDireccion(DirMovimiento::ESTE);
+    else if (dirX < 0) setDireccion(DirMovimiento::OESTE);
+    else if (dirY > 0) setDireccion(DirMovimiento::NORTE);
+    else if (dirY < 0) setDireccion(DirMovimiento::SUR);
+    else               setDireccion(DirMovimiento::IDLE);
+
+    if (dirX != 0 || dirY != 0) setAccion(AccionPieza::MOVERSE);
+    else setAccion(AccionPieza::IDLE);
+}                        
 
 
-void PiezaTierra::moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}//se ha eliminado pero no borrado 
-//para evitar problemas de compatibilidad
-   

@@ -2,6 +2,7 @@
 #include "tablero.h"
 #include "freeglut.h"
 #include "pos.h"
+#include <cmath>
 #include "pieza.h"
 #include"peon.h"
 #include "golem.h"
@@ -13,6 +14,7 @@
 #include "mago.h"
 #include "listapieza.h"
 #include"cursor.h"
+#include <iostream>
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -35,9 +37,9 @@ void Tablero::inicializaTablero() {
 	// Definicion de colores RGB para cada tipo
 	using byte = unsigned char;
 	byte colores[3][3] = {
-		{220, 255, 220},  // 0: verde muy claro
-		{34,  100,  34},  // 1: verde oscuro
-		{85, 140,  40},  // 2: verde medio
+		{90, 180, 80}, // 0: Casilla de Plantas
+		{90, 30, 120}, // 1: Casilla de Zombies
+		{200, 200, 200}, // 2: Casilla Neutral
 	};
 
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
@@ -139,17 +141,37 @@ void Tablero::dibujaPiezas()
 	}
 }
 
-Pieza* Tablero::getPieza(Pos p) const {
+Pieza* Tablero::getPieza(Pos p) const 
+{
 	if (p.fila < 0 || p.fila >= FILAS || p.col < 0 || p.col >= COLS)
 		return nullptr; // Fuera del tablero
 	return casillas[p.fila][p.col].pieza;
 }
 
-bool Tablero::estaOcupada(Pos p) const {
+bool Tablero::estaOcupada(Pos p) const 
+{
 	return casillas[p.fila][p.col].CasOcupada(); // ya tiene Casilla
 }
 
-std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
+Pos Tablero::screenToCell(float xMundo, float yMundo) const
+{
+	// Formula inversa a la usada en dibujaTablero():
+	//   x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f
+	//   y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f
+	float colF = (xMundo + (COLS * TAM_CELDA) / 2.0f) / TAM_CELDA;
+	float filaF = (yMundo + (FILAS * TAM_CELDA) / 2.0f) / TAM_CELDA;
+
+	int col = (int)std::floor(colF);
+	int fila = (int)std::floor(filaF);
+
+	if (fila < 0 || fila >= FILAS || col < 0 || col >= COLS)
+		return Pos(); // fuera del tablero -> Pos invalida
+
+	return Pos(fila, col);
+}
+
+std::vector<Pos> Tablero::movimientosValidos(Pos origen)
+{
 	std::vector<Pos> validos;
 	Pieza* p = getPieza(origen);
 	if (p == nullptr) return validos; // Sin pieza, sin movimientos
@@ -206,7 +228,8 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
 	return validos;
 }
 
-void Tablero::marcaCasillasValidas() {
+void Tablero::marcaCasillasValidas() 
+{
 	for (Pos& p : casillasValidas) { // Usa el vector interno
 		float x = p.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
 		float y = p.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
@@ -222,7 +245,8 @@ void Tablero::marcaCasillasValidas() {
 	}
 }
 
-bool Tablero::moverPieza(Pos origen, Pos destino) {
+bool Tablero::moverPieza(Pos origen, Pos destino) 
+{
 	Pieza* p = casillas[origen.fila][origen.col].pieza;
 	if (p == nullptr) return false;
 
@@ -260,7 +284,8 @@ bool Tablero::moverPieza(Pos origen, Pos destino) {
 	}
 }
 
-bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
+bool Tablero::gestionarEntrada(Pos cursor, int& turno) 
+{
 	if (!piezaSeleccionada.esValida()) {
 		// Intentar seleccionar pieza del turno actual
 		Pieza* p = getPieza(cursor);
@@ -289,18 +314,21 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
 	return false; // No se ha movido
 }
 
-bool Tablero::piezaBloqueada(Pos p) {
+bool Tablero::piezaBloqueada(Pos p) 
+{
 	Pieza* pieza = getPieza(p);
 	if (pieza == nullptr) return false;
 	return movimientosValidos(p).empty();
 }
 
-void Tablero::cancelarSeleccion() {
+void Tablero::cancelarSeleccion() 
+{
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
 }
 
-void Tablero::dibuja(const Cursor& cursor) {
+void Tablero::dibuja(const Cursor& cursor) 
+{
 	dibujaTablero(cursor);     // casillas + cursor
 	dibujaPiezas();            // piezas encima
 	marcaCasillasValidas();    // casillas verdes encima de todo
@@ -321,16 +349,19 @@ bool Tablero::actualizarAnimacion(double dt)
 		float moveX = (dx > 0) ? paso : -paso;
 		if (std::abs(moveX) > std::abs(dx)) moveX = dx;
 		animX += moveX;
+		piezaAnimando->setDireccion(dx > 0 ? DirMovimiento::ESTE : DirMovimiento::OESTE);
 	}
 	else if (std::abs(dy) > 0.01f)
 	{
 		float moveY = (dy > 0) ? paso : -paso;
 		if (std::abs(moveY) > std::abs(dy)) moveY = dy;
 		animY += moveY;
+		piezaAnimando->setDireccion(dy > 0 ? DirMovimiento::NORTE : DirMovimiento::SUR);
 	}
 	else
 	{
 		//animacion terminada
+		piezaAnimando->setDireccion(DirMovimiento::IDLE);
 		animando = false;
 		piezaAnimando = nullptr;
 		if (combatePendiente)
@@ -340,4 +371,38 @@ bool Tablero::actualizarAnimacion(double dt)
 		}
 	}
 	return false;
+}
+
+void Tablero::resolverCombate(bool plantaGana)
+{
+	Pieza* atacante = casillas[posOrigen.fila][posOrigen.col].pieza;
+	Pieza* defensor = casillas[posDestino.fila][posDestino.col].pieza;
+
+	bool atacanteEsPlanta = (atacante && atacante->getBando() == Bando::planta);
+	bool ganadorEsAtacante = (plantaGana == atacanteEsPlanta);
+
+	// Mete la pieza en su lista según bando y confirma por consola
+	auto eliminar = [&](Pieza* p) {
+		if (p->getBando() == Bando::planta) 
+			eliminadasPlanta.push_back(p);
+		
+		else 
+			eliminadasZombi.push_back(p);
+		
+		};
+
+	if (ganadorEsAtacante)
+	{
+		// Gana el atacante: el defensor va a su lista, atacante ocupa su casilla
+		eliminar(defensor);
+		casillas[posDestino.fila][posDestino.col].pieza = atacante;
+		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
+		atacante->setCasilla(posDestino);
+	}
+	else
+	{
+		// Gana el defensor: el atacante va a su lista, defensor se queda
+		eliminar(atacante);
+		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
+	}
 }
