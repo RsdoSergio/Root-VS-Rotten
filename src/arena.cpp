@@ -208,8 +208,13 @@ void arena::mueve(double dt)
 
 	mover(pieza1);
 	if (pieza1) Interaccion::choque(*pieza1, caja);
+	if (pieza1) for (int i = 0; i < MAX_OBSTACULOS; i++)
+		Interaccion::choque(*pieza1, obstaculos[i]);
+
 	mover(pieza2);
 	if (pieza2) Interaccion::choque(*pieza2, caja);
+	if (pieza2) for (int i = 0; i < MAX_OBSTACULOS; i++)
+		Interaccion::choque(*pieza2, obstaculos[i]);
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
@@ -239,12 +244,12 @@ void arena::tecla(unsigned char key)
 	if ((key == 'q' || key == 'Q') && tiempoDisparo1 >= pieza1->getIntervaloAtaque())
 	{
 		int dirX = 0, dirY = 0;
-		if (pieza1->getUltimoEjeX() != 0 && pieza1->getUltimoEjeY() != 0) 
+		if (pieza1->getUltimoEjeX() != 0 && pieza1->getUltimoEjeY() != 0)
 		{
 			if (pieza1->getUltimoEjeReciente() == 0) dirX = pieza1->getUltimoEjeX();
 			else dirY = pieza1->getUltimoEjeY();
 		}
-		else 
+		else
 		{
 			dirX = pieza1->getUltimoEjeX();
 			dirY = pieza1->getUltimoEjeY();
@@ -258,12 +263,12 @@ void arena::tecla(unsigned char key)
 	if ((key == 'k' || key == 'K') && tiempoDisparo2 >= pieza2->getIntervaloAtaque())
 	{
 		int dirX = 0, dirY = 0;
-		if (pieza2->getUltimoEjeX() != 0 && pieza2->getUltimoEjeY() != 0) 
+		if (pieza2->getUltimoEjeX() != 0 && pieza2->getUltimoEjeY() != 0)
 		{
 			if (pieza2->getUltimoEjeReciente() == 0) dirX = pieza2->getUltimoEjeX();
 			else   dirY = pieza2->getUltimoEjeY();
-		}                                   
-		else 
+		}
+		else
 		{
 			dirX = pieza2->getUltimoEjeX();
 			dirY = pieza2->getUltimoEjeY();
