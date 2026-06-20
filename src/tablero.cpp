@@ -2,6 +2,7 @@
 #include "tablero.h"
 #include "freeglut.h"
 #include "pos.h"
+#include <cmath>
 #include "pieza.h"
 #include"peon.h"
 #include "golem.h"
@@ -13,6 +14,7 @@
 #include "mago.h"
 #include "listapieza.h"
 #include"cursor.h"
+#include <iostream>
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -155,6 +157,23 @@ Pieza* Tablero::getPieza(Pos p) const
 bool Tablero::estaOcupada(Pos p) const 
 {
 	return casillas[p.fila][p.col].CasOcupada(); // ya tiene Casilla
+}
+
+Pos Tablero::screenToCell(float xMundo, float yMundo) const
+{
+	// Formula inversa a la usada en dibujaTablero():
+	//   x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f
+	//   y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f
+	float colF = (xMundo + (COLS * TAM_CELDA) / 2.0f) / TAM_CELDA;
+	float filaF = (yMundo + (FILAS * TAM_CELDA) / 2.0f) / TAM_CELDA;
+
+	int col = (int)std::floor(colF);
+	int fila = (int)std::floor(filaF);
+
+	if (fila < 0 || fila >= FILAS || col < 0 || col >= COLS)
+		return Pos(); // fuera del tablero -> Pos invalida
+
+	return Pos(fila, col);
 }
 
 std::vector<Pos> Tablero::movimientosValidos(Pos origen)
@@ -368,9 +387,20 @@ void Tablero::resolverCombate(bool plantaGana)
 	bool atacanteEsPlanta = (atacante && atacante->getBando() == Bando::planta);
 	bool ganadorEsAtacante = (plantaGana == atacanteEsPlanta);
 
+	// Mete la pieza en su lista según bando y confirma por consola
+	auto eliminar = [&](Pieza* p) {
+		if (p->getBando() == Bando::planta) 
+			eliminadasPlanta.push_back(p);
+		
+		else 
+			eliminadasZombi.push_back(p);
+		
+		};
+
 	if (ganadorEsAtacante)
 	{
-		// Gana el atacante: ocupa la casilla del defensor
+		// Gana el atacante: el defensor va a su lista, atacante ocupa su casilla
+		eliminar(defensor);
 		casillas[posDestino.fila][posDestino.col].pieza = atacante;
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
 		atacante->setCasilla(posDestino);
@@ -378,7 +408,8 @@ void Tablero::resolverCombate(bool plantaGana)
 	}
 	else
 	{
-		// Gana el defensor: el atacante desaparece, defensor se queda
+		// Gana el defensor: el atacante va a su lista, defensor se queda
+		eliminar(atacante);
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
 		defensor->curar(defensor->getVidaMax());
 	}

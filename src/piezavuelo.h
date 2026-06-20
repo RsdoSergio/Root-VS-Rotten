@@ -15,10 +15,9 @@ public:
     bool tecla_izq = false;
     bool tecla_dcha = false;
 
-    int ultimo_eje_reciente = 0; // 0 = X fue lo último pulsado, 1 = Y fue lo último
+   
 
-    int  ultimo_eje_x = 0;   // -1 izq, 0 nada, +1 dcha  — última tecla X pulsada
-    int  ultimo_eje_y = 0;   // -1 abajo, 0 nada, +1 arriba — última tecla Y pulsada
+   
 
     void setMovimiento(int dir, bool estado);
     void actualizarArena(double dt);

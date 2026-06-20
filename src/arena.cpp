@@ -2,8 +2,9 @@
 #include "freeglut.h"
 #include "piezatierra.h"
 #include"piezavuelo.h"
+#include"piezateletransporte.h"
 #include "interaccion.h"
-
+#include"pieza.h"
 
 void arena::dibujaFondo() const
 {
@@ -133,6 +134,12 @@ void arena::dibujaHUD() const
 	glEnd();
 }
 
+void arena::dibujaObstaculos() const
+{
+	for (int i = 0; i < MAX_OBSTACULOS; i++)
+		obstaculos[i].dibuja();
+}
+
 void arena::dibuja() const
 {
 	if (!activo) return;
@@ -140,6 +147,7 @@ void arena::dibuja() const
 	dibujaInterior();
 	dibujaMarco();
 	dibujaHUD();
+	dibujaObstaculos();
 	dibujaPiezasArena();
 	dibujaProyectiles();
 }
@@ -152,19 +160,16 @@ void arena::fDatos( Pieza& p1,  Pieza& p2, BandoVentaja ventaja)
 		pieza2 = &p2;
 	}
 	else {
-
 		pieza1 = &p2;
 		pieza2 = &p1;
 	}
-	
-	
+
 	nombrePieza1 = p1.getNombre();
 	nombrePieza2 = p2.getNombre();
 	vidaPieza1 = p1.getVida();
 	vidaPieza2 = p2.getVida();
 	vidaMaxPieza1 = p1.getVidaMax();
 	vidaMaxPieza2 = p2.getVidaMax();
-
 	float bonus = 1.3f; // 30% más de vida
 	if (ventaja == BandoVentaja::PLANTA) {
 		vidaPieza1 *= bonus;
@@ -176,10 +181,12 @@ void arena::fDatos( Pieza& p1,  Pieza& p2, BandoVentaja ventaja)
 		vidaMaxPieza2 *= bonus;
 		pieza2->curar(pieza2->getVidaMax() * (bonus - 1.0f));
 	}
-	
+
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
+	pieza1->resetEjes();
+	pieza2->resetEjes();
 	activo = true;
 }
 
@@ -202,19 +209,37 @@ void arena::mueve(double dt)
 {
 	if (!activo) return;
 
-	auto mover = [&](Pieza* p)
+	auto mover = [&](Pieza* p, const std::vector<Proyectil*>& proyectiles)
 		{
 			if (!p) return;
+			if (ataqueMeleeActivo(p, proyectiles))
+			{
+				p->setAccion(AccionPieza::ATACAR);
+				return;
+			}
 			PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
 			if (pt) pt->actualizarArena(dt);
 			PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
 			if (pv) pv->actualizarArena(dt);
+			PiezaTeletransporte* pte = dynamic_cast<PiezaTeletransporte*>(p);
+			if (pte) pte->actualizarArena(dt);
 		};
 
-	mover(pieza1);
-	if (pieza1) Interaccion::choque(*pieza1, caja);
-	mover(pieza2);
-	if (pieza2) Interaccion::choque(*pieza2, caja);
+	mover(pieza1, proyectil1);
+	if (pieza1)
+		Interaccion::choque(*pieza1, caja);
+	if (pieza1)
+		for (int i = 0; i < MAX_OBSTACULOS; i++)
+			Interaccion::choque(*pieza1, obstaculos[i]);
+
+	mover(pieza2, proyectil2);
+	if (pieza2)
+		Interaccion::choque(*pieza2, caja);
+	if (pieza2)
+		for (int i = 0; i < MAX_OBSTACULOS; i++)
+			Interaccion::choque(*pieza2, obstaculos[i]);
+
+	if (pieza1 && pieza2) Interaccion::choque(*pieza1, *pieza2);
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
@@ -225,11 +250,29 @@ void arena::mueve(double dt)
 		pr->mueve(dt);
 		if (pieza2 && pieza2->estaViva())
 			Interaccion::choque(*pr, *pieza2);
+		for (int i = 0; i < MAX_OBSTACULOS; i++)
+			Interaccion::choque(*pr, obstaculos[i]);
+
+		//se desactiva el proyectil si sale de la arena
+		double px = pr->getPosProyectil().getX();
+		double py = pr->getPosProyectil().getY();
+		if (px < caja.getXmin() || px > caja.getXMAX() ||
+			py < caja.getYmin() || py > caja.getYMAX())
+			pr->desactivar();
 	}
 	for (Proyectil* pr : proyectil2) {
 		pr->mueve(dt);
 		if (pieza1 && pieza1->estaViva())
 			Interaccion::choque(*pr, *pieza1);
+		for (int i = 0; i < MAX_OBSTACULOS; i++)
+			Interaccion::choque(*pr, obstaculos[i]);
+
+		//se desactiva el proyectil si sale de la arena
+		double px = pr->getPosProyectil().getX();
+		double py = pr->getPosProyectil().getY();
+		if (px < caja.getXmin() || px > caja.getXMAX() ||
+			py < caja.getYmin() || py > caja.getYMAX())
+			pr->desactivar();
 	}
 
 	// Fin de combate
@@ -241,20 +284,8 @@ void arena::tecla(unsigned char key)
 {
 	if (!activo) return;
 
-	if ((key == 'q' || key == 'Q') && tiempoDisparo1 >= pieza1->getIntervaloAtaque())
-	{
-		Vector2D pos = pieza1->getPosArena();
-		Vector2D vel(VEL_PROYECTIL, 0.0);
-		proyectil1.push_back(new Proyectil(pos, vel, pieza1->getFuerza()));
-		tiempoDisparo1 = 0.0;
-	}
-	if ((key == 'k' || key == 'K') && tiempoDisparo2 >= pieza2->getIntervaloAtaque())
-	{
-		Vector2D pos = pieza2->getPosArena();
-		Vector2D vel(-VEL_PROYECTIL, 0.0);
-		proyectil2.push_back(new Proyectil(pos, vel, pieza2->getFuerza()));
-		tiempoDisparo2 = 0.0;
-	}
+	if (key == 'q' || key == 'Q') procesarAtaque(pieza1, proyectil1, tiempoDisparo1, +1);
+	if (key == 'k' || key == 'K') procesarAtaque(pieza2, proyectil2, tiempoDisparo2, -1);
 }
 
 // Dibuja los proyectiles activos
@@ -264,14 +295,60 @@ void arena::dibujaProyectiles() const
 	for (Proyectil* p : proyectil2) p->dibuja();
 }
 
-void arena::MoverPiezaPlanta(unsigned char key)
+void arena::colocarObstaculoAleatorio(int idx)
 {
-	
+	constexpr double OBS_MIN = 1.0;
+	constexpr double OBS_MAX = 5.0;
+	constexpr double HOLGURA = 0.8;
+	constexpr double MARGEN_PIEZA = TAM_PIEZA + 1.5;
+
+	double x = 0.0, y = 0.0, w = OBS_MIN, h = OBS_MIN;
+	int intentos = 0;
+
+	while (intentos < 200)
+	{
+		intentos++;
+
+		w = OBS_MIN + (double)rand() / RAND_MAX * (OBS_MAX - OBS_MIN);
+		h = OBS_MIN + (double)rand() / RAND_MAX * (OBS_MAX - OBS_MIN);
+
+		double xMin = caja.getXmin() + w / 2.0 + HOLGURA;
+		double xMax = caja.getXMAX() - w / 2.0 - HOLGURA;
+		double yMin = caja.getYmin() + h / 2.0 + HOLGURA;
+		double yMax = caja.getYMAX() - h / 2.0 - HOLGURA;
+
+		x = xMin + (double)rand() / RAND_MAX * (xMax - xMin);
+		y = yMin + (double)rand() / RAND_MAX * (yMax - yMin);
+
+		bool solapaPieza1 = pieza1 && (std::abs(x - pieza1->getPosArena().getX()) < (w / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza1->getPosArena().getY()) < (h / 2.0 + MARGEN_PIEZA));
+
+		bool solapaPieza2 = pieza2 && (std::abs(x - pieza2->getPosArena().getX()) < (w / 2.0 + MARGEN_PIEZA) && std::abs(y - pieza2->getPosArena().getY()) < (h / 2.0 + MARGEN_PIEZA));
+
+		bool solapaObs = false;
+		for (int j = 0; j < idx; j++)
+		{
+			double minDistX = (w + obstaculos[j].getAncho()) / 2.0 + HOLGURA;
+			double minDistY = (h + obstaculos[j].getAlto()) / 2.0 + HOLGURA;
+			if (std::abs(x - obstaculos[j].getPosX()) < minDistX && std::abs(y - obstaculos[j].getPosY()) < minDistY)
+			{
+				solapaObs = true;
+				break;
+			}
+		}
+
+		if (!solapaPieza1 && !solapaPieza2 && !solapaObs)
+			break;
+	}
+
+	obstaculos[idx].colocar(x, y, w, h);
 }
 
-void arena::MoverPiezaZombi(int key)
+bool arena::ataqueMeleeActivo(Pieza* p, const std::vector<Proyectil*>& proyectiles) const
 {
-	
+	if (!p->esMelee()) return false;
+	for (Proyectil* pr : proyectiles)
+		if (pr->getEstado()) return true;
+	return false;
 }
 
 void arena::recibirMovimiento(int jugador, int dir, bool estado)
@@ -286,4 +363,47 @@ void arena::recibirMovimiento(int jugador, int dir, bool estado)
 
 	PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
 	if (pv) pv->setMovimiento(dir, estado);
+
+	PiezaTeletransporte* pte = dynamic_cast<PiezaTeletransporte*>(p);
+	if (pte) pte->setMovimiento(dir, estado);
+}
+
+void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto)
+{
+
+	
+	if (!p || tiempoDisparo < p->getIntervaloAtaque()) return;
+	
+
+	if (p->esMelee())
+	{
+		int dirX = p->getUltimoEjeX();
+		int dirY = p->getUltimoEjeY();
+		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
+
+		Vector2D pos(
+			p->getPosArena().getX() + dirX * 0.9,
+			p->getPosArena().getY() + dirY * 0.9
+		);
+		Vector2D vel(0.0, 0.0); // no se mueve
+		proyectiles.push_back(new Proyectil(pos, vel, p->getFuerza(), p->getIntervaloAtaque()));
+	}
+	else
+	{
+		int dirX = 0, dirY = 0;
+		if (p->getUltimoEjeX() != 0 && p->getUltimoEjeY() != 0)
+		{
+			if (p->getUltimoEjeReciente() == 0) dirX = p->getUltimoEjeX();
+			else dirY = p->getUltimoEjeY();
+		}
+		else
+		{
+			dirX = p->getUltimoEjeX();
+			dirY = p->getUltimoEjeY();
+		}
+		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
+		Vector2D vel(dirX * VEL_PROYECTIL, dirY * VEL_PROYECTIL);
+		proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
+	}
+	tiempoDisparo = 0.0;
 }

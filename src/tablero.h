@@ -23,6 +23,12 @@ public:
 	bool   estaOcupada(Pos p) const;
 	bool piezaBloqueada(Pos p);
 
+	// Convierte una coordenada en espacio de mundo (las mismas unidades que usa
+	// dibujaTablero) a la casilla (fila, col) correspondiente. Es la operacion
+	// inversa de las cuentas de x,y que se hacen al dibujar. Devuelve Pos invalida
+	// si el punto cae fuera del tablero.
+	Pos screenToCell(float xMundo, float yMundo) const;
+
 	bool gestionarEntrada(Pos cursor, int& turno);
 	void cancelarSeleccion();
 	void dibuja(const Cursor& cursor);
@@ -37,7 +43,8 @@ public:
 	void resolverCombate(bool atacanteGana); 
 	void avanzarCiclo(); // llamar cada 5 turnos
 	BandoVentaja getBandoVentaja() const;
-	
+	std::vector<Pieza*>& getEliminadasPlanta() { return eliminadasPlanta; }
+	std::vector<Pieza*>& getEliminadasZombi() { return eliminadasZombi; }
 
 private:
 
@@ -66,8 +73,11 @@ private:
 	float animY = 0.0f;
 	float destX = 0.0f;
 	float destY = 0.0f;
+
 	int ciclo = 0;        // contador de turnos
 	int indiceCiclo = 0;
 	int patronOriginal[FILAS][COLS]; // guardamos el patrón inicial
+	std::vector<Pieza*> eliminadasPlanta;
+	std::vector<Pieza*> eliminadasZombi;
 
 };

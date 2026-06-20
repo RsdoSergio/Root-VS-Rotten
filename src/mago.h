@@ -36,17 +36,10 @@ public:
         hechizosUsados[static_cast<int>(h)] = true;
     }
 
-    void dibujaTablero(float x, float y) const override {
-        // Dorado para LUZ, rojo oscuro para OSCURIDAD (son los líderes, destacan)
-        if (bando == Bando::planta) glColor3f(1.0f, 0.85f, 0.0f);
-        else                     glColor3f(0.7f, 0.0f, 0.0f);
-        glBegin(GL_POLYGON);
-        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
-        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
-        glEnd();
-    }
+    // Antes se dibujaba como cuadrado de color (dorado LUZ / rojo oscuro OSCURIDAD);
+    // ahora usa sprite, ver Mago::getRutaSprite() en mago.cpp
+    std::string getRutaSprite() const override;
+    
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Girasol Primitivo" : "Doctor Zombie";

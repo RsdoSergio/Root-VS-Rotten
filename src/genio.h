@@ -16,18 +16,11 @@ public:
         velocidadProyectil(3.0) {} // Proyectil lento
 
     double getVelocidadProyectil() const { return velocidadProyectil; }
+
+    // Antes se dibujaba como cuadrado de color (morado claro LUZ / morado oscuro OSCURIDAD);
+    // ahora usa sprite, ver Djinn::getRutaSprite() en genio.cpp
+    std::string getRutaSprite() const override;
     
-    void dibujaTablero(float x, float y) const override {
-        // Morado claro para LUZ, morado oscuro para OSCURIDAD
-        if (bando == Bando::planta) glColor3f(0.8f, 0.4f, 0.9f);
-        else                     glColor3f(0.4f, 0.1f, 0.5f);
-        glBegin(GL_POLYGON);
-        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
-        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
-        glEnd();
-    }
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Mazorcañon" : "Gondolero";

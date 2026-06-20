@@ -10,7 +10,7 @@
 #include "peon.h"
 #include "menu.h"
 #include "caja.h"
-#include "gestorTexturas.h"5
+#include "gestorTexturas.h"
 
 
 class Mundo
@@ -35,7 +35,11 @@ public:
 	void mueve();
 	void tecla(unsigned char key);
 	void teclaEspecial(int key);   // flechas del teclado para cursor2
+	void clicRaton(int boton, int estado, int xPixel, int yPixel); // clic de raton sobre el tablero
 	//funciones para gestionar el pulsado continuo de tecla
 	void teclaLevantada(unsigned char key);
 	void teclaEspecialLevantada(int key);
+
+private:
+	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
 };

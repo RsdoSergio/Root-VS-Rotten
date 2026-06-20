@@ -11,6 +11,7 @@ constexpr int DIR_IZQ = 2;
 constexpr int DIR_DCHA = 3;
 
 enum class DirMovimiento { IDLE, NORTE, SUR, ESTE, OESTE };
+enum class AccionPieza { IDLE, MOVERSE, ATACAR };
 
 enum class TipoMovimiento { TIERRA, VUELO, TELETRANSPORTE };
 constexpr float TAM_PIEZA = 0.9f;//Porvisional para las piezas
@@ -19,7 +20,8 @@ enum class BandoVentaja { PLANTA, ZOMBI };
 
 class Pieza
 {
-    friend class Interaccion; // <-- aquí, fuera de cualquier sección
+    friend class Interaccion; 
+    
 
 protected:
     double   vida;
@@ -32,6 +34,16 @@ protected:
     Pos      casilla;
     Vector2D posArena;
     DirMovimiento dirActual = DirMovimiento::IDLE;
+    DirMovimiento ultimaDir = DirMovimiento::ESTE;
+    int ultimo_eje_x = 0;  // -1 izq, 0 nada, +1 dcha
+    int ultimo_eje_y = 0;  // -1 abajo, 0 nada, +1 arriba
+    int ultimo_eje_reciente = 0;
+    double radioGolpe = 1.5;
+    double tiempoAnimAtaque = 0.3;
+    AccionPieza accionActual = AccionPieza::IDLE;
+    //para poder ajustar los tama�os de piezas a gusto
+    
+
 
 
 public:
@@ -48,19 +60,33 @@ public:
 
     Vector2D getPosArena() const { return posArena; }
 
+    DirMovimiento getUltimaDir() const { return ultimaDir; } //
+
+    int getUltimoEjeX() const { return ultimo_eje_x; }
+    int getUltimoEjeY() const { return ultimo_eje_y; }
+    int getUltimoEjeReciente() const { return ultimo_eje_reciente; }
+    int getRadioMovimiento() const { return radioMovimiento; }
+
     void setCasilla(Pos p) { casilla = p; }
     void recibirDanio(double d);
     void curar(double cantidad);
 
     void setPosArena(double x, double y) { posArena.setValores(x, y); }
 
-    int getRadioMovimiento() const { return radioMovimiento; }
-
+    
+    AccionPieza getAccion() const { return accionActual; }
     DirMovimiento getDireccion() const { return dirActual; }//usado para obtener en que direccion se esta moviendo la pieza en ese momento
-    void setDireccion(DirMovimiento d) { dirActual = d; }//luego usarlo para los sprites
+                                                            //luego usarlo para los sprites
+    void setDireccion(DirMovimiento d);
+    void setAccion(AccionPieza a) { accionActual = a; }
 
-    virtual void dibujaTablero(float x, float y) const {};
-    virtual void dibujaArena(float x, float y) const {};
+    void resetEjes();
+    
+    //puesto para resetear el movimiento al iniciar el combate
+    
+
+    virtual void dibujaTablero(float x, float y) const;
+    virtual void dibujaArena(float x, float y) const;
     virtual std::string getNombre() const { return "Pieza"; }
     virtual void usarAtaqueSecundario() {};
 
@@ -69,8 +95,10 @@ public:
     virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
 
     virtual bool puedeDiagonal() const { return false; } //implementado para que las piezas de tierra se puedan mover en diagonales
-
+    virtual bool esMelee() const { return false; }
     virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
+
+    virtual int getFrame(DirMovimiento dir, AccionPieza accion) const;
 
     virtual ~Pieza() {} 
 

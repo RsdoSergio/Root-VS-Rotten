@@ -17,17 +17,10 @@ public:
 
     double getVelocidadProyectil() const { return velocidadProyectil; }
 
-    void dibujaTablero(float x, float y) const override {
-        // Rosa claro para LUZ, rosa oscuro para OSCURIDAD
-        if (bando == Bando::planta) glColor3f(0.95f, 0.7f, 0.8f);
-        else                     glColor3f(0.6f, 0.3f, 0.4f);
-        glBegin(GL_POLYGON);
-        glVertex3f(x - TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y - TAM_PIEZA, 0);
-        glVertex3f(x + TAM_PIEZA, y + TAM_PIEZA, 0);
-        glVertex3f(x - TAM_PIEZA, y + TAM_PIEZA, 0);
-        glEnd();
-    }
+    // Antes se dibujaba como cuadrado de color (rosa claro LUZ / rosa oscuro OSCURIDAD);
+    // ahora usa sprite, ver Unicornio::getRutaSprite() en unicornio.cpp
+    std::string getRutaSprite() const override;
+    
 
 
     std::string getNombre() const override {
