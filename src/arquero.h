@@ -15,7 +15,10 @@ public:
             0.6,   // Enfriamiento bajo
             2, //rad de mov
             b, pos),
-        velocidadProyectil(8.0) {} // El proyectil viaja más rápido que la propia pieza
+        velocidadProyectil(8.0) // El proyectil viaja más rápido que la propia pieza
+    {
+            
+    } 
 
     double getVelocidadProyectil() const { return velocidadProyectil; }
 

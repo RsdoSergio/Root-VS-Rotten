@@ -40,7 +40,10 @@ protected:
     double radioGolpe = 1.5;
     double tiempoAnimAtaque = 0.3;
     AccionPieza accionActual = AccionPieza::IDLE;
-    //para poder ajustar los tamaños de piezas a gusto
+    
+    bool   atacandoActivo = false;
+    double tiempoAtaqueRestante = 0.0;
+
     
 
 
@@ -56,6 +59,7 @@ public:
     Pos    getCasilla()   const { return casilla; }
     bool   estaViva()     const { return vida > 0; }
     double getIntervaloAtaque() const { return intervaloAtaque; }//nuevo para el cooldown de ataque
+    double getTiempoAnimAtaque() const { return tiempoAnimAtaque; }
 
     Vector2D getPosArena() const { return posArena; }
 
@@ -98,6 +102,12 @@ public:
     virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 
     virtual int getFrame(DirMovimiento dir, AccionPieza accion) const;
+
+    bool estaAtacando() const { return atacandoActivo; }
+    void iniciarAtaque() { atacandoActivo = true; tiempoAtaqueRestante = tiempoAnimAtaque; }
+    
+    void actualizarAtaque(double dt);
+   
 
     virtual ~Pieza() {} 
 };
