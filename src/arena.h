@@ -11,7 +11,6 @@
 #include "obstaculo.h"
 #include<vector>
 
-
 constexpr int MAX_OBSTACULOS = 6;
 
 class arena
@@ -47,6 +46,7 @@ class arena
 	void dibujaProyectiles() const;
 	void dibujaObstaculos()  const;
 	void colocarObstaculoAleatorio(int indice);
+	bool ataqueMeleeActivo(Pieza* p, const std::vector<Proyectil*>& proyectiles) const;
 
 	bool plantaGano = false; // true si ganó la planta, false si ganó el zombi
 
@@ -74,13 +74,35 @@ public:
 
 	void desactiva()
 	{
+		//reseteo de la pieza a x defecto
+		if (pieza1)
+		{
+			pieza1->setAccion(AccionPieza::IDLE);
+			pieza1->setDireccion(DirMovimiento::IDLE);
+		}
+		if (pieza2)
+		{
+			pieza2->setAccion(AccionPieza::IDLE);
+			pieza2->setDireccion(DirMovimiento::IDLE);
+		}
+
+		//limpia los proyectiles que hayan quedado activos al terminar el combate
+		for (Proyectil* pr : proyectil1)
+			delete pr;
+		for (Proyectil* pr : proyectil2)
+			delete pr;
+		proyectil1.clear();
+		proyectil2.clear();
+
 		activo = false;
 		pieza1 = nullptr;
 		pieza2 = nullptr;
 	}
+
 	bool estaActiva() const { return activo; }
 	void fDatos(Pieza& p1, Pieza& p2);
 
 	void recibirMovimiento(int jugador, int dir, bool estado);
+	void procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto);
 	bool getPlantaGano() const { return plantaGano; } // getter para mundo
 };

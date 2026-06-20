@@ -22,8 +22,7 @@ public:
     // Antes se dibujaba como cuadrado de color (amarillo LUZ / amarillo oscuro OSCURIDAD);
     // ahora usa sprite, ver Arquero::getRutaSprite() en arquero.cpp
     std::string getRutaSprite() const override;
-    void dibujaTablero(float x, float y) const override;
-    void dibujaArena(float x, float y) const override;
+    
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Guisantralladora" : "Pertigador";

@@ -3,5 +3,5 @@
 #include"pieza.h"
 void precargarTexturas();
 
-void dibujarSprite(const std::string& ruta, float x, float y, float tam,DirMovimiento dir, int totalFrames);
+void dibujarSprite(const std::string& ruta, float x, float y, float tam, int frame, int totalFrames);
     

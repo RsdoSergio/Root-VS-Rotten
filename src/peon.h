@@ -11,13 +11,16 @@ public:
             12.0,  // vida baja
             4.0,   // fuerza baja
             7.0,   // velocidad alta
-            0.4,   // recarga rápida
+            0.8,   // recarga rápida
             1, //rad de mov
-            b, pos) {};
+            b, pos)
+    {
+        radioGolpe = 2.5;
+        tiempoAnimAtaque = 0.3;
+    };
 
     std::string getRutaSprite() const override;
-    void dibujaTablero(float x, float y) const override;
-    void dibujaArena(float x, float y) const override;
+    
 
     std::string getNombre() const override 
     {
@@ -27,5 +30,7 @@ public:
     
     bool puedeDiagonal() const override { return true; };
 
-   
+    bool esMelee()const override { return true; }
+
+    
 };

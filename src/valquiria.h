@@ -20,9 +20,7 @@ public:
     // Antes se dibujaba como cuadrado de color (cian LUZ / azul oscuro OSCURIDAD);
     // ahora usa sprite, ver Valquiria::getRutaSprite() en valquiria.cpp
     std::string getRutaSprite() const override;
-    void dibujaTablero(float x, float y) const override;
-    void dibujaArena(float x, float y) const override;
-
+   
     std::string getNombre() const override {
         return bando == Bando::planta ? "Rotinabo" : "Globador";
     }

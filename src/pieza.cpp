@@ -1,4 +1,5 @@
 #include "pieza.h"
+#include"gestorTexturas.h"
 
 
 Pieza::Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos)
@@ -26,17 +27,37 @@ void Pieza::curar(double cantidad) {
 
 void Pieza::setDireccion(DirMovimiento d) {
     dirActual = d;
-    switch (d) {
-    case DirMovimiento::ESTE:  ultimo_eje_x = +1; ultimo_eje_y = 0; break;
-    case DirMovimiento::OESTE: ultimo_eje_x = -1; ultimo_eje_y = 0; break;
-    case DirMovimiento::NORTE: ultimo_eje_x = 0; ultimo_eje_y = +1; break;
-    case DirMovimiento::SUR:   ultimo_eje_x = 0; ultimo_eje_y = -1; break;
-    default: break; // IDLE no toca los ejes
-    }
+    if (d != DirMovimiento::IDLE)
+        ultimaDir = d;
 }
 
 void Pieza::resetEjes() {
     ultimo_eje_x = 0;
     ultimo_eje_y = 0;
     ultimo_eje_reciente = 0;
+}
+
+int Pieza:: getFrame(DirMovimiento dir, AccionPieza accion) const
+{
+    if (accion == AccionPieza::ATACAR) return 5;
+    switch (dir) {
+    case DirMovimiento::ESTE:  return 1;
+    case DirMovimiento::OESTE: return 2;
+    case DirMovimiento::NORTE: return 3;
+    case DirMovimiento::SUR:   return 4;
+    default:                   return 0;
+    }
+}
+
+
+void Pieza::dibujaTablero(float x, float y) const
+{
+    int frame = getFrame(getDireccion(), getAccion());
+    dibujarSprite(getRutaSprite(), x, y, 1.4f, frame, 6);
+}
+
+void Pieza::dibujaArena(float x, float y) const
+{
+    int frame = getFrame(getDireccion(), getAccion());
+    dibujarSprite(getRutaSprite(), x, y, 2.0f, frame, 6);
 }

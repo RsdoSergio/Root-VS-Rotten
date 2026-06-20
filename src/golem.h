@@ -13,8 +13,7 @@ public:
             1, //rad de mov
             b, pos) {}
 
-    void dibujaTablero(float x, float y) const override;
-    void dibujaArena(float x, float y) const override;
+    
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Bonk Choy" : "Yeti";
@@ -22,5 +21,7 @@ public:
     void usarAtaqueSecundario() override {};
     
     std::string getRutaSprite() const override;
+   
+    
 
 };
