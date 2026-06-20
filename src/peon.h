@@ -20,8 +20,7 @@ public:
     };
 
     std::string getRutaSprite() const override;
-    void dibujaTablero(float x, float y) const override;
-    void dibujaArena(float x, float y) const override;
+    
 
     std::string getNombre() const override 
     {

@@ -1,4 +1,5 @@
 #include "pieza.h"
+#include"gestorTexturas.h"
 
 
 Pieza::Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos)
@@ -46,4 +47,17 @@ int Pieza:: getFrame(DirMovimiento dir, AccionPieza accion) const
     case DirMovimiento::SUR:   return 4;
     default:                   return 0;
     }
+}
+
+
+void Pieza::dibujaTablero(float x, float y) const
+{
+    int frame = getFrame(getDireccion(), getAccion());
+    dibujarSprite(getRutaSprite(), x, y, 1.4f, frame, 6);
+}
+
+void Pieza::dibujaArena(float x, float y) const
+{
+    int frame = getFrame(getDireccion(), getAccion());
+    dibujarSprite(getRutaSprite(), x, y, 2.0f, frame, 6);
 }

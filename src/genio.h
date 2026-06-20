@@ -20,8 +20,7 @@ public:
     // Antes se dibujaba como cuadrado de color (morado claro LUZ / morado oscuro OSCURIDAD);
     // ahora usa sprite, ver Djinn::getRutaSprite() en genio.cpp
     std::string getRutaSprite() const override;
-    void dibujaTablero(float x, float y) const override;
-    void dibujaArena(float x, float y) const override;
+    
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Mazorcañon" : "Gondolero";

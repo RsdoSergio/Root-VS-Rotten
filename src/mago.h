@@ -39,8 +39,7 @@ public:
     // Antes se dibujaba como cuadrado de color (dorado LUZ / rojo oscuro OSCURIDAD);
     // ahora usa sprite, ver Mago::getRutaSprite() en mago.cpp
     std::string getRutaSprite() const override;
-    void dibujaTablero(float x, float y) const override;
-    void dibujaArena(float x, float y) const override;
+    
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Girasol Primitivo" : "Doctor Zombie";

@@ -8,12 +8,3 @@ std::string Fenix::getRutaSprite() const
         : "imagenes/sprites_zombies/zombie_dragon.png";
 }
 
-void Fenix::dibujaTablero(float x, float y) const
-{
-    dibujarSprite(getRutaSprite(), x, y, 1.4f, getDireccion(), 6);
-}
-
-void Fenix::dibujaArena(float x, float y) const
-{
-    dibujarSprite(getRutaSprite(), x, y, 2.0f, getDireccion(), 6);
-}

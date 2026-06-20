@@ -20,8 +20,7 @@ public:
     // Antes se dibujaba como cuadrado de color (naranja LUZ / naranja oscuro OSCURIDAD);
     // ahora usa sprite, ver Fenix::getRutaSprite() en fenix.cpp
     std::string getRutaSprite() const override;
-    void dibujaTablero(float x, float y) const override;
-    void dibujaArena(float x, float y) const override;
+    
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Boca de Dragon" : "Zombidito Dragon";
