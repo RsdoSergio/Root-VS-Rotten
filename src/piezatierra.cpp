@@ -74,6 +74,9 @@ void PiezaTierra::actualizarArena(double dt)
     else if (dirY > 0) setDireccion(DirMovimiento::NORTE);
     else if (dirY < 0) setDireccion(DirMovimiento::SUR);
     else               setDireccion(DirMovimiento::IDLE);
-}
+
+    if (dirX != 0 || dirY != 0) setAccion(AccionPieza::MOVERSE);
+    else setAccion(AccionPieza::IDLE);
+}                        
 
 

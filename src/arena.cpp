@@ -197,18 +197,23 @@ void arena::mueve(double dt)
 {
 	if (!activo) return;
 
-	auto mover = [&](Pieza* p)
+	auto mover = [&](Pieza* p, const std::vector<Proyectil*>& proyectiles)
+	{
+		if(!p) return;
+		if (ataqueMeleeActivo(p, proyectiles))
 		{
-			if (!p) return;
-			PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
-			if (pt) pt->actualizarArena(dt);
-			PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
-			if (pv) pv->actualizarArena(dt);
-		};
+			p->setAccion(AccionPieza::ATACAR);
+			return;
+		}
+		PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
+		if (pt) pt->actualizarArena(dt);
+		PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
+		if (pv) pv->actualizarArena(dt);
+	};
 
-	mover(pieza1);
+	mover(pieza1, proyectil1);
 	if (pieza1) Interaccion::choque(*pieza1, caja);
-	mover(pieza2);
+	mover(pieza2, proyectil2);
 	if (pieza2) Interaccion::choque(*pieza2, caja);
 
 	// Actualizar timers de cooldown
@@ -236,44 +241,8 @@ void arena::tecla(unsigned char key)
 {
 	if (!activo) return;
 
-	if ((key == 'q' || key == 'Q') && tiempoDisparo1 >= pieza1->getIntervaloAtaque())
-	{
-		int dirX = 0, dirY = 0;
-		if (pieza1->getUltimoEjeX() != 0 && pieza1->getUltimoEjeY() != 0) 
-		{
-			if (pieza1->getUltimoEjeReciente() == 0) dirX = pieza1->getUltimoEjeX();
-			else dirY = pieza1->getUltimoEjeY();
-		}
-		else 
-		{
-			dirX = pieza1->getUltimoEjeX();
-			dirY = pieza1->getUltimoEjeY();
-		}
-		Vector2D pos = pieza1->getPosArena();
-		if (dirX == 0 && dirY == 0)dirX = 1;
-		Vector2D vel(dirX * VEL_PROYECTIL, dirY * VEL_PROYECTIL);
-		proyectil1.push_back(new Proyectil(pos, vel, pieza1->getFuerza()));
-		tiempoDisparo1 = 0.0;
-	}
-	if ((key == 'k' || key == 'K') && tiempoDisparo2 >= pieza2->getIntervaloAtaque())
-	{
-		int dirX = 0, dirY = 0;
-		if (pieza2->getUltimoEjeX() != 0 && pieza2->getUltimoEjeY() != 0) 
-		{
-			if (pieza2->getUltimoEjeReciente() == 0) dirX = pieza2->getUltimoEjeX();
-			else   dirY = pieza2->getUltimoEjeY();
-		}                                   
-		else 
-		{
-			dirX = pieza2->getUltimoEjeX();
-			dirY = pieza2->getUltimoEjeY();
-		}
-		Vector2D pos = pieza2->getPosArena();
-		if (dirX == 0 && dirY == 0)dirX = -1;
-		Vector2D vel(dirX * VEL_PROYECTIL, dirY * VEL_PROYECTIL);
-		proyectil2.push_back(new Proyectil(pos, vel, pieza2->getFuerza()));
-		tiempoDisparo2 = 0.0;
-	}
+	if (key == 'q' || key == 'Q') procesarAtaque(pieza1, proyectil1, tiempoDisparo1, +1);
+	if (key == 'k' || key == 'K') procesarAtaque(pieza2, proyectil2, tiempoDisparo2, -1);
 }
 
 // Dibuja los proyectiles activos
@@ -331,6 +300,17 @@ void arena::colocarObstaculoAleatorio(int idx)
 	obstaculos[idx].colocar(x, y, w, h);
 }
 
+bool arena::ataqueMeleeActivo(Pieza* p, const std::vector<Proyectil*>& proyectiles) const
+{
+	if (!p->esMelee()) return false;
+	for (Proyectil* pr : proyectiles)
+		if (pr->getEstado()) return true;
+	return false;
+}	
+	
+		
+
+
 void arena::recibirMovimiento(int jugador, int dir, bool estado)
 {
 	if (!activo) return;
@@ -346,4 +326,41 @@ void arena::recibirMovimiento(int jugador, int dir, bool estado)
 
 	PiezaTeletransporte* pte = dynamic_cast<PiezaTeletransporte*>(p);
 	if (pte) pte->setMovimiento(dir, estado);
+}
+
+void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto)
+{
+	if (!p || tiempoDisparo < p->getIntervaloAtaque()) return;
+
+	if (p->esMelee())
+	{
+		int dirX = p->getUltimoEjeX();
+		int dirY = p->getUltimoEjeY();
+		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
+
+		Vector2D pos(
+			p->getPosArena().getX() + dirX * 0.9,
+			p->getPosArena().getY() + dirY * 0.9
+		);
+		Vector2D vel(0.0, 0.0); // no se mueve
+		proyectiles.push_back(new Proyectil(pos, vel, p->getFuerza(), p->getIntervaloAtaque()));
+	}
+	else
+	{
+		int dirX = 0, dirY = 0;
+		if (p->getUltimoEjeX() != 0 && p->getUltimoEjeY() != 0)
+		{
+			if (p->getUltimoEjeReciente() == 0) dirX = p->getUltimoEjeX();
+			else dirY = p->getUltimoEjeY();
+		}
+		else
+		{
+			dirX = p->getUltimoEjeX();
+			dirY = p->getUltimoEjeY();
+		}
+		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
+		Vector2D vel(dirX * VEL_PROYECTIL, dirY * VEL_PROYECTIL);
+		proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
+	}
+	tiempoDisparo = 0.0;
 }
