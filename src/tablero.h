@@ -49,7 +49,8 @@ public:
 	void activarHechizo(Pieza* mago, HechizoBase* hechizo);
 	bool aplicarHechizo(Pos destino);
 	void cancelarHechizo() { hechizoActivo = nullptr; magoLanzando = nullptr; }
-		
+	void colocarPiezaEnCasilla(Pos p, Pieza* pieza) { casillas[p.fila][p.col].pieza = pieza; }
+
 
 private:
 
@@ -84,4 +85,6 @@ private:
 
 	HechizoBase* hechizoActivo = nullptr;
 	Pieza* magoLanzando = nullptr;
+
+
 };

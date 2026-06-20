@@ -78,7 +78,7 @@ void Mundo::tecla(unsigned char key)
 		jugarCasilla(posActiva);
 	}
 
-	if (magoSeleccionado != nullptr && !tablero.modoHechizoActivo())
+	if (magoSeleccionado != nullptr && !tablero.modoHechizoActivo() && !eligiendoRevive)
 	{
 		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
 		if (m != nullptr)
@@ -88,7 +88,31 @@ void Mundo::tecla(unsigned char key)
 				m->usarHechizo(Hechizo::HEAL);
 				magoSeleccionado = nullptr;
 			}
-			// futuro: '1' TELEPORT, '3' REVIVE, '4' IMPRISON, '5' SHIFT_TIME, '6' EXCHANGE, '7' SUMMON
+
+			if (key == '3' && m->puedeUsarHechizo(Hechizo::REVIVE)) {
+				if (!hechizoRevive.getCandidatas(tablero, m).empty()) {
+					eligiendoRevive = true; // abrimos el sub-menu, NO activamos el hechizo todavia
+				}
+			}
+
+			// futuro: '1' TELEPORT, '4' IMPRISON, '5' SHIFT_TIME, '6' EXCHANGE, '7' SUMMON
+		}
+	}
+
+	// Sub-menu de Revive: el jugador elige QUE pieza revivir antes de elegir donde
+	if (eligiendoRevive)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr && key >= '1' && key <= '9')
+		{
+			int indice = key - '1'; // '1' -> indice 0, '2' -> indice 1...
+			if (hechizoRevive.elegirPieza(tablero, m, indice))
+			{
+				tablero.activarHechizo(m, &hechizoRevive); // ahora si, ya con pieza elegida
+				m->usarHechizo(Hechizo::REVIVE);
+				eligiendoRevive = false;
+				magoSeleccionado = nullptr;
+			}
 		}
 	}
 
