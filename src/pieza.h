@@ -81,8 +81,8 @@ public:
     //puesto para resetear el movimiento al iniciar el combate
     
 
-    virtual void dibujaTablero(float x, float y) const {};
-    virtual void dibujaArena(float x, float y) const {};
+    virtual void dibujaTablero(float x, float y) const;
+    virtual void dibujaArena(float x, float y) const;
     virtual std::string getNombre() const { return "Pieza"; }
     virtual void usarAtaqueSecundario() {};
 

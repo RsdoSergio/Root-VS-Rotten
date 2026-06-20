@@ -10,16 +10,4 @@ std::string Peon :: getRutaSprite() const
         : "imagenes/sprites_zombies/zombie_normal.png";
 }
 
-void Peon::dibujaTablero(float x, float y) const
-{
-    int frame = getFrame(getDireccion(), getAccion());
-    dibujarSprite(getRutaSprite(), x, y, 1.4f, frame, 6);
-}
-
-void Peon :: dibujaArena(float x, float y) const  
-{
-    int frame = getFrame(getDireccion(), getAccion());
-    dibujarSprite(getRutaSprite(), x, y, 2.0f, frame, 6);
-}
-
 
