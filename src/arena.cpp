@@ -423,7 +423,7 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 			dirY = p->getUltimoEjeY();
 		}
 		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
-		Vector2D vel(dirX * VEL_PROYECTIL, dirY * VEL_PROYECTIL);
+		Vector2D vel(dirX * p->getVelocidadProyectil(), dirY * p->getVelocidadProyectil());
 		proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
 	}
 	p->iniciarAtaque();

@@ -99,6 +99,7 @@ public:
 
     virtual bool puedeDiagonal() const { return false; } //implementado para que las piezas de tierra se puedan mover en diagonales
     virtual bool esMelee() const { return false; }
+    virtual double getVelocidadProyectil() const { return 12.0; } // valor por defecto, igual que VEL_PROYECTIL de arena
     virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 
     virtual int getFrame(DirMovimiento dir, AccionPieza accion) const;

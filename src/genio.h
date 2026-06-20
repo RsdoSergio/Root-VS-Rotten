@@ -15,7 +15,7 @@ public:
             b, pos),
         velocidadProyectil(3.0) {} // Proyectil lento
 
-    double getVelocidadProyectil() const { return velocidadProyectil; }
+    double getVelocidadProyectil() const override { return velocidadProyectil; }
 
     // Antes se dibujaba como cuadrado de color (morado claro LUZ / morado oscuro OSCURIDAD);
     // ahora usa sprite, ver Djinn::getRutaSprite() en genio.cpp

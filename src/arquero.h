@@ -20,7 +20,7 @@ public:
             
     } 
 
-    double getVelocidadProyectil() const { return velocidadProyectil; }
+    double getVelocidadProyectil() const override { return velocidadProyectil; }
 
     // Antes se dibujaba como cuadrado de color (amarillo LUZ / amarillo oscuro OSCURIDAD);
     // ahora usa sprite, ver Arquero::getRutaSprite() en arquero.cpp
