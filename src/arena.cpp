@@ -231,11 +231,15 @@ void arena::mueve(double dt)
 		pr->mueve(dt);
 		if (pieza2 && pieza2->estaViva())
 			Interaccion::choque(*pr, *pieza2);
+		for (int i = 0; i < MAX_OBSTACULOS; i++)
+			Interaccion::choque(*pr, obstaculos[i]);
 	}
 	for (Proyectil* pr : proyectil2) {
 		pr->mueve(dt);
 		if (pieza1 && pieza1->estaViva())
 			Interaccion::choque(*pr, *pieza1);
+		for (int i = 0; i < MAX_OBSTACULOS; i++)
+			Interaccion::choque(*pr, obstaculos[i]);
 	}
 
 	// Fin de combate

@@ -83,3 +83,16 @@ void Interaccion::choque(Pieza& p1, Pieza& p2)
 		p2.posArena.setValores(p2.posArena.getX() + nx * solape / 2.0, p2.posArena.getY() + ny * solape / 2.0);
 	}
 }
+
+void Interaccion::choque(Proyectil& pr, const Obstaculo& o)
+{
+	if (!pr.getEstado()) return; //si ya está desactivado
+	if (!o.estaActivo()) return;
+
+	constexpr double radioProyectil = 0.1;
+	double x = pr.getPosProyectil().getX();
+	double y = pr.getPosProyectil().getY();
+
+	if (x + radioProyectil > o.getXmin() && x - radioProyectil < o.getXmax() && y + radioProyectil > o.getYmin() && y - radioProyectil < o.getYmax())
+		pr.desactivar();
+}
