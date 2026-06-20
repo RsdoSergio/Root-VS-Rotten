@@ -233,6 +233,13 @@ void arena::mueve(double dt)
 			Interaccion::choque(*pr, *pieza2);
 		for (int i = 0; i < MAX_OBSTACULOS; i++)
 			Interaccion::choque(*pr, obstaculos[i]);
+
+		//se desactiva el proyectil si sale de la arena
+		double px = pr->getPosProyectil().getX();
+		double py = pr->getPosProyectil().getY();
+		if (px < caja.getXmin() || px > caja.getXMAX() ||
+			py < caja.getYmin() || py > caja.getYMAX())
+			pr->desactivar();
 	}
 	for (Proyectil* pr : proyectil2) {
 		pr->mueve(dt);
@@ -240,6 +247,13 @@ void arena::mueve(double dt)
 			Interaccion::choque(*pr, *pieza1);
 		for (int i = 0; i < MAX_OBSTACULOS; i++)
 			Interaccion::choque(*pr, obstaculos[i]);
+
+		//se desactiva el proyectil si sale de la arena
+		double px = pr->getPosProyectil().getX();
+		double py = pr->getPosProyectil().getY();
+		if (px < caja.getXmin() || px > caja.getXMAX() ||
+			py < caja.getYmin() || py > caja.getYMAX())
+			pr->desactivar();
 	}
 
 	// Fin de combate
