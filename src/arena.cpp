@@ -5,6 +5,7 @@
 #include"piezateletransporte.h"
 #include "interaccion.h"
 #include"pieza.h"
+#include "audio.h"
 
 void arena::dibujaFondo() const
 {
@@ -176,6 +177,8 @@ void arena::fDatos(Pieza& p1, Pieza& p2)
 	pieza1->resetEjes();
 	pieza2->resetEjes();
 	activo = true;
+
+	Audio::playMusicaCombate();
 }
 
 // Dibuja las dos piezas en sus lados respectivos de la arena
