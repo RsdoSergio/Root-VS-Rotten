@@ -76,8 +76,24 @@ void Mundo::tecla(unsigned char key)
 		jugarCasilla(posActiva);
 	}
 
+	if (magoSeleccionado != nullptr && !tablero.modoHechizoActivo())
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr)
+		{
+			if (key == '2' && m->puedeUsarHechizo(Hechizo::HEAL)) {
+				tablero.activarHechizo(m, &hechizoHeal);
+				m->usarHechizo(Hechizo::HEAL);
+				magoSeleccionado = nullptr;
+			}
+			// futuro: '1' TELEPORT, '3' REVIVE, '4' IMPRISON, '5' SHIFT_TIME, '6' EXCHANGE, '7' SUMMON
+		}
+	}
+
 	if (key == 27) {
 		tablero.cancelarSeleccion(); //Escape para cancelar seleccion
+		tablero.cancelarHechizo();
+		magoSeleccionado = nullptr;
 		cursor.setBloqueado(false);
 		cursor2.setBloqueado(false);
 		if (key == 'v') arena.desactiva();
@@ -89,6 +105,24 @@ void Mundo::tecla(unsigned char key)
 // La usan tanto el teclado (tecla(), con key==13) como el raton (clicRaton()).
 void Mundo::jugarCasilla(Pos casilla)
 {
+	if (tablero.modoHechizoActivo())
+	{
+		tablero.aplicarHechizo(casilla);
+		magoSeleccionado = nullptr; // cerramos el menu de hechizos
+		return;
+	}
+
+	if (magoSeleccionado == nullptr)
+	{
+		Pieza* p = tablero.getPieza(casilla);
+		Mago* m = dynamic_cast<Mago*>(p);
+		if (m != nullptr && (int)m->getBando() == turno)
+		{
+			magoSeleccionado = m;
+			return;
+		}
+	}
+	
 	bool combate = tablero.gestionarEntrada(casilla, turno);
 	if (turno == 0)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
