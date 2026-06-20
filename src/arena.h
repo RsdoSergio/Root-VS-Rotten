@@ -46,7 +46,7 @@ class arena
 	void dibujaProyectiles() const;
 	void dibujaObstaculos()  const;
 	void colocarObstaculoAleatorio(int indice);
-	bool ataqueMeleeActivo(Pieza* p, const std::vector<Proyectil*>& proyectiles) const;
+	
 
 	bool plantaGano = false; // true si ganó la planta, false si ganó el zombi
 
@@ -59,45 +59,11 @@ public:
 	void mueve(double dt);           // mueve los proyectiles activos
 	void tecla(unsigned char key);   // q dispara pieza1, k dispara pieza2
 
-	void activa()
-	{
-		activo = true;
-		indiceFondo = 1 + rand() % 9;
-		numObstaculos = 3 + rand() % 4;
+	void activa();
+	
 
-		for (int i = 0; i < MAX_OBSTACULOS; i++)
-			obstaculos[i].desactivar();
-
-		for (int i = 0; i < numObstaculos; i++)
-			colocarObstaculoAleatorio(i);
-	}
-
-	void desactiva()
-	{
-		//reseteo de la pieza a x defecto
-		if (pieza1)
-		{
-			pieza1->setAccion(AccionPieza::IDLE);
-			pieza1->setDireccion(DirMovimiento::IDLE);
-		}
-		if (pieza2)
-		{
-			pieza2->setAccion(AccionPieza::IDLE);
-			pieza2->setDireccion(DirMovimiento::IDLE);
-		}
-
-		//limpia los proyectiles que hayan quedado activos al terminar el combate
-		for (Proyectil* pr : proyectil1)
-			delete pr;
-		for (Proyectil* pr : proyectil2)
-			delete pr;
-		proyectil1.clear();
-		proyectil2.clear();
-
-		activo = false;
-		pieza1 = nullptr;
-		pieza2 = nullptr;
-	}
+	void desactiva();
+	
 
 	bool estaActiva() const { return activo; }
 	void fDatos(Pieza& p1, Pieza& p2);

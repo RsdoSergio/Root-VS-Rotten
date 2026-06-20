@@ -11,7 +11,11 @@ public:
             4.0,   // velocidad baja
            1.2,   // recarga lenta
             1, //rad de mov
-            b, pos) {}
+            b, pos) 
+            {
+                radioGolpe = 4;  // golpe más grande que el Peón
+                tiempoAnimAtaque = 0.7;
+            }
 
     
 
@@ -21,7 +25,8 @@ public:
     void usarAtaqueSecundario() override {};
     
     std::string getRutaSprite() const override;
-   
+    
+    bool esMelee() const override { return true; }
     
 
 };
