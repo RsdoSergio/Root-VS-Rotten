@@ -50,11 +50,36 @@ void Interaccion::choque(Pieza& p, const Obstaculo& o)
 
 		double minSolap = std::min({ solapIzq, solapDcha, solapAbaj, solapArri });
 
-		if (minSolap == solapIzq)  x -= solapIzq;
-		else if (minSolap == solapDcha) x += solapDcha;
-		else if (minSolap == solapAbaj) y -= solapAbaj;
-		else                            y += solapArri;
+		if (minSolap == solapIzq)
+			x -= solapIzq;
+		else if (minSolap == solapDcha)
+			x += solapDcha;
+		else if (minSolap == solapAbaj)
+			y -= solapAbaj;
+		else
+			y += solapArri;
 
 		p.posArena.setValores(x, y);
+	}
+}
+
+void Interaccion::choque(Pieza& p1, Pieza& p2)
+{
+	constexpr double radio = TAM_PIEZA / 1.0;
+
+	double dx = p2.posArena.getX() - p1.posArena.getX();
+	double dy = p2.posArena.getY() - p1.posArena.getY();
+	double dist = std::sqrt(dx * dx + dy * dy);
+
+	double minDist = radio + radio;
+
+	if (dist < minDist && dist > 0.0)
+	{
+		double solape = minDist - dist;
+		double nx = dx / dist;
+		double ny = dy / dist;
+
+		p1.posArena.setValores(p1.posArena.getX() - nx * solape / 2.0, p1.posArena.getY() - ny * solape / 2.0);
+		p2.posArena.setValores(p2.posArena.getX() + nx * solape / 2.0, p2.posArena.getY() + ny * solape / 2.0);
 	}
 }

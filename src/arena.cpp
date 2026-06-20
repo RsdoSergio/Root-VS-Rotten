@@ -207,14 +207,20 @@ void arena::mueve(double dt)
 		};
 
 	mover(pieza1);
-	if (pieza1) Interaccion::choque(*pieza1, caja);
-	if (pieza1) for (int i = 0; i < MAX_OBSTACULOS; i++)
-		Interaccion::choque(*pieza1, obstaculos[i]);
+	if (pieza1)
+		Interaccion::choque(*pieza1, caja);
+	if (pieza1)
+		for (int i = 0; i < MAX_OBSTACULOS; i++)
+			Interaccion::choque(*pieza1, obstaculos[i]);
 
 	mover(pieza2);
-	if (pieza2) Interaccion::choque(*pieza2, caja);
-	if (pieza2) for (int i = 0; i < MAX_OBSTACULOS; i++)
-		Interaccion::choque(*pieza2, obstaculos[i]);
+	if (pieza2)
+		Interaccion::choque(*pieza2, caja);
+	if (pieza2)
+		for (int i = 0; i < MAX_OBSTACULOS; i++)
+			Interaccion::choque(*pieza2, obstaculos[i]);
+
+	if (pieza1 && pieza2) Interaccion::choque(*pieza1, *pieza2);
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
