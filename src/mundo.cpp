@@ -34,8 +34,10 @@ void Mundo::tecla(unsigned char key)
 {
 	if (!enPartida) {
 		menu.tecla(key);
-		if (menu.seEligeJugar())
+		if (menu.seEligeJugar()) {
 			enPartida = true;
+			Audio::playMusicaTablero();
+		}
 		return;
 	}
 
@@ -144,7 +146,10 @@ void Mundo::mueve()
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
 	if (estabaActiva && !arena.estaActiva())
+	{
 		tablero.resolverCombate(arena.getPlantaGano());
+		Audio::playMusicaTablero();
+	}
 
 	bool iniciarCombate = tablero.actualizarAnimacion(0.025);
 	if (iniciarCombate) {
