@@ -17,6 +17,7 @@ public:
     {
         radioGolpe = 2.5;
         tiempoAnimAtaque = 0.3;
+       
     };
 
     std::string getRutaSprite() const override;
