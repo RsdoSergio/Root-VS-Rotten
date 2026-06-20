@@ -26,17 +26,24 @@ void Pieza::curar(double cantidad) {
 
 void Pieza::setDireccion(DirMovimiento d) {
     dirActual = d;
-    switch (d) {
-    case DirMovimiento::ESTE:  ultimo_eje_x = +1; ultimo_eje_y = 0; break;
-    case DirMovimiento::OESTE: ultimo_eje_x = -1; ultimo_eje_y = 0; break;
-    case DirMovimiento::NORTE: ultimo_eje_x = 0; ultimo_eje_y = +1; break;
-    case DirMovimiento::SUR:   ultimo_eje_x = 0; ultimo_eje_y = -1; break;
-    default: break; // IDLE no toca los ejes
-    }
+    if (d != DirMovimiento::IDLE)
+        ultimaDir = d;
 }
 
 void Pieza::resetEjes() {
     ultimo_eje_x = 0;
     ultimo_eje_y = 0;
     ultimo_eje_reciente = 0;
+}
+
+int Pieza:: getFrame(DirMovimiento dir, AccionPieza accion) const
+{
+    if (accion == AccionPieza::ATACAR) return 5;
+    switch (dir) {
+    case DirMovimiento::ESTE:  return 1;
+    case DirMovimiento::OESTE: return 2;
+    case DirMovimiento::NORTE: return 3;
+    case DirMovimiento::SUR:   return 4;
+    default:                   return 0;
+    }
 }

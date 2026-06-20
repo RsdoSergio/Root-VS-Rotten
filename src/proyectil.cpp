@@ -27,6 +27,13 @@ void Proyectil::mueve(double dt)
 	//todavia no hay aceleracion
     //se implmentara a posterior.
     posicion = posicion + velocidad * dt;
+
+    if (duracion > 0.0)
+    {
+        tiempoVivo += dt;
+        if (tiempoVivo >= duracion)
+            desactivar();
+    }
 }
 
 void Proyectil::dibuja() const

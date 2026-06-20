@@ -22,5 +22,7 @@ public:
     void usarAtaqueSecundario() override {};
     
     std::string getRutaSprite() const override;
+   
+    
 
 };
