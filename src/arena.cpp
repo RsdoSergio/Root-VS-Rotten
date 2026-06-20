@@ -198,25 +198,27 @@ void arena::mueve(double dt)
 	if (!activo) return;
 
 	auto mover = [&](Pieza* p, const std::vector<Proyectil*>& proyectiles)
-	{
-		if(!p) return;
-		if (ataqueMeleeActivo(p, proyectiles))
 		{
 			if (!p) return;
+			if (ataqueMeleeActivo(p, proyectiles))
+			{
+				p->setAccion(AccionPieza::ATACAR);
+				return;
+			}
 			PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
 			if (pt) pt->actualizarArena(dt);
 			PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
 			if (pv) pv->actualizarArena(dt);
 		};
 
-	mover(pieza1);
+	mover(pieza1, proyectil1);
 	if (pieza1)
 		Interaccion::choque(*pieza1, caja);
 	if (pieza1)
 		for (int i = 0; i < MAX_OBSTACULOS; i++)
 			Interaccion::choque(*pieza1, obstaculos[i]);
 
-	mover(pieza2);
+	mover(pieza2, proyectil2);
 	if (pieza2)
 		Interaccion::choque(*pieza2, caja);
 	if (pieza2)
@@ -224,19 +226,6 @@ void arena::mueve(double dt)
 			Interaccion::choque(*pieza2, obstaculos[i]);
 
 	if (pieza1 && pieza2) Interaccion::choque(*pieza1, *pieza2);
-			p->setAccion(AccionPieza::ATACAR);
-			return;
-		}
-		PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
-		if (pt) pt->actualizarArena(dt);
-		PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
-		if (pv) pv->actualizarArena(dt);
-	};
-
-	mover(pieza1, proyectil1);
-	if (pieza1) Interaccion::choque(*pieza1, caja);
-	mover(pieza2, proyectil2);
-	if (pieza2) Interaccion::choque(*pieza2, caja);
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
@@ -384,10 +373,7 @@ bool arena::ataqueMeleeActivo(Pieza* p, const std::vector<Proyectil*>& proyectil
 	for (Proyectil* pr : proyectiles)
 		if (pr->getEstado()) return true;
 	return false;
-}	
-	
-		
-
+}
 
 void arena::recibirMovimiento(int jugador, int dir, bool estado)
 {
