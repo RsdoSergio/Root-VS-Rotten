@@ -78,7 +78,7 @@ void Mundo::tecla(unsigned char key)
 		jugarCasilla(posActiva);
 	}
 
-	if (magoSeleccionado != nullptr && !tablero.modoHechizoActivo() && !eligiendoRevive)
+	if (magoSeleccionado != nullptr && !tablero.modoHechizoActivo() && !eligiendoRevive && !eligiendoExchangeOrigen)
 	{
 		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
 		if (m != nullptr)
@@ -95,7 +95,11 @@ void Mundo::tecla(unsigned char key)
 				}
 			}
 
-			// futuro: '1' TELEPORT, '4' IMPRISON, '5' SHIFT_TIME, '6' EXCHANGE, '7' SUMMON
+			if (key == '6' && m->puedeUsarHechizo(Hechizo::EXCHANGE)) {
+				eligiendoExchangeOrigen = true; // paso 1: elegir la primera pieza en el tablero
+			}
+
+			// futuro: '1' TELEPORT, '4' IMPRISON, '5' SHIFT_TIME, '7' SUMMON
 		}
 	}
 
@@ -120,6 +124,8 @@ void Mundo::tecla(unsigned char key)
 		tablero.cancelarSeleccion(); //Escape para cancelar seleccion
 		tablero.cancelarHechizo();
 		magoSeleccionado = nullptr;
+		eligiendoExchangeOrigen = false;
+		hechizoExchange.resetear();
 		cursor.setBloqueado(false);
 		cursor2.setBloqueado(false);
 		if (key == 'v') arena.desactiva();
@@ -136,6 +142,19 @@ void Mundo::jugarCasilla(Pos casilla)
 		tablero.aplicarHechizo(casilla);
 		magoSeleccionado = nullptr; // cerramos el menu de hechizos
 		return;
+	}
+
+	if (eligiendoExchangeOrigen)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr && hechizoExchange.elegirOrigen(tablero, m, casilla))
+		{
+			tablero.activarHechizo(m, &hechizoExchange); // el siguiente clic es el destino
+			m->usarHechizo(Hechizo::EXCHANGE);
+			eligiendoExchangeOrigen = false;
+			magoSeleccionado = nullptr;
+		}
+		return; // mientras se elige origen, este clic no se interpreta como movimiento normal
 	}
 
 	if (magoSeleccionado == nullptr)
