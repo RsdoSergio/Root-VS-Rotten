@@ -13,6 +13,7 @@
 #include "gestorTexturas.h"
 #include "mago.h"
 #include "hechizoHeal.h"
+#include "hechizoRevive.h"
 
 
 class Mundo
@@ -45,5 +46,6 @@ private:
 	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
 	hechizoHeal hechizoHeal; 
 	Pieza* magoSeleccionado = nullptr;	
-	//std::string textoHechizos() const;
-};
+	hechizoRevive hechizoRevive;
+	bool eligiendoRevive = false; 
+};	
