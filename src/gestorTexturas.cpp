@@ -32,6 +32,12 @@ void precargarTexturas() {
 	"imagenes/sprites_zombies/zombie_gondola.png",
 	"imagenes/sprites_zombies/zombie_yeti.png",
 	"imagenes/sprites_zombies/zombie_doctor.png",
+	"imagenes/obstaculos/obs1.png",
+	"imagenes/obstaculos/obs2.png",
+	"imagenes/obstaculos/obs3.png",
+	"imagenes/obstaculos/obs4.png",
+	"imagenes/obstaculos/obs5.png",
+	"imagenes/obstaculos/obs6.png",
 	};
 
 	int total = sizeof(texturas) / sizeof(texturas[0]); //nº elementos
@@ -58,7 +64,6 @@ void precargarTexturas() {
 		glutSwapBuffers();
 	}
 }
-
 
 void dibujarSprite(const std::string& ruta, float x, float y, float tam, int frame, int totalFrames)
 {

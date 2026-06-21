@@ -3,6 +3,7 @@
 #include"pos.h"
 #include<vector>
 #include "listapieza.h"
+#include "hechizo.h"
 
 
 class Cursor;
@@ -46,6 +47,13 @@ public:
 	std::vector<Pieza*>& getEliminadasPlanta() { return eliminadasPlanta; }
 	std::vector<Pieza*>& getEliminadasZombi() { return eliminadasZombi; }
 
+	bool modoHechizoActivo() const { return hechizoActivo != nullptr; } 
+	void activarHechizo(Pieza* mago, HechizoBase* hechizo);
+	bool aplicarHechizo(Pos destino);
+	void cancelarHechizo() { hechizoActivo = nullptr; magoLanzando = nullptr; }
+	void colocarPiezaEnCasilla(Pos p, Pieza* pieza) { casillas[p.fila][p.col].pieza = pieza; }
+
+
 private:
 
 	void dibujaTablero(const Cursor& cursor);
@@ -80,4 +88,6 @@ private:
 	std::vector<Pieza*> eliminadasPlanta;
 	std::vector<Pieza*> eliminadasZombi;
 
+	HechizoBase* hechizoActivo = nullptr;
+	Pieza* magoLanzando = nullptr;
 };

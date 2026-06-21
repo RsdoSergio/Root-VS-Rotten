@@ -11,6 +11,10 @@
 #include "menu.h"
 #include "caja.h"
 #include "gestorTexturas.h"
+#include "mago.h"
+#include "hechizoHeal.h"
+#include "hechizoRevive.h"
+#include "hechizoExchange.h"
 
 
 class Mundo
@@ -42,4 +46,10 @@ public:
 
 private:
 	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
-};
+	hechizoHeal hechizoHeal; 
+	Pieza* magoSeleccionado = nullptr;	
+	hechizoRevive hechizoRevive;
+	bool eligiendoRevive = false; 
+	hechizoExchange hechizoExchange;
+	bool eligiendoExchangeOrigen = false;
+};	

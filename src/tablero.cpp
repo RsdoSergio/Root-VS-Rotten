@@ -389,12 +389,12 @@ void Tablero::resolverCombate(bool plantaGana)
 
 	// Mete la pieza en su lista según bando y confirma por consola
 	auto eliminar = [&](Pieza* p) {
-		if (p->getBando() == Bando::planta) 
+		if (p->getBando() == Bando::planta)
 			eliminadasPlanta.push_back(p);
-		
-		else 
+
+		else
 			eliminadasZombi.push_back(p);
-		
+
 		};
 
 	if (ganadorEsAtacante)
@@ -414,6 +414,26 @@ void Tablero::resolverCombate(bool plantaGana)
 		defensor->curar(defensor->getVidaMax());
 	}
 }
+	
+	void Tablero::activarHechizo(Pieza * mago, HechizoBase * hechizo)
+	{
+		magoLanzando = mago;
+		hechizoActivo = hechizo;
+	}
+
+	bool Tablero::aplicarHechizo(Pos destino)
+	{
+		if (hechizoActivo == nullptr || magoLanzando == nullptr) return false;
+
+		bool exito = hechizoActivo->ejecutar(*this, magoLanzando, destino);
+
+		if (exito) { 
+			hechizoActivo = nullptr; 
+			magoLanzando = nullptr; 
+		}
+		return exito;
+	}
+
 
 void Tablero::avanzarCiclo() {
 	using byte = unsigned char;

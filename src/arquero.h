@@ -15,9 +15,12 @@ public:
             0.6,   // Enfriamiento bajo
             2, //rad de mov
             b, pos),
-        velocidadProyectil(8.0) {} // El proyectil viaja más rápido que la propia pieza
+        velocidadProyectil(8.0) // El proyectil viaja más rápido que la propia pieza
+    {
+            
+    } 
 
-    double getVelocidadProyectil() const { return velocidadProyectil; }
+    double getVelocidadProyectil() const override { return velocidadProyectil; }
 
     // Antes se dibujaba como cuadrado de color (amarillo LUZ / amarillo oscuro OSCURIDAD);
     // ahora usa sprite, ver Arquero::getRutaSprite() en arquero.cpp

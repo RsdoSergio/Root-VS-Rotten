@@ -34,8 +34,10 @@ void Mundo::tecla(unsigned char key)
 {
 	if (!enPartida) {
 		menu.tecla(key);
-		if (menu.seEligeJugar())
+		if (menu.seEligeJugar()) {
 			enPartida = true;
+			Audio::playMusicaTablero();
+		}
 		return;
 	}
 
@@ -74,8 +76,54 @@ void Mundo::tecla(unsigned char key)
 		Pos posActiva = (turno == 0) ? cursor.getPosicion() : cursor2.getPosicion();
 		jugarCasilla(posActiva);
 	}
+	if (magoSeleccionado != nullptr && !tablero.modoHechizoActivo() && !eligiendoRevive && !eligiendoExchangeOrigen)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr)
+		{
+			if (key == '2' && m->puedeUsarHechizo(Hechizo::HEAL)) {
+				tablero.activarHechizo(m, &hechizoHeal);
+				m->usarHechizo(Hechizo::HEAL);
+				magoSeleccionado = nullptr;
+			}
+
+			if (key == '3' && m->puedeUsarHechizo(Hechizo::REVIVE)) {
+				if (!hechizoRevive.getCandidatas(tablero, m).empty()) {
+					eligiendoRevive = true; // abrimos el sub-menu, NO activamos el hechizo todavia
+				}
+			}
+
+			if (key == '6' && m->puedeUsarHechizo(Hechizo::EXCHANGE)) {
+				eligiendoExchangeOrigen = true; // paso 1: elegir la primera pieza en el tablero
+			}
+
+			// futuro: '1' TELEPORT, '4' IMPRISON, '5' SHIFT_TIME, '7' SUMMON
+		}
+	}
+
+	// Sub-menu de Revive: el jugador elige QUE pieza revivir antes de elegir donde
+	if (eligiendoRevive)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr && key >= '1' && key <= '9')
+		{
+			int indice = key - '1'; // '1' -> indice 0, '2' -> indice 1...
+			if (hechizoRevive.elegirPieza(tablero, m, indice))
+			{
+				tablero.activarHechizo(m, &hechizoRevive); // ahora si, ya con pieza elegida
+				m->usarHechizo(Hechizo::REVIVE);
+				eligiendoRevive = false;
+				magoSeleccionado = nullptr;
+			}
+		}
+	}
+
 	if (key == 27) {
 		tablero.cancelarSeleccion(); //Escape para cancelar seleccion
+		tablero.cancelarHechizo();
+		magoSeleccionado = nullptr;
+		eligiendoExchangeOrigen = false;
+		hechizoExchange.resetear();
 		cursor.setBloqueado(false);
 		cursor2.setBloqueado(false);
 		if (key == 'v') arena.desactiva();
@@ -86,15 +134,47 @@ void Mundo::tecla(unsigned char key)
 // La usan tanto el teclado (tecla(), con key==13) como el raton (clicRaton()).
 void Mundo::jugarCasilla(Pos casilla)
 {
+	if (tablero.modoHechizoActivo())
+	{
+		tablero.aplicarHechizo(casilla);
+		magoSeleccionado = nullptr; // cerramos el menu de hechizos
+		return;
+	}
 
-	bool combate = tablero.gestionarEntrada(posActiva, turno);
-		if (turno == 0)
-			cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
-		else
-			cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
+	if (eligiendoExchangeOrigen)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr && hechizoExchange.elegirOrigen(tablero, m, casilla))
+		{
+			tablero.activarHechizo(m, &hechizoExchange); // el siguiente clic es el destino
+			m->usarHechizo(Hechizo::EXCHANGE);
+			eligiendoExchangeOrigen = false;
+			magoSeleccionado = nullptr;
+		}
+		return; // mientras se elige origen, este clic no se interpreta como movimiento normal
+	}
+
+	if (magoSeleccionado == nullptr)
+	{
+		Pieza* p = tablero.getPieza(casilla);
+		Mago* m = dynamic_cast<Mago*>(p);
+		if (m != nullptr && (int)m->getBando() == turno)
+		{
+			magoSeleccionado = m;
+			return;
+		}
+	}
+
+	bool combate = tablero.gestionarEntrada(casilla, turno);
+	if (turno == 0)
+		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
+	else
+		cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
+
 
 		if (combate) {
-			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+			BandoVentaja ventaja = tablero.getBandoVentaja();
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(),ventaja);
 			arena.activa();
 		}
 	}
@@ -107,7 +187,9 @@ bool estabaActiva = arena.estaActiva();
 	// Si la arena acaba de desactivarse este frame → resolver resultado
 	if (estabaActiva && !arena.estaActiva()) {
 		tablero.resolverCombate(arena.getPlantaGano());
+
 		tablero.avanzarCiclo();
+		Audio::playMusicaTablero();
 	}
 
 	bool iniciarCombate = tablero.actualizarAnimacion(0.025);
@@ -115,7 +197,9 @@ bool estabaActiva = arena.estaActiva();
 		BandoVentaja ventaja = tablero.getBandoVentaja();
 		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), ventaja);
 		arena.activa();
+
 	}
+	
 }
 
 //Metodo que gestiona el dibujo de la simulacion
