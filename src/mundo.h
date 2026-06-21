@@ -11,7 +11,7 @@
 #include "menu.h"
 #include "caja.h"
 #include "gestorTexturas.h"
-#include "mago.h"
+#include "piezas/mago.h"
 #include "hechizos/hechizoRevive.h"
 #include "hechizos/hechizoExchange.h"
 #include "hechizos/hechizoHeal.h"
@@ -35,11 +35,6 @@ class Mundo
 	bool    enPausa = false;
 	Caja caja;
 	int opcionPausa = 0;
-	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
-	hechizoHeal hechizoHeal;
-	Pieza* magoSeleccionado = nullptr;
-	//std::string textoHechizos() const;
-
 	Transicion transicion;
 	AccionTransicion accionPendiente = AccionTransicion::NINGUNA;
 	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual

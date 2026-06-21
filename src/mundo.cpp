@@ -7,7 +7,7 @@
 #include "audio.h"
 #include "gestorTexturas.h"
 #include <ctime>
-#include "hechizoExchange.h"
+#include "hechizos/hechizoExchange.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
