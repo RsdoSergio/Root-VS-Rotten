@@ -3,7 +3,7 @@
 #include "pieza.h"
 #include <cmath>
 
-std::vector<Pieza*>& hechizoRevive::getCandidatas(Tablero& tablero, Pieza* caster)
+std::vector<Pieza*>& hechizoRevive::getCandidatas(Tablero& tablero, Pieza* caster) const
 {
     return (caster->getBando() == Bando::planta)
         ? tablero.getEliminadasPlanta()
@@ -44,6 +44,6 @@ bool hechizoRevive::ejecutar(Tablero& tablero, Pieza* caster, Pos objetivo)
     piezaElegida->setCasilla(objetivo);
     tablero.colocarPiezaEnCasilla(objetivo, piezaElegida);
 
-    piezaElegida = nullptr; 
+    piezaElegida = nullptr;
     return true;
 }

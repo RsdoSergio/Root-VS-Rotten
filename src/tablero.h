@@ -49,6 +49,7 @@ public:
 	void activarHechizo(Pieza* mago, HechizoBase* hechizo);
 	bool aplicarHechizo(Pos destino);
 	void cancelarHechizo() { hechizoActivo = nullptr; magoLanzando = nullptr; }
+	HechizoBase* getHechizoActivo() const { return hechizoActivo; }
 	void colocarPiezaEnCasilla(Pos p, Pieza* pieza) { casillas[p.fila][p.col].pieza = pieza; }
 
 

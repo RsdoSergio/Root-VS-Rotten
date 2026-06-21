@@ -15,5 +15,8 @@ public:
 
 	bool tieneOrigenElegido() const { return origen.esValida(); }
 	void resetear() { origen = Pos(); }
+	std::string getMensajeSeleccion() const override { return "Pendiente de implementar"; }
+	std::string getMensajeExito() const override { return "Pendiente de implementar"; }
+
 };
 
