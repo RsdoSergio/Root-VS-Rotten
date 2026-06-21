@@ -28,6 +28,10 @@ class Mundo
 	bool    enPausa = false;
 	Caja caja;
 	int opcionPausa = 0;
+	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
+	hechizoHeal hechizoHeal;
+	Pieza* magoSeleccionado = nullptr;
+	//std::string textoHechizos() const;
 
 public:
 	void inicializa();
@@ -39,10 +43,4 @@ public:
 	//funciones para gestionar el pulsado continuo de tecla
 	void teclaLevantada(unsigned char key);
 	void teclaEspecialLevantada(int key);
-
-private:
-	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
-	hechizoHeal hechizoHeal;
-	Pieza* magoSeleccionado = nullptr;
-	//std::string textoHechizos() const;
 };

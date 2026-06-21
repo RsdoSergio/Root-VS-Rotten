@@ -124,7 +124,7 @@ void Mundo::jugarCasilla(Pos casilla)
 			return;
 		}
 	}
-	
+
 	bool combate = tablero.gestionarEntrada(casilla, turno);
 	if (turno == 0)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
@@ -175,12 +175,11 @@ void Mundo::dibuja()
 	glMatrixMode(GL_MODELVIEW);
 	glColor3ub(255, 255, 255);
 
-	tablero.dibuja(cursor);
+	tablero.dibuja(cursor, turno);
 	cursor.dibuja();   // borde amarillo
 	cursor2.dibuja();  // borde morado
 	//caja.dibuja();
 	arena.dibuja();
-	menu.dibujaTeclaMenu();
 	if (enPausa) menu.dibujaPausa(opcionPausa);
 }
 // Flechas

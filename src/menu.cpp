@@ -152,13 +152,6 @@ void Menu::dibuja()
 	if (pantalla == 2) dibujaCreditos();
 }
 
-void Menu::dibujaTeclaMenu() const
-{
-	ETSIDI::setFont("fuentes/texto.ttf", 18);
-	ETSIDI::setTextColor(0.3f, 0.3f, 0.3f);
-	ETSIDI::printxy("M (Menu)", -25.f, -13.f);
-}
-
 void Menu::dibujaPausa(int opcion) const
 {
 	glEnable(GL_BLEND); 	// Activar transparencia para respetar el canal alfa del PNG (me lo ha dicho la IA)

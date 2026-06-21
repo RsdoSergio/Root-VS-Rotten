@@ -15,6 +15,7 @@
 #include "listapieza.h"
 #include "cursor.h"
 #include <iostream>
+#include "ETSIDI.h"
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -37,9 +38,9 @@ void Tablero::inicializaTablero() {
 	// Definicion de colores RGB para cada tipo
 	using byte = unsigned char;
 	byte colores[3][3] = {
-		{90, 180, 80}, // 0: Casilla de Plantas
-		{90, 30, 120}, // 1: Casilla de Zombies
-		{200, 200, 200}, // 2: Casilla Neutral
+		{136, 180, 10}, // 0: Casilla de Plantas
+		{80, 47, 84}, // 1: Casilla de Zombies
+		{235, 235, 235}, // 2: Casilla Neutral
 	};
 
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
@@ -59,6 +60,22 @@ void Tablero::inicializaTablero() {
 }
 
 void Tablero::dibujaTablero(const Cursor& cursor) {
+	extern float G_XMAX;
+	extern float G_YMAX;
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondos/fondo_tablero.png").id);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+
 	// Dibuja las casillas
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
@@ -327,11 +344,12 @@ void Tablero::cancelarSeleccion()
 	casillasValidas.clear();
 }
 
-void Tablero::dibuja(const Cursor& cursor)
+void Tablero::dibuja(const Cursor& cursor, int turno)
 {
-	dibujaTablero(cursor);     // casillas + cursor
-	dibujaPiezas();            // piezas encima
-	marcaCasillasValidas();    // casillas verdes encima de todo
+	dibujaTablero(cursor); // fondo + casillas + cursor
+	dibujaPiezas(); // piezas encima
+	marcaCasillasValidas(); // casillas verdes encima de todo
+	dibujarIndicadorTurno(turno); // indicador de turno, lo último
 }
 
 constexpr float VEL_ANIMACION = 3.0f; // movimiento casillas por segundo
@@ -420,4 +438,28 @@ bool Tablero::aplicarHechizo(Pos destino)
 
 	if (exito) { hechizoActivo = nullptr; magoLanzando = nullptr; }
 	return exito;
+}
+
+void Tablero::dibujarIndicadorTurno(int turno) {
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	const char* ruta = (turno == 0) ? "imagenes/turnos/turno_plantas.png" : "imagenes/turnos/turno_zombies.png";
+
+	auto tex = ETSIDI::getTexture(ruta);
+	if (tex.id == 0) return;
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, tex.id);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
 }

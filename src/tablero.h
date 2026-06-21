@@ -31,7 +31,7 @@ public:
 
 	bool gestionarEntrada(Pos cursor, int& turno);
 	void cancelarSeleccion();
-	void dibuja(const Cursor& cursor);
+	void dibuja(const Cursor& cursor, int turno);
 
 	// Getters para que Mundo pueda acceder a los combatientes
 	Pieza* getPersonaje1() const { return personaje1; }
@@ -55,6 +55,7 @@ private:
 	void dibujaTablero(const Cursor& cursor);
 	void dibujaPiezas();
 	void marcaCasillasValidas();
+	void dibujarIndicadorTurno(int turno);
 
 	Casilla casillas[FILAS][COLS];
 	Pos piezaSeleccionada;
