@@ -151,11 +151,14 @@ void Mundo::mueve()
 		Audio::playMusicaTablero();
 	}
 
-	bool iniciarCombate = tablero.actualizarAnimacion(0.025);
-	if (iniciarCombate) {
+	int resultado = tablero.actualizarAnimacion(0.025);
+	if (resultado == 1)
+	{
 		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
 		arena.activa();
 	}
+	if (resultado == 2)
+		turno = 1 - turno;
 }
 
 //Metodo que gestiona el dibujo de la simulacion

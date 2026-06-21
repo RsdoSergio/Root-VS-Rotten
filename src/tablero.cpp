@@ -309,6 +309,11 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 		if (p != nullptr && (int)p->getBando() == turno) {
 			piezaSeleccionada = cursor;
 			casillasValidas = movimientosValidos(cursor);
+			//guarda la última seleccionada por bando
+			if (p->getBando() == Bando::planta)
+				ultimaPiezaPlanta = p;
+			else
+				ultimaPiezaZombi = p;
 		}
 	}
 	else {
@@ -322,7 +327,6 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 
 		if (destinoValido) {
 			bool hayCombate = moverPieza(piezaSeleccionada, cursor);
-			if (!hayCombate) turno = 1 - turno; // turno cambia solo si no hay combate
 			piezaSeleccionada = Pos();
 			casillasValidas.clear();
 			return hayCombate;
@@ -349,12 +353,13 @@ void Tablero::dibuja(const Cursor& cursor, int turno)
 	dibujaTablero(cursor); // fondo + casillas + cursor
 	dibujaPiezas(); // piezas encima
 	marcaCasillasValidas(); // casillas verdes encima de todo
+	dibujarPiezaSeleccionada();
 	dibujarIndicadorTurno(turno); // indicador de turno, lo último
 }
 
 constexpr float VEL_ANIMACION = 3.0f; // movimiento casillas por segundo
 
-bool Tablero::actualizarAnimacion(double dt)
+int Tablero::actualizarAnimacion(double dt)
 {
 	if (!animando || piezaAnimando == nullptr) return false;
 
@@ -376,19 +381,17 @@ bool Tablero::actualizarAnimacion(double dt)
 		animY += moveY;
 		piezaAnimando->setDireccion(dy > 0 ? DirMovimiento::NORTE : DirMovimiento::SUR);
 	}
-	else
-	{
-		//animacion terminada
+	else {
 		piezaAnimando->setDireccion(DirMovimiento::IDLE);
 		animando = false;
 		piezaAnimando = nullptr;
-		if (combatePendiente)
-		{
+		if (combatePendiente) {
 			combatePendiente = false;
-			return true; //empieza el combate
+			return 1; //hay combate
 		}
+		return 2; //terminó sin combate -> mundo cambia el turno
 	}
-	return false;
+	return 0;
 }
 
 void Tablero::resolverCombate(bool plantaGana)
@@ -462,4 +465,15 @@ void Tablero::dibujarIndicadorTurno(int turno) {
 	glEnd();
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
+}
+
+void Tablero::dibujarPiezaSeleccionada() {
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	if (ultimaPiezaPlanta != nullptr)
+		ultimaPiezaPlanta->dibujaTableroGrande(-G_XMAX + 6.7f, -0.2f, 3.4f);
+
+	if (ultimaPiezaZombi != nullptr)
+		ultimaPiezaZombi->dibujaTableroGrande(G_XMAX - 6.7f, -0.2f, 3.4f);
 }

@@ -38,7 +38,7 @@ public:
 	Pieza* getPersonaje2() const { return personaje2; }
 
 	bool estaAnimando() const { return animando; }
-	bool actualizarAnimacion(double dt);  // llamada en mueve()
+	int actualizarAnimacion(double dt);  // llamada en mueve(). 0=sigue, 1=combate, 2=termino sin combate
 	bool combatePendiente = false;
 	void resolverCombate(bool atacanteGana);
 
@@ -50,12 +50,15 @@ public:
 	bool aplicarHechizo(Pos destino);
 	void cancelarHechizo() { hechizoActivo = nullptr; magoLanzando = nullptr; }
 
+	Pieza* getPiezaSeleccionada() const { return piezaSeleccionada.esValida() ? getPieza(piezaSeleccionada) : nullptr; }
+
 private:
 
 	void dibujaTablero(const Cursor& cursor);
 	void dibujaPiezas();
 	void marcaCasillasValidas();
 	void dibujarIndicadorTurno(int turno);
+	void dibujarPiezaSeleccionada();
 
 	Casilla casillas[FILAS][COLS];
 	Pos piezaSeleccionada;
@@ -65,6 +68,10 @@ private:
 	// Piezas involucradas en el ultimo combate detectado
 	Pieza* personaje1 = nullptr;
 	Pieza* personaje2 = nullptr;
+
+	//para ver las piezas seleccionadas en el tablero y mostrarlas en grande
+	Pieza* ultimaPiezaPlanta = nullptr;
+	Pieza* ultimaPiezaZombi = nullptr;
 
 	Pos posOrigen;
 	Pos posDestino;
