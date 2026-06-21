@@ -15,6 +15,7 @@
 #include "hechizoHeal.h"
 #include "hechizoRevive.h"
 #include "hechizoExchange.h"
+#include <string>
 
 
 class Mundo
@@ -49,6 +50,13 @@ private:
 	Pieza* magoSeleccionado = nullptr;	
 	hechizoRevive hechizoRevive;
 	bool eligiendoRevive = false; 
+
+	bool mostrarPanelHechizos = false;
+	std::string mensajeFeedback;
+	double tiempoFeedback = 0.0;
+
+	std::string generarTextoPanel() const;
+	void dibujaPanelHechizos() const;
 	hechizoExchange hechizoExchange;
 	bool eligiendoExchangeOrigen = false;
 };	

@@ -7,6 +7,7 @@
 #include "audio.h"
 #include "gestorTexturas.h"
 #include <ctime>
+#include "hechizoExchange.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
@@ -38,6 +39,11 @@ void Mundo::tecla(unsigned char key)
 			enPartida = true;
 			Audio::playMusicaTablero();
 		}
+		return;
+	}
+
+	if (key == ' ' && magoSeleccionado != nullptr) {
+		mostrarPanelHechizos = !mostrarPanelHechizos;
 		return;
 	}
 
@@ -90,9 +96,8 @@ void Mundo::tecla(unsigned char key)
 			}
 
 			if (key == '3' && m->puedeUsarHechizo(Hechizo::REVIVE)) {
-				if (!hechizoRevive.getCandidatas(tablero, m).empty()) {
-					eligiendoRevive = true; // abrimos el sub-menu, NO activamos el hechizo todavia
-				}
+				eligiendoRevive = true;
+				mostrarPanelHechizos = true;
 			}
 
 			if (key == '6' && m->puedeUsarHechizo(Hechizo::EXCHANGE)) {
@@ -121,9 +126,11 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	if (key == 27) {
-		tablero.cancelarSeleccion(); //Escape para cancelar seleccion
+		tablero.cancelarSeleccion();
 		tablero.cancelarHechizo();
 		magoSeleccionado = nullptr;
+		eligiendoRevive = false;
+		hechizoRevive.resetear();        
 		eligiendoExchangeOrigen = false;
 		hechizoExchange.resetear();
 		cursor.setBloqueado(false);
@@ -139,7 +146,12 @@ void Mundo::jugarCasilla(Pos casilla)
 {
 	if (tablero.modoHechizoActivo())
 	{
-		tablero.aplicarHechizo(casilla);
+		HechizoBase* usado = tablero.getHechizoActivo();
+		bool exito = tablero.aplicarHechizo(casilla);
+		if (exito && usado != nullptr) {
+			mensajeFeedback = usado->getMensajeExito();
+			tiempoFeedback = 3.0;
+		}
 		magoSeleccionado = nullptr; // cerramos el menu de hechizos
 		return;
 	}
@@ -167,19 +179,14 @@ void Mundo::jugarCasilla(Pos casilla)
 			return;
 		}
 	}
-	
+
 	bool combate = tablero.gestionarEntrada(casilla, turno);
+	magoSeleccionado = nullptr; // <-- añadir: cualquier movimiento normal limpia la seleccion de mago
 	if (turno == 0)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
 	else
 		cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
-
-	if (combate) {
-		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
-		arena.activa();
-	}
 }
-
 void Mundo::mueve()
 {
 	if (!enPartida || enPausa) return;
@@ -198,6 +205,11 @@ void Mundo::mueve()
 	if (iniciarCombate) {
 		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
 		arena.activa();
+	}
+	
+	if (tiempoFeedback > 0.0) {
+		tiempoFeedback -= 0.025;
+		if (tiempoFeedback <= 0.0) mensajeFeedback.clear();
 	}
 }
 
@@ -223,6 +235,7 @@ void Mundo::dibuja()
 	cursor2.dibuja();  // borde morado
 	//caja.dibuja();
 	arena.dibuja();
+	dibujaPanelHechizos();
 	menu.dibujaTeclaMenu();
 	if (enPausa) menu.dibujaPausa(opcionPausa);
 }
@@ -295,4 +308,115 @@ void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 	else            cursor2.setPosicion(casilla);
 
 	jugarCasilla(casilla);
+}
+
+static void dibujaTexto(float x, float y, const std::string& texto)
+{
+	glRasterPos2f(x, y);
+	for (char c : texto)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+}
+
+std::string Mundo::generarTextoPanel() const
+{
+	if (!mensajeFeedback.empty())
+		return mensajeFeedback;
+
+	Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+	if (m == nullptr) return "";
+
+	if (eligiendoRevive)
+	{
+	
+		auto& candidatas = hechizoRevive.getCandidatas(const_cast<Tablero&>(tablero), m);
+		if (candidatas.empty())
+			return "No hay piezas que revivir";
+		
+		
+
+		// Agrupar por nombre para no repetir entradas (ej: 2 Zombis -> "Zombi x2")
+		std::vector<std::string> nombresUnicos;
+		std::vector<int> contadores;
+
+		for (Pieza* p : candidatas)
+		{
+			std::string nombre = p->getNombre();
+			bool encontrado = false;
+			for (size_t i = 0; i < nombresUnicos.size(); i++)
+			{
+				if (nombresUnicos[i] == nombre) {
+					contadores[i]++;
+					encontrado = true;
+					break;
+				}
+			}
+			if (!encontrado) {
+				nombresUnicos.push_back(nombre);
+				contadores.push_back(1);
+			}
+		}
+
+		std::string texto;
+		for (size_t i = 0; i < nombresUnicos.size(); i++)
+		{
+			texto += std::to_string(i + 1) + "." + nombresUnicos[i];
+			if (contadores[i] > 1)
+				texto += " x" + std::to_string(contadores[i]);
+			texto += "  ";
+		}
+		return texto;
+	}
+
+	if (eligiendoExchangeOrigen)
+		return "Elige la pieza aliada de origen";
+
+	if (tablero.modoHechizoActivo())
+	{
+		HechizoBase* h = tablero.getHechizoActivo();
+		return h ? h->getMensajeSeleccion() : "";
+	}
+
+	std::string texto;
+	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Summon" };
+	for (int i = 0; i < 7; i++)
+		texto += std::to_string(i + 1) + "." + nombres[i] + "  ";
+	return texto;
+}
+void Mundo::dibujaPanelHechizos() const
+{
+	bool debeMostrarse = mostrarPanelHechizos || eligiendoRevive || eligiendoExchangeOrigen || tablero.modoHechizoActivo();
+	if (!debeMostrarse) return;
+	if (magoSeleccionado == nullptr && mensajeFeedback.empty()) return;
+
+	std::string texto = generarTextoPanel();
+	if (texto.empty()) return;
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_LIGHTING);
+
+	float anchoCaja = COLS * TAM_CELDA;
+	float altoCaja = 1.6f;
+	float x0 = -anchoCaja / 2.0f;
+	float y0 = -(FILAS * TAM_CELDA) / 2.0f - altoCaja - 0.4f;
+
+	glColor3ub(0, 0, 0);
+	glBegin(GL_QUADS);
+	glVertex2f(x0, y0);
+	glVertex2f(x0 + anchoCaja, y0);
+	glVertex2f(x0 + anchoCaja, y0 + altoCaja);
+	glVertex2f(x0, y0 + altoCaja);
+	glEnd();
+
+	glColor3ub(255, 255, 255);
+	glLineWidth(2.0f);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(x0, y0);
+	glVertex2f(x0 + anchoCaja, y0);
+	glVertex2f(x0 + anchoCaja, y0 + altoCaja);
+	glVertex2f(x0, y0 + altoCaja);
+	glEnd();
+	glLineWidth(1.0f);
+
+	glColor3ub(255, 255, 255);
+	dibujaTexto(x0 + 0.3f, y0 + altoCaja / 2.0f - 0.3f, texto);
 }
