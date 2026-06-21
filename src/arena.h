@@ -1,5 +1,5 @@
 #pragma once
-#include "pieza.h"
+#include "piezas/pieza.h"
 #include <string>
 #include "ETSIDI.h"
 #include "proyectil.h"
@@ -46,9 +46,9 @@ class arena
 	void dibujaProyectiles() const;
 	void dibujaObstaculos()  const;
 	void colocarObstaculoAleatorio(int indice);
-	
 
 	bool plantaGano = false; // true si ganó la planta, false si ganó el zombi
+	bool terminado = false;  // true si el combate ya acabo pero seguimos esperando al barrido
 
 	int indiceFondo = 1; //para el fondo
 
@@ -60,10 +60,8 @@ public:
 	void tecla(unsigned char key);   // q dispara pieza1, k dispara pieza2
 
 	void activa();
-	
 
 	void desactiva();
-	
 
 	bool estaActiva() const { return activo; }
 	void fDatos(Pieza& p1, Pieza& p2);
@@ -71,4 +69,5 @@ public:
 	void recibirMovimiento(int jugador, int dir, bool estado);
 	void procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto);
 	bool getPlantaGano() const { return plantaGano; } // getter para mundo
+	bool combateTerminado() const { return terminado; }
 };

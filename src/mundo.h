@@ -6,17 +6,20 @@
 #include "pos.h"
 #include "arena.h"
 #include "listapieza.h"
-#include "pieza.h"
-#include "peon.h"
+#include "piezas/pieza.h"
+#include "piezas/peon.h"
 #include "menu.h"
 #include "caja.h"
 #include "gestorTexturas.h"
 #include "mago.h"
-#include "hechizoHeal.h"
-#include "hechizoRevive.h"
-#include "hechizoExchange.h"
+#include "hechizos/hechizoRevive.h"
+#include "hechizos/hechizoExchange.h"
+#include "hechizos/hechizoHeal.h"
 #include <string>
+#include "piezas/mago.h"
+#include "transicion.h"
 
+enum class AccionTransicion { NINGUNA, EMPEZAR_PARTIDA, ENTRAR_ARENA, VOLVER_TABLERO };
 
 class Mundo
 {
@@ -32,7 +35,28 @@ class Mundo
 	bool    enPausa = false;
 	Caja caja;
 	int opcionPausa = 0;
-	
+	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
+	hechizoHeal hechizoHeal;
+	Pieza* magoSeleccionado = nullptr;
+	//std::string textoHechizos() const;
+
+	Transicion transicion;
+	AccionTransicion accionPendiente = AccionTransicion::NINGUNA;
+	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
+	hechizoHeal hechizoHeal;
+	Pieza* magoSeleccionado = nullptr;
+	hechizoRevive hechizoRevive;
+	bool eligiendoRevive = false;
+
+	bool mostrarPanelHechizos = false;
+	std::string mensajeFeedback;
+	double tiempoFeedback = 0.0;
+
+	std::string generarTextoPanel() const;
+	void dibujaPanelHechizos() const;
+	hechizoExchange hechizoExchange;
+	bool eligiendoExchangeOrigen = false;
+
 public:
 	void inicializa();
 	void dibuja();
@@ -43,20 +67,4 @@ public:
 	//funciones para gestionar el pulsado continuo de tecla
 	void teclaLevantada(unsigned char key);
 	void teclaEspecialLevantada(int key);
-
-private:
-	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
-	hechizoHeal hechizoHeal; 
-	Pieza* magoSeleccionado = nullptr;	
-	hechizoRevive hechizoRevive;
-	bool eligiendoRevive = false; 
-
-	bool mostrarPanelHechizos = false;
-	std::string mensajeFeedback;
-	double tiempoFeedback = 0.0;
-
-	std::string generarTextoPanel() const;
-	void dibujaPanelHechizos() const;
-	hechizoExchange hechizoExchange;
-	bool eligiendoExchangeOrigen = false;
-};	
+};

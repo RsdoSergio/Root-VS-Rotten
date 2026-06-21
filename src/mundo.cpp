@@ -33,11 +33,13 @@ void Mundo::inicializa() {
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
+	if (transicion.estaActiva()) return;
+
 	if (!enPartida) {
 		menu.tecla(key);
-		if (menu.seEligeJugar()) {
-			enPartida = true;
-			Audio::playMusicaTablero();
+		if (menu.seEligeJugar() && accionPendiente == AccionTransicion::NINGUNA) {
+			accionPendiente = AccionTransicion::EMPEZAR_PARTIDA;
+			transicion.cubrir();
 		}
 		return;
 	}
@@ -130,7 +132,7 @@ void Mundo::tecla(unsigned char key)
 		tablero.cancelarHechizo();
 		magoSeleccionado = nullptr;
 		eligiendoRevive = false;
-		hechizoRevive.resetear();        
+		hechizoRevive.resetear();
 		eligiendoExchangeOrigen = false;
 		hechizoExchange.resetear();
 		cursor.setBloqueado(false);
@@ -189,28 +191,57 @@ void Mundo::jugarCasilla(Pos casilla)
 }
 void Mundo::mueve()
 {
+	transicion.actualiza(0.025);
+
+	if (transicion.estaCubierta() && accionPendiente != AccionTransicion::NINGUNA)
+	{
+		switch (accionPendiente)
+		{
+		case AccionTransicion::EMPEZAR_PARTIDA:
+			enPartida = true;
+			Audio::playMusicaTablero();
+			break;
+		case AccionTransicion::ENTRAR_ARENA:
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+			arena.activa();
+			break;
+		case AccionTransicion::VOLVER_TABLERO:
+			tablero.resolverCombate(arena.getPlantaGano());
+			arena.desactiva();
+			Audio::playMusicaTablero();
+			break;
+		default:
+			break;
+		}
+		accionPendiente = AccionTransicion::NINGUNA;
+		transicion.descubrir();
+	}
+
 	if (!enPartida || enPausa) return;
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (estabaActiva && !arena.estaActiva())
+	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA)
 	{
-		tablero.resolverCombate(arena.getPlantaGano());
-		Audio::playMusicaTablero();
+		accionPendiente = AccionTransicion::VOLVER_TABLERO;
+		transicion.cubrir();
 	}
 
-	bool iniciarCombate = tablero.actualizarAnimacion(0.025);
-	if (iniciarCombate) {
-		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
-		arena.activa();
+	int resultado = tablero.actualizarAnimacion(0.025);
+	if (resultado == 1 && accionPendiente == AccionTransicion::NINGUNA)
+	{
+		accionPendiente = AccionTransicion::ENTRAR_ARENA;
+		transicion.cubrir();
 	}
-	
+
 	if (tiempoFeedback > 0.0) {
 		tiempoFeedback -= 0.025;
 		if (tiempoFeedback <= 0.0) mensajeFeedback.clear();
 	}
+	if (resultado == 2)
+		turno = 1 - turno;
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -219,6 +250,7 @@ void Mundo::dibuja()
 	if (!enPartida)
 	{
 		menu.dibuja();
+		transicion.dibuja();
 		return;
 	}
 
@@ -230,18 +262,19 @@ void Mundo::dibuja()
 	glMatrixMode(GL_MODELVIEW);
 	glColor3ub(255, 255, 255);
 
-	tablero.dibuja(cursor);
+	tablero.dibuja(cursor, turno);
 	cursor.dibuja();   // borde amarillo
 	cursor2.dibuja();  // borde morado
 	//caja.dibuja();
 	arena.dibuja();
 	dibujaPanelHechizos();
-	menu.dibujaTeclaMenu();
 	if (enPausa) menu.dibujaPausa(opcionPausa);
+	transicion.dibuja();
 }
 // Flechas
 void Mundo::teclaEspecial(int key)
 {
+	if (transicion.estaActiva()) return;
 	if (!enPartida) return;
 
 	if (arena.estaActiva()) {
@@ -285,6 +318,7 @@ extern float G_YMAX;
 // tras mover el cursor con WASD/flechas).
 void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 {
+	if (transicion.estaActiva()) return;
 	if (boton != GLUT_LEFT_BUTTON || estado != GLUT_DOWN) return;
 	if (!enPartida || enPausa) return;
 	if (arena.estaActiva()) return;        // en la arena el raton no se usa
@@ -327,12 +361,9 @@ std::string Mundo::generarTextoPanel() const
 
 	if (eligiendoRevive)
 	{
-	
 		auto& candidatas = hechizoRevive.getCandidatas(const_cast<Tablero&>(tablero), m);
 		if (candidatas.empty())
 			return "No hay piezas que revivir";
-		
-		
 
 		// Agrupar por nombre para no repetir entradas (ej: 2 Zombis -> "Zombi x2")
 		std::vector<std::string> nombresUnicos;

@@ -3,18 +3,19 @@
 #include "freeglut.h"
 #include "pos.h"
 #include <cmath>
-#include "pieza.h"
-#include"peon.h"
-#include "golem.h"
-#include "arquero.h"
-#include "valquiria.h"
-#include "genio.h"
-#include "unicornio.h"
-#include "fenix.h"
-#include "mago.h"
+#include "piezas/pieza.h"
+#include "piezas/peon.h"
+#include "piezas/golem.h"
+#include "piezas/arquero.h"
+#include "piezas/valquiria.h"
+#include "piezas/genio.h"
+#include "piezas/unicornio.h"
+#include "piezas/fenix.h"
+#include "piezas/mago.h"
 #include "listapieza.h"
-#include"cursor.h"
+#include "cursor.h"
 #include <iostream>
+#include "ETSIDI.h"
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -37,9 +38,9 @@ void Tablero::inicializaTablero() {
 	// Definicion de colores RGB para cada tipo
 	using byte = unsigned char;
 	byte colores[3][3] = {
-		{90, 180, 80}, // 0: Casilla de Plantas
-		{90, 30, 120}, // 1: Casilla de Zombies
-		{200, 200, 200}, // 2: Casilla Neutral
+		{136, 180, 10}, // 0: Casilla de Plantas
+		{80, 47, 84}, // 1: Casilla de Zombies
+		{235, 235, 235}, // 2: Casilla Neutral
 	};
 
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
@@ -59,6 +60,22 @@ void Tablero::inicializaTablero() {
 }
 
 void Tablero::dibujaTablero(const Cursor& cursor) {
+	extern float G_XMAX;
+	extern float G_YMAX;
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondos/fondo_tablero.png").id);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+
 	// Dibuja las casillas
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
@@ -141,14 +158,14 @@ void Tablero::dibujaPiezas()
 	}
 }
 
-Pieza* Tablero::getPieza(Pos p) const 
+Pieza* Tablero::getPieza(Pos p) const
 {
 	if (p.fila < 0 || p.fila >= FILAS || p.col < 0 || p.col >= COLS)
 		return nullptr; // Fuera del tablero
 	return casillas[p.fila][p.col].pieza;
 }
 
-bool Tablero::estaOcupada(Pos p) const 
+bool Tablero::estaOcupada(Pos p) const
 {
 	return casillas[p.fila][p.col].CasOcupada(); // ya tiene Casilla
 }
@@ -228,7 +245,7 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen)
 	return validos;
 }
 
-void Tablero::marcaCasillasValidas() 
+void Tablero::marcaCasillasValidas()
 {
 	for (Pos& p : casillasValidas) { // Usa el vector interno
 		float x = p.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
@@ -245,7 +262,7 @@ void Tablero::marcaCasillasValidas()
 	}
 }
 
-bool Tablero::moverPieza(Pos origen, Pos destino) 
+bool Tablero::moverPieza(Pos origen, Pos destino)
 {
 	Pieza* p = casillas[origen.fila][origen.col].pieza;
 	if (p == nullptr) return false;
@@ -284,7 +301,7 @@ bool Tablero::moverPieza(Pos origen, Pos destino)
 	}
 }
 
-bool Tablero::gestionarEntrada(Pos cursor, int& turno) 
+bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 {
 	if (!piezaSeleccionada.esValida()) {
 		// Intentar seleccionar pieza del turno actual
@@ -292,6 +309,11 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 		if (p != nullptr && (int)p->getBando() == turno) {
 			piezaSeleccionada = cursor;
 			casillasValidas = movimientosValidos(cursor);
+			//guarda la última seleccionada por bando
+			if (p->getBando() == Bando::planta)
+				ultimaPiezaPlanta = p;
+			else
+				ultimaPiezaZombi = p;
 		}
 	}
 	else {
@@ -305,7 +327,6 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 
 		if (destinoValido) {
 			bool hayCombate = moverPieza(piezaSeleccionada, cursor);
-			if (!hayCombate) turno = 1 - turno; // turno cambia solo si no hay combate
 			piezaSeleccionada = Pos();
 			casillasValidas.clear();
 			return hayCombate;
@@ -314,29 +335,31 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 	return false; // No se ha movido
 }
 
-bool Tablero::piezaBloqueada(Pos p) 
+bool Tablero::piezaBloqueada(Pos p)
 {
 	Pieza* pieza = getPieza(p);
 	if (pieza == nullptr) return false;
 	return movimientosValidos(p).empty();
 }
 
-void Tablero::cancelarSeleccion() 
+void Tablero::cancelarSeleccion()
 {
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
 }
 
-void Tablero::dibuja(const Cursor& cursor) 
+void Tablero::dibuja(const Cursor& cursor, int turno)
 {
-	dibujaTablero(cursor);     // casillas + cursor
-	dibujaPiezas();            // piezas encima
-	marcaCasillasValidas();    // casillas verdes encima de todo
+	dibujaTablero(cursor); // fondo + casillas + cursor
+	dibujaPiezas(); // piezas encima
+	marcaCasillasValidas(); // casillas verdes encima de todo
+	dibujarPiezaSeleccionada();
+	dibujarIndicadorTurno(turno); // indicador de turno, lo último
 }
 
 constexpr float VEL_ANIMACION = 3.0f; // movimiento casillas por segundo
 
-bool Tablero::actualizarAnimacion(double dt)
+int Tablero::actualizarAnimacion(double dt)
 {
 	if (!animando || piezaAnimando == nullptr) return false;
 
@@ -358,19 +381,17 @@ bool Tablero::actualizarAnimacion(double dt)
 		animY += moveY;
 		piezaAnimando->setDireccion(dy > 0 ? DirMovimiento::NORTE : DirMovimiento::SUR);
 	}
-	else
-	{
-		//animacion terminada
+	else {
 		piezaAnimando->setDireccion(DirMovimiento::IDLE);
 		animando = false;
 		piezaAnimando = nullptr;
-		if (combatePendiente)
-		{
+		if (combatePendiente) {
 			combatePendiente = false;
-			return true; //empieza el combate
+			return 1; //hay combate
 		}
+		return 2; //terminó sin combate -> mundo cambia el turno
 	}
-	return false;
+	return 0;
 }
 
 void Tablero::resolverCombate(bool plantaGana)
@@ -383,12 +404,11 @@ void Tablero::resolverCombate(bool plantaGana)
 
 	// Mete la pieza en su lista según bando y confirma por consola
 	auto eliminar = [&](Pieza* p) {
-		if (p->getBando() == Bando::planta) 
+		if (p->getBando() == Bando::planta)
 			eliminadasPlanta.push_back(p);
-		
-		else 
+
+		else
 			eliminadasZombi.push_back(p);
-		
 		};
 
 	if (ganadorEsAtacante)
@@ -421,4 +441,39 @@ bool Tablero::aplicarHechizo(Pos destino)
 
 	if (exito) { hechizoActivo = nullptr; magoLanzando = nullptr; }
 	return exito;
+}
+
+void Tablero::dibujarIndicadorTurno(int turno) {
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	const char* ruta = (turno == 0) ? "imagenes/turnos/turno_plantas.png" : "imagenes/turnos/turno_zombies.png";
+
+	auto tex = ETSIDI::getTexture(ruta);
+	if (tex.id == 0) return;
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, tex.id);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+}
+
+void Tablero::dibujarPiezaSeleccionada() {
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	if (ultimaPiezaPlanta != nullptr)
+		ultimaPiezaPlanta->dibujaTableroGrande(-G_XMAX + 6.7f, -0.2f, 3.4f);
+
+	if (ultimaPiezaZombi != nullptr)
+		ultimaPiezaZombi->dibujaTableroGrande(G_XMAX - 6.7f, -0.2f, 3.4f);
 }

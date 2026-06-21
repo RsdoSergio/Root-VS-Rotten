@@ -1,23 +1,22 @@
 #pragma once
-#include "pieza.h"
+#include "piezas/pieza.h"
 
 struct Nodo {
-    Pieza* pieza;
-    Nodo* siguiente;
+	Pieza* pieza;
+	Nodo* siguiente;
 
-    Nodo(Pieza* p) : pieza(p), siguiente(nullptr) {}
+	Nodo(Pieza* p) : pieza(p), siguiente(nullptr) {}
 };
 
 class listapieza
 {
-    Nodo* cabeza;
+	Nodo* cabeza;
 
 public:
-    listapieza() : cabeza(nullptr) {}
-    ~listapieza(); // se destruyen todas las piezas
+	listapieza() : cabeza(nullptr) {}
+	~listapieza(); // se destruyen todas las piezas
 
-    void agregar(Pieza* p);
-    void eliminarMuertas();   
-    Nodo* getCabeza() const { return cabeza; }
+	void agregar(Pieza* p);
+	void eliminarMuertas();
+	Nodo* getCabeza() const { return cabeza; }
 };
-

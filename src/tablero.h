@@ -3,7 +3,7 @@
 #include"pos.h"
 #include<vector>
 #include "listapieza.h"
-#include "hechizo.h"
+#include "hechizos/hechizo.h"
 
 class Cursor;
 
@@ -31,33 +31,35 @@ public:
 
 	bool gestionarEntrada(Pos cursor, int& turno);
 	void cancelarSeleccion();
-	void dibuja(const Cursor& cursor);
+	void dibuja(const Cursor& cursor, int turno);
 
 	// Getters para que Mundo pueda acceder a los combatientes
 	Pieza* getPersonaje1() const { return personaje1; }
 	Pieza* getPersonaje2() const { return personaje2; }
 
 	bool estaAnimando() const { return animando; }
-	bool actualizarAnimacion(double dt);  // llamada en mueve()
+	int actualizarAnimacion(double dt);  // llamada en mueve(). 0=sigue, 1=combate, 2=termino sin combate
 	bool combatePendiente = false;
-	void resolverCombate(bool atacanteGana); 
+	void resolverCombate(bool atacanteGana);
 
 	std::vector<Pieza*>& getEliminadasPlanta() { return eliminadasPlanta; }
 	std::vector<Pieza*>& getEliminadasZombi() { return eliminadasZombi; }
 
-	bool modoHechizoActivo() const { return hechizoActivo != nullptr; } 
+	bool modoHechizoActivo() const { return hechizoActivo != nullptr; }
 	void activarHechizo(Pieza* mago, HechizoBase* hechizo);
 	bool aplicarHechizo(Pos destino);
 	void cancelarHechizo() { hechizoActivo = nullptr; magoLanzando = nullptr; }
 	HechizoBase* getHechizoActivo() const { return hechizoActivo; }
 	void colocarPiezaEnCasilla(Pos p, Pieza* pieza) { casillas[p.fila][p.col].pieza = pieza; }
-
+	Pieza* getPiezaSeleccionada() const { return piezaSeleccionada.esValida() ? getPieza(piezaSeleccionada) : nullptr; }
 
 private:
 
 	void dibujaTablero(const Cursor& cursor);
 	void dibujaPiezas();
 	void marcaCasillasValidas();
+	void dibujarIndicadorTurno(int turno);
+	void dibujarPiezaSeleccionada();
 
 	Casilla casillas[FILAS][COLS];
 	Pos piezaSeleccionada;
@@ -67,6 +69,10 @@ private:
 	// Piezas involucradas en el ultimo combate detectado
 	Pieza* personaje1 = nullptr;
 	Pieza* personaje2 = nullptr;
+
+	//para ver las piezas seleccionadas en el tablero y mostrarlas en grande
+	Pieza* ultimaPiezaPlanta = nullptr;
+	Pieza* ultimaPiezaZombi = nullptr;
 
 	Pos posOrigen;
 	Pos posDestino;
@@ -86,6 +92,4 @@ private:
 
 	HechizoBase* hechizoActivo = nullptr;
 	Pieza* magoLanzando = nullptr;
-
-
 };
