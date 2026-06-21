@@ -13,7 +13,7 @@ struct OpcionMenu {
 static void dibujaPrincipal(int opcion)
 {
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_menu_inicio.png").id);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondos/fondo_menu_inicio.png").id);
 	// Forzar máxima calidad
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -165,7 +165,7 @@ void Menu::dibujaPausa(int opcion) const
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_pausa.png").id);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondos/fondo_pausa.png").id);
 	// Forzar máxima calidad
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

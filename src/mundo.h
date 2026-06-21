@@ -6,14 +6,13 @@
 #include "pos.h"
 #include "arena.h"
 #include "listapieza.h"
-#include "pieza.h"
-#include "peon.h"
+#include "piezas/pieza.h"
+#include "piezas/peon.h"
 #include "menu.h"
 #include "caja.h"
 #include "gestorTexturas.h"
-#include "mago.h"
-#include "hechizoHeal.h"
-
+#include "piezas/mago.h"
+#include "hechizos/hechizoHeal.h"
 
 class Mundo
 {
@@ -29,7 +28,7 @@ class Mundo
 	bool    enPausa = false;
 	Caja caja;
 	int opcionPausa = 0;
-	
+
 public:
 	void inicializa();
 	void dibuja();
@@ -43,7 +42,7 @@ public:
 
 private:
 	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
-	hechizoHeal hechizoHeal; 
-	Pieza* magoSeleccionado = nullptr;	
+	hechizoHeal hechizoHeal;
+	Pieza* magoSeleccionado = nullptr;
 	//std::string textoHechizos() const;
 };

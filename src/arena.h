@@ -1,5 +1,5 @@
 #pragma once
-#include "pieza.h"
+#include "piezas/pieza.h"
 #include <string>
 #include "ETSIDI.h"
 #include "proyectil.h"
@@ -46,7 +46,6 @@ class arena
 	void dibujaProyectiles() const;
 	void dibujaObstaculos()  const;
 	void colocarObstaculoAleatorio(int indice);
-	
 
 	bool plantaGano = false; // true si ganó la planta, false si ganó el zombi
 
@@ -60,10 +59,8 @@ public:
 	void tecla(unsigned char key);   // q dispara pieza1, k dispara pieza2
 
 	void activa();
-	
 
 	void desactiva();
-	
 
 	bool estaActiva() const { return activo; }
 	void fDatos(Pieza& p1, Pieza& p2);

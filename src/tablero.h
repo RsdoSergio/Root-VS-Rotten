@@ -3,7 +3,7 @@
 #include"pos.h"
 #include<vector>
 #include "listapieza.h"
-#include "hechizo.h"
+#include "hechizos/hechizo.h"
 
 class Cursor;
 
@@ -40,16 +40,15 @@ public:
 	bool estaAnimando() const { return animando; }
 	bool actualizarAnimacion(double dt);  // llamada en mueve()
 	bool combatePendiente = false;
-	void resolverCombate(bool atacanteGana); 
+	void resolverCombate(bool atacanteGana);
 
 	std::vector<Pieza*>& getEliminadasPlanta() { return eliminadasPlanta; }
 	std::vector<Pieza*>& getEliminadasZombi() { return eliminadasZombi; }
 
-	bool modoHechizoActivo() const { return hechizoActivo != nullptr; } 
+	bool modoHechizoActivo() const { return hechizoActivo != nullptr; }
 	void activarHechizo(Pieza* mago, HechizoBase* hechizo);
 	bool aplicarHechizo(Pos destino);
 	void cancelarHechizo() { hechizoActivo = nullptr; magoLanzando = nullptr; }
-		
 
 private:
 

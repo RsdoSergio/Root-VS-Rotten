@@ -1,10 +1,10 @@
 #include "arena.h"
 #include "freeglut.h"
-#include "piezatierra.h"
-#include"piezavuelo.h"
-#include"piezateletransporte.h"
+#include "piezas/piezatierra.h"
+#include"piezas/piezavuelo.h"
+#include"piezas/piezateletransporte.h"
 #include "interaccion.h"
-#include"pieza.h"
+#include"piezas/pieza.h"
 #include "audio.h"
 
 void arena::dibujaFondo() const
@@ -21,15 +21,15 @@ void arena::dibujaFondo() const
 void arena::dibujaInterior() const
 {
 	const char* fondos[9] = {			//array con las 9 rutas de los fondos
-	   "imagenes/fondo_arena1.png",
-	   "imagenes/fondo_arena2.png",
-	   "imagenes/fondo_arena3.png",
-	   "imagenes/fondo_arena4.png",
-	   "imagenes/fondo_arena5.png",
-	   "imagenes/fondo_arena6.png",
-	   "imagenes/fondo_arena7.png",
-	   "imagenes/fondo_arena8.png",
-	   "imagenes/fondo_arena9.png"
+	   "imagenes/fondos/fondo_arena1.png",
+	   "imagenes/fondos/fondo_arena2.png",
+	   "imagenes/fondos/fondo_arena3.png",
+	   "imagenes/fondos/fondo_arena4.png",
+	   "imagenes/fondos/fondo_arena5.png",
+	   "imagenes/fondos/fondo_arena6.png",
+	   "imagenes/fondos/fondo_arena7.png",
+	   "imagenes/fondos/fondo_arena8.png",
+	   "imagenes/fondos/fondo_arena9.png"
 	};
 
 	const char* ruta = fondos[indiceFondo - 1]; //ojo q es un array (índice 0 = arena1)
@@ -240,21 +240,21 @@ void arena::mueve(double dt)
 	if (!activo) return;
 
 	auto mover = [&](Pieza* p, const std::vector<Proyectil*>& proyectiles)
-	{
-			if (!p) return;
-		p->actualizarAtaque(dt);
-		if (p->estaAtacando())
 		{
-			p->setAccion(AccionPieza::ATACAR);
-			return;
-		}
-		PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
-		if (pt) pt->actualizarArena(dt);
-		PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
-		if (pv) pv->actualizarArena(dt);
-		PiezaTeletransporte* pte = dynamic_cast<PiezaTeletransporte*>(p);
-		if (pte) pte->actualizarArena(dt);	
-	};
+			if (!p) return;
+			p->actualizarAtaque(dt);
+			if (p->estaAtacando())
+			{
+				p->setAccion(AccionPieza::ATACAR);
+				return;
+			}
+			PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
+			if (pt) pt->actualizarArena(dt);
+			PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
+			if (pv) pv->actualizarArena(dt);
+			PiezaTeletransporte* pte = dynamic_cast<PiezaTeletransporte*>(p);
+			if (pte) pte->actualizarArena(dt);
+		};
 
 	mover(pieza1, proyectil1);
 	if (pieza1)
@@ -318,8 +318,6 @@ void arena::tecla(unsigned char key)
 	if (key == 'q' || key == 'Q') procesarAtaque(pieza1, proyectil1, tiempoDisparo1, +1);
 	if (key == 'k' || key == 'K') procesarAtaque(pieza2, proyectil2, tiempoDisparo2, -1);
 }
-
-
 
 // Dibuja los proyectiles activos
 void arena::dibujaProyectiles() const
@@ -385,8 +383,6 @@ void arena::colocarObstaculoAleatorio(int idx)
 
 	obstaculos[idx].colocar(x, y, lado, lado, sprite);
 }
-
-
 
 void arena::recibirMovimiento(int jugador, int dir, bool estado)
 {

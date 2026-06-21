@@ -3,17 +3,17 @@
 #include "freeglut.h"
 #include "pos.h"
 #include <cmath>
-#include "pieza.h"
-#include"peon.h"
-#include "golem.h"
-#include "arquero.h"
-#include "valquiria.h"
-#include "genio.h"
-#include "unicornio.h"
-#include "fenix.h"
-#include "mago.h"
+#include "piezas/pieza.h"
+#include "piezas/peon.h"
+#include "piezas/golem.h"
+#include "piezas/arquero.h"
+#include "piezas/valquiria.h"
+#include "piezas/genio.h"
+#include "piezas/unicornio.h"
+#include "piezas/fenix.h"
+#include "piezas/mago.h"
 #include "listapieza.h"
-#include"cursor.h"
+#include "cursor.h"
 #include <iostream>
 
 void Tablero::inicializaTablero() {
@@ -141,14 +141,14 @@ void Tablero::dibujaPiezas()
 	}
 }
 
-Pieza* Tablero::getPieza(Pos p) const 
+Pieza* Tablero::getPieza(Pos p) const
 {
 	if (p.fila < 0 || p.fila >= FILAS || p.col < 0 || p.col >= COLS)
 		return nullptr; // Fuera del tablero
 	return casillas[p.fila][p.col].pieza;
 }
 
-bool Tablero::estaOcupada(Pos p) const 
+bool Tablero::estaOcupada(Pos p) const
 {
 	return casillas[p.fila][p.col].CasOcupada(); // ya tiene Casilla
 }
@@ -228,7 +228,7 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen)
 	return validos;
 }
 
-void Tablero::marcaCasillasValidas() 
+void Tablero::marcaCasillasValidas()
 {
 	for (Pos& p : casillasValidas) { // Usa el vector interno
 		float x = p.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
@@ -245,7 +245,7 @@ void Tablero::marcaCasillasValidas()
 	}
 }
 
-bool Tablero::moverPieza(Pos origen, Pos destino) 
+bool Tablero::moverPieza(Pos origen, Pos destino)
 {
 	Pieza* p = casillas[origen.fila][origen.col].pieza;
 	if (p == nullptr) return false;
@@ -284,7 +284,7 @@ bool Tablero::moverPieza(Pos origen, Pos destino)
 	}
 }
 
-bool Tablero::gestionarEntrada(Pos cursor, int& turno) 
+bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 {
 	if (!piezaSeleccionada.esValida()) {
 		// Intentar seleccionar pieza del turno actual
@@ -314,20 +314,20 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 	return false; // No se ha movido
 }
 
-bool Tablero::piezaBloqueada(Pos p) 
+bool Tablero::piezaBloqueada(Pos p)
 {
 	Pieza* pieza = getPieza(p);
 	if (pieza == nullptr) return false;
 	return movimientosValidos(p).empty();
 }
 
-void Tablero::cancelarSeleccion() 
+void Tablero::cancelarSeleccion()
 {
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
 }
 
-void Tablero::dibuja(const Cursor& cursor) 
+void Tablero::dibuja(const Cursor& cursor)
 {
 	dibujaTablero(cursor);     // casillas + cursor
 	dibujaPiezas();            // piezas encima
@@ -383,12 +383,11 @@ void Tablero::resolverCombate(bool plantaGana)
 
 	// Mete la pieza en su lista según bando y confirma por consola
 	auto eliminar = [&](Pieza* p) {
-		if (p->getBando() == Bando::planta) 
+		if (p->getBando() == Bando::planta)
 			eliminadasPlanta.push_back(p);
-		
-		else 
+
+		else
 			eliminadasZombi.push_back(p);
-		
 		};
 
 	if (ganadorEsAtacante)
