@@ -14,6 +14,7 @@
 #include "mago.h"
 #include "hechizoHeal.h"
 #include "hechizoRevive.h"
+#include "hechizoExchange.h"
 
 
 class Mundo
@@ -48,4 +49,6 @@ private:
 	Pieza* magoSeleccionado = nullptr;	
 	hechizoRevive hechizoRevive;
 	bool eligiendoRevive = false; 
+	hechizoExchange hechizoExchange;
+	bool eligiendoExchangeOrigen = false;
 };	
