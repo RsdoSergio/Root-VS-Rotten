@@ -11,8 +11,12 @@
 #include "menu.h"
 #include "caja.h"
 #include "gestorTexturas.h"
-#include "piezas/mago.h"
+#include "mago.h"
+#include "hechizos/hechizoRevive.h"
+#include "hechizos/hechizoExchange.h"
 #include "hechizos/hechizoHeal.h"
+#include <string>
+#include "piezas/mago.h"
 #include "transicion.h"
 
 enum class AccionTransicion { NINGUNA, EMPEZAR_PARTIDA, ENTRAR_ARENA, VOLVER_TABLERO };
@@ -38,6 +42,20 @@ class Mundo
 
 	Transicion transicion;
 	AccionTransicion accionPendiente = AccionTransicion::NINGUNA;
+	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
+	hechizoHeal hechizoHeal;
+	Pieza* magoSeleccionado = nullptr;
+	hechizoRevive hechizoRevive;
+	bool eligiendoRevive = false;
+
+	bool mostrarPanelHechizos = false;
+	std::string mensajeFeedback;
+	double tiempoFeedback = 0.0;
+
+	std::string generarTextoPanel() const;
+	void dibujaPanelHechizos() const;
+	hechizoExchange hechizoExchange;
+	bool eligiendoExchangeOrigen = false;
 
 public:
 	void inicializa();
