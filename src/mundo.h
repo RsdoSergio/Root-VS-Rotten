@@ -13,6 +13,9 @@
 #include "gestorTexturas.h"
 #include "piezas/mago.h"
 #include "hechizos/hechizoHeal.h"
+#include "transicion.h"
+
+enum class AccionTransicion { NINGUNA, EMPEZAR_PARTIDA, ENTRAR_ARENA, VOLVER_TABLERO };
 
 class Mundo
 {
@@ -32,6 +35,9 @@ class Mundo
 	hechizoHeal hechizoHeal;
 	Pieza* magoSeleccionado = nullptr;
 	//std::string textoHechizos() const;
+
+	Transicion transicion;
+	AccionTransicion accionPendiente = AccionTransicion::NINGUNA;
 
 public:
 	void inicializa();

@@ -53,6 +53,7 @@
     <ClCompile Include="src\tablero.cpp" />
     <ClCompile Include="src\piezas\unicornio.cpp" />
     <ClCompile Include="src\piezas\valquiria.cpp" />
+    <ClCompile Include="src\transicion.cpp" />
     <ClCompile Include="src\vector2d.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +95,7 @@
     <ClInclude Include="src\tablero.h" />
     <ClInclude Include="src\piezas\unicornio.h" />
     <ClInclude Include="src\piezas\valquiria.h" />
+    <ClInclude Include="src\transicion.h" />
     <ClInclude Include="src\vector2d.h" />
   </ItemGroup>
   <ItemGroup>

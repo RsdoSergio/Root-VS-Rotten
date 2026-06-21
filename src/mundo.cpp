@@ -32,11 +32,13 @@ void Mundo::inicializa() {
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
+	if (transicion.estaActiva()) return;
+
 	if (!enPartida) {
 		menu.tecla(key);
-		if (menu.seEligeJugar()) {
-			enPartida = true;
-			Audio::playMusicaTablero();
+		if (menu.seEligeJugar() && accionPendiente == AccionTransicion::NINGUNA) {
+			accionPendiente = AccionTransicion::EMPEZAR_PARTIDA;
+			transicion.cubrir();
 		}
 		return;
 	}
@@ -139,23 +141,49 @@ void Mundo::jugarCasilla(Pos casilla)
 
 void Mundo::mueve()
 {
+	transicion.actualiza(0.025);
+
+	if (transicion.estaCubierta() && accionPendiente != AccionTransicion::NINGUNA)
+	{
+		switch (accionPendiente)
+		{
+		case AccionTransicion::EMPEZAR_PARTIDA:
+			enPartida = true;
+			Audio::playMusicaTablero();
+			break;
+		case AccionTransicion::ENTRAR_ARENA:
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+			arena.activa();
+			break;
+		case AccionTransicion::VOLVER_TABLERO:
+			tablero.resolverCombate(arena.getPlantaGano());
+			arena.desactiva();
+			Audio::playMusicaTablero();
+			break;
+		default:
+			break;
+		}
+		accionPendiente = AccionTransicion::NINGUNA;
+		transicion.descubrir();
+	}
+
 	if (!enPartida || enPausa) return;
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (estabaActiva && !arena.estaActiva())
+	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA)
 	{
-		tablero.resolverCombate(arena.getPlantaGano());
-		Audio::playMusicaTablero();
+		accionPendiente = AccionTransicion::VOLVER_TABLERO;
+		transicion.cubrir();
 	}
 
 	int resultado = tablero.actualizarAnimacion(0.025);
-	if (resultado == 1)
+	if (resultado == 1 && accionPendiente == AccionTransicion::NINGUNA)
 	{
-		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
-		arena.activa();
+		accionPendiente = AccionTransicion::ENTRAR_ARENA;
+		transicion.cubrir();
 	}
 	if (resultado == 2)
 		turno = 1 - turno;
@@ -167,6 +195,7 @@ void Mundo::dibuja()
 	if (!enPartida)
 	{
 		menu.dibuja();
+		transicion.dibuja();
 		return;
 	}
 
@@ -184,10 +213,12 @@ void Mundo::dibuja()
 	//caja.dibuja();
 	arena.dibuja();
 	if (enPausa) menu.dibujaPausa(opcionPausa);
+	transicion.dibuja();
 }
 // Flechas
 void Mundo::teclaEspecial(int key)
 {
+	if (transicion.estaActiva()) return;
 	if (!enPartida) return;
 
 	if (arena.estaActiva()) {
@@ -231,6 +262,7 @@ extern float G_YMAX;
 // tras mover el cursor con WASD/flechas).
 void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 {
+	if (transicion.estaActiva()) return;
 	if (boton != GLUT_LEFT_BUTTON || estado != GLUT_DOWN) return;
 	if (!enPartida || enPausa) return;
 	if (arena.estaActiva()) return;        // en la arena el raton no se usa

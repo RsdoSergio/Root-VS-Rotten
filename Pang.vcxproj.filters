@@ -36,6 +36,7 @@
     <ClCompile Include="src\hechizos\hechizoExchange.cpp" />
     <ClCompile Include="src\hechizos\hechizoShiftTime.cpp" />
     <ClCompile Include="src\hechizos\hechizoSummon.cpp" />
+    <ClCompile Include="src\transicion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\ETSIDI.h" />
@@ -77,6 +78,7 @@
     <ClInclude Include="src\hechizos\hechizoExchange.h" />
     <ClInclude Include="src\hechizos\hechizoShiftTime.h" />
     <ClInclude Include="src\hechizos\hechizoSummon.h" />
+    <ClInclude Include="src\transicion.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\ETSIDI.lib" />

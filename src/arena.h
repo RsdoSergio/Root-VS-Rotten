@@ -48,6 +48,7 @@ class arena
 	void colocarObstaculoAleatorio(int indice);
 
 	bool plantaGano = false; // true si ganó la planta, false si ganó el zombi
+	bool terminado = false;  // true si el combate ya acabo pero seguimos esperando al barrido
 
 	int indiceFondo = 1; //para el fondo
 
@@ -68,4 +69,5 @@ public:
 	void recibirMovimiento(int jugador, int dir, bool estado);
 	void procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto);
 	bool getPlantaGano() const { return plantaGano; } // getter para mundo
+	bool combateTerminado() const { return terminado; }
 };

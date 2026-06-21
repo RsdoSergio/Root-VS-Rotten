@@ -138,6 +138,7 @@ void arena::dibujaHUD() const
 void arena::activa()
 {
 	activo = true;
+	terminado = false;
 	indiceFondo = 1 + rand() % 9;
 	numObstaculos = 3 + rand() % 4;
 
@@ -170,6 +171,7 @@ void arena::desactiva()
 	proyectil2.clear();
 
 	activo = false;
+	terminado = false;
 	pieza1 = nullptr;
 	pieza2 = nullptr;
 }
@@ -242,6 +244,7 @@ void arena::mueve(double dt)
 	auto mover = [&](Pieza* p, const std::vector<Proyectil*>& proyectiles)
 		{
 			if (!p) return;
+			if (terminado) return;
 			p->actualizarAtaque(dt);
 			if (p->estaAtacando())
 			{
@@ -307,8 +310,8 @@ void arena::mueve(double dt)
 	}
 
 	// Fin de combate
-	if (pieza1 && !pieza1->estaViva()) { plantaGano = false;  desactiva(); } // murió pieza1, ganó pieza2
-	if (pieza2 && !pieza2->estaViva()) { plantaGano = true; desactiva(); } // murió pieza2, ganó pieza1
+	if (pieza1 && !pieza1->estaViva()) { plantaGano = false;  terminado = true; } // murió pieza1, ganó pieza2
+	if (pieza2 && !pieza2->estaViva()) { plantaGano = true; terminado = true; } // murió pieza2, ganó pieza1
 }
 
 void arena::tecla(unsigned char key)
