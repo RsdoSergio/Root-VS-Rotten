@@ -52,6 +52,8 @@ public:
 	HechizoBase* getHechizoActivo() const { return hechizoActivo; }
 	void colocarPiezaEnCasilla(Pos p, Pieza* pieza) { casillas[p.fila][p.col].pieza = pieza; }
 	Pieza* getPiezaSeleccionada() const { return piezaSeleccionada.esValida() ? getPieza(piezaSeleccionada) : nullptr; }
+	void avanzarCiclo();
+	BandoVentaja getBandoVentaja() const;
 
 private:
 
@@ -92,4 +94,8 @@ private:
 
 	HechizoBase* hechizoActivo = nullptr;
 	Pieza* magoLanzando = nullptr;
+
+	int indiceCiclo = 0;
+	int patronOriginal[FILAS][COLS];
+	
 };

@@ -54,6 +54,7 @@ class Mundo
 	bool eligiendoExchangeOrigen = false;
 	hechizoTeleport hechizoTeleport;
 	bool eligiendoTeleportOrigen = false;
+	int ronda = 0;
 
 public:
 	void inicializa();

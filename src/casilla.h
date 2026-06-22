@@ -22,4 +22,7 @@ public:
 	bool CasPoder() const { return tipo == PODER; }//true si es casilla especial
 
 	void inicializa(int f, int c, TipoCasilla t, byte cr, byte cg, byte cb);
+
+
+	void setColor(byte cr, byte cg, byte cb) { r = cr; g = cg; b = cb; }
 };
