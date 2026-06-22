@@ -192,6 +192,7 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen)
 	std::vector<Pos> validos;
 	Pieza* p = getPieza(origen);
 	if (p == nullptr) return validos; // Sin pieza, sin movimientos
+	if (p->estaAprisionada()) return validos; 
 
 	int radio = p->getRadioMovimiento();
 	TipoMovimiento tipo = p->getTipoMovimiento();

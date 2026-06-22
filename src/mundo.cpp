@@ -110,7 +110,13 @@ void Mundo::tecla(unsigned char key)
 				eligiendoTeleportOrigen = true; // paso 1: elegir la pieza a teletransportar
 			}
 
-			// futuro: '4' IMPRISON, '5' SHIFT_TIME, '7' SUMMON
+			if (key == '4' && m->puedeUsarHechizo(Hechizo::IMPRISON)) {
+				tablero.activarHechizo(m, &hechizoImprison);
+				m->usarHechizo(Hechizo::IMPRISON);
+				magoSeleccionado = nullptr;
+			}
+
+			// futuro: '5' SHIFT_TIME, '7' SUMMON
 		}
 	}
 
@@ -202,6 +208,7 @@ void Mundo::jugarCasilla(Pos casilla)
 	}
 
 	bool combate = tablero.gestionarEntrada(casilla, turno);
+	tablero.setTurnoActual(numeroJugada);
 	magoSeleccionado = nullptr; // <-- añadir: cualquier movimiento normal limpia la seleccion de mago
 	if (turno == 0)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
@@ -259,8 +266,20 @@ void Mundo::mueve()
 		tiempoFeedback -= 0.025;
 		if (tiempoFeedback <= 0.0) mensajeFeedback.clear();
 	}
-	if (resultado == 2)
+
+	if (resultado == 2) {
 		turno = 1 - turno;
+		tablero.setTurnoActual(numeroJugada); 
+		numeroJugada++;
+	}
+
+	// Provisional: libera piezas aprisionadas tras 3 turnos, hasta que exista el ciclo de color
+	for (int i = 0; i < FILAS; i++)
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = tablero.getPieza(Pos(i, j));
+			if (p && p->estaAprisionada() && (numeroJugada - p->getTurnoAprisionamiento() >= 3))
+				p->liberar();
+		}
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -439,8 +458,7 @@ void Mundo::dibujaPanelHechizos() const
 {
 	bool debeMostrarse = mostrarPanelHechizos || eligiendoRevive || eligiendoExchangeOrigen || eligiendoTeleportOrigen || tablero.modoHechizoActivo();
 	if (!debeMostrarse) return;
-	if (magoSeleccionado == nullptr && mensajeFeedback.empty()) return;
-
+	if (magoSeleccionado == nullptr && mensajeFeedback.empty() && !tablero.modoHechizoActivo()) return;
 	std::string texto = generarTextoPanel();
 	if (texto.empty()) return;
 

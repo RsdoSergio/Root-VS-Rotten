@@ -43,6 +43,9 @@ protected:
 	bool   atacandoActivo = false;
 	double tiempoAtaqueRestante = 0.0;
 
+	bool aprisionada = false;
+	int turnoAprisionamiento = -1;
+
 public:
 	Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos);
 
@@ -104,4 +107,9 @@ public:
 	void actualizarAtaque(double dt);
 
 	virtual ~Pieza() {}
+
+	bool estaAprisionada() const { return aprisionada; }
+	void aprisionar(int turnoActual) { aprisionada = true; turnoAprisionamiento = turnoActual; }
+	void liberar() { aprisionada = false; turnoAprisionamiento = -1; }
+	int getTurnoAprisionamiento() const { return turnoAprisionamiento; }
 };
