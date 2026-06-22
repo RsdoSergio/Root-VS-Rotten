@@ -54,6 +54,8 @@ public:
 	Pieza* getPiezaSeleccionada() const { return piezaSeleccionada.esValida() ? getPieza(piezaSeleccionada) : nullptr; }
 	int getTurnoActual() const { return turnoActual; }
 	void setTurnoActual(int t) { turnoActual = t; }
+	void avanzarCiclo();
+	BandoVentaja getBandoVentaja() const;
 
 private:
 
@@ -96,4 +98,7 @@ private:
 	Pieza* magoLanzando = nullptr;
 
 	int turnoActual = 0;
+	int indiceCiclo = 0;
+	int patronOriginal[FILAS][COLS];
+	
 };

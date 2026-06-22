@@ -45,9 +45,15 @@ void Tablero::inicializaTablero() {
 
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
 		for (int j = 0; j < COLS; j++) {
+
+			patronOriginal[i][j] = patron[i][j];
 			Casilla::TipoCasilla tipo;
 
-			if (((i + 1 == 1 || i + 1 == 9) && j + 1 == 5) || ((i + 1 == 1 || i + 1 == 5 || i + 1 == 9) && i + 1 == 5))
+			if ((i == 4 && j == 4) ||  // centro
+				(i == 0 && j == 4) ||  // arriba
+				(i == 8 && j == 4) ||  // abajo
+				(i == 4 && j == 0) ||  // izquierda
+				(i == 4 && j == 8))    // derecha
 				tipo = Casilla::PODER;
 			else
 				tipo = Casilla::NORMAL;
@@ -419,12 +425,14 @@ void Tablero::resolverCombate(bool plantaGana)
 		casillas[posDestino.fila][posDestino.col].pieza = atacante;
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
 		atacante->setCasilla(posDestino);
+		atacante->curar(atacante->getVidaMax());
 	}
 	else
 	{
 		// Gana el defensor: el atacante va a su lista, defensor se queda
 		eliminar(atacante);
 		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
+		defensor->curar(defensor->getVidaMax());
 	}
 }
 
@@ -477,4 +485,35 @@ void Tablero::dibujarPiezaSeleccionada() {
 
 	if (ultimaPiezaZombi != nullptr)
 		ultimaPiezaZombi->dibujaTableroGrande(G_XMAX - 6.7f, -0.2f, 3.4f);
+}
+void Tablero::avanzarCiclo() {
+	using byte = unsigned char;
+
+	byte ciclos[5][3] = {
+		{200, 200, 200},  // gris (inicial)
+		{0,   0,   139},  // azul marino
+		{0,   191, 255},  // azul claro
+		{128, 128, 128},  // gris medio
+		{255, 255, 255},  // blanco
+	};
+
+	indiceCiclo = (indiceCiclo + 1) % 5;
+
+	for (int i = 0; i < FILAS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			//if (casillas[i][j].tipo == Casilla::PODER) continue;
+			int p = patronOriginal[i][j];
+			if (p == 2) // solo las neutrales cambian
+				casillas[i][j].setColor(
+					ciclos[indiceCiclo][0],
+					ciclos[indiceCiclo][1],
+					ciclos[indiceCiclo][2]);
+		}
+	}
+}
+BandoVentaja Tablero::getBandoVentaja() const {
+	if (indiceCiclo == 0 || indiceCiclo == 2)
+		return BandoVentaja::ZOMBI;
+	else
+		return BandoVentaja::PLANTA;
 }

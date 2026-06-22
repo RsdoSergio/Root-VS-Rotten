@@ -3,6 +3,8 @@
 #include "pos.h"
 #include<iostream>
 
+enum class BandoVentaja { PLANTA, ZOMBI };
+
 enum class DirArena { ARRIBA, ABAJO, IZQUIERDA, DERECHA };
 
 constexpr int DIR_ARRIBA = 0;
@@ -42,6 +44,7 @@ protected:
 
 	bool   atacandoActivo = false;
 	double tiempoAtaqueRestante = 0.0;
+	
 
 	bool aprisionada = false;
 	int turnoAprisionamiento = -1;
@@ -99,10 +102,20 @@ public:
 	virtual double getVelocidadProyectil() const { return 12.0; } // valor por defecto, igual que VEL_PROYECTIL de arena
 	virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 
+	virtual void actualizarArena(double dt) {}
+	virtual void setMovimiento(int dir, bool estado) {}
+
+	virtual void activarExplosion() {}
+	virtual double consumirDanoExplosion() { return 0.0; }
+
+	virtual double getRadioExplosionMax() const { return 0.0; }
+
 	virtual int getFrame(DirMovimiento dir, AccionPieza accion) const;
 
 	bool estaAtacando() const { return atacandoActivo; }
 	void iniciarAtaque() { atacandoActivo = true; tiempoAtaqueRestante = tiempoAnimAtaque; }
+
+	virtual void actualizarEfectos(double dt) {}
 
 	void actualizarAtaque(double dt);
 
@@ -112,4 +125,6 @@ public:
 	void aprisionar(int turnoActual) { aprisionada = true; turnoAprisionamiento = turnoActual; }
 	void liberar() { aprisionada = false; turnoAprisionamiento = -1; }
 	int getTurnoAprisionamiento() const { return turnoAprisionamiento; }
+	void setVelocidad(double v) { velocidad = v; }
+	void setVidaMax(double v) { vidaMax = v; }
 };

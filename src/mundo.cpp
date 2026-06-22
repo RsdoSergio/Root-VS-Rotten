@@ -214,6 +214,12 @@ void Mundo::jugarCasilla(Pos casilla)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
 	else
 		cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
+
+	if (combate) {
+		BandoVentaja ventaja = tablero.getBandoVentaja();
+		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), ventaja);
+		arena.activa();
+	}
 }
 void Mundo::mueve()
 {
@@ -226,21 +232,57 @@ void Mundo::mueve()
 		case AccionTransicion::EMPEZAR_PARTIDA:
 			enPartida = true;
 			Audio::playMusicaTablero();
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
 			break;
-		case AccionTransicion::ENTRAR_ARENA:
-			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+
+		case AccionTransicion::ABRIR_CARTEL_VERSUS:
+			rutaCartel = "imagenes/carteles/cartel_vs.png";
+			mostrandoCartel = true;
+			tiempoCartel = 2.0;
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
+			break;
+
+		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
+			rutaCartel = arena.getPlantaGano() ? "imagenes/carteles/cartel_plantas_ganan.png" : "imagenes/carteles/cartel_plantas_pierden.png";
+			mostrandoCartel = true;
+			tiempoCartel = 2.0;
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
+			break;
+
+		case AccionTransicion::CERRAR_CARTEL_VERSUS:
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), tablero.getBandoVentaja());
 			arena.activa();
+			mostrandoCartel = false;
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
 			break;
-		case AccionTransicion::VOLVER_TABLERO:
+
+		case AccionTransicion::CERRAR_CARTEL_RESULTADO:
 			tablero.resolverCombate(arena.getPlantaGano());
+			tablero.avanzarCiclo();
 			arena.desactiva();
 			Audio::playMusicaTablero();
+			mostrandoCartel = false;
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
 			break;
+
 		default:
 			break;
 		}
-		accionPendiente = AccionTransicion::NINGUNA;
-		transicion.descubrir();
+	}
+
+	if (mostrandoCartel && !transicion.estaActiva())
+	{
+		tiempoCartel -= 0.025;
+		if (tiempoCartel <= 0.0)
+		{
+			accionPendiente = (rutaCartel.find("cartel_vs") != std::string::npos) ? AccionTransicion::CERRAR_CARTEL_VERSUS : AccionTransicion::CERRAR_CARTEL_RESULTADO;
+			transicion.cubrir();
+		}
 	}
 
 	if (!enPartida || enPausa) return;
@@ -249,16 +291,16 @@ void Mundo::mueve()
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA)
+	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
 	{
-		accionPendiente = AccionTransicion::VOLVER_TABLERO;
+		accionPendiente = AccionTransicion::ABRIR_CARTEL_RESULTADO;
 		transicion.cubrir();
 	}
 
 	int resultado = tablero.actualizarAnimacion(0.025);
 	if (resultado == 1 && accionPendiente == AccionTransicion::NINGUNA)
 	{
-		accionPendiente = AccionTransicion::ENTRAR_ARENA;
+		accionPendiente = AccionTransicion::ABRIR_CARTEL_VERSUS;
 		transicion.cubrir();
 	}
 
@@ -307,6 +349,30 @@ void Mundo::dibuja()
 	arena.dibuja();
 	dibujaPanelHechizos();
 	if (enPausa) menu.dibujaPausa(opcionPausa);
+
+	if (mostrandoCartel && !rutaCartel.empty())
+	{
+		extern float G_XMAX;
+		extern float G_YMAX;
+		auto tex = ETSIDI::getTexture(rutaCartel.c_str());
+		if (tex.id != 0)
+		{
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBindTexture(GL_TEXTURE_2D, tex.id);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+			glEnd();
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		}
+	}
+
 	transicion.dibuja();
 }
 // Flechas

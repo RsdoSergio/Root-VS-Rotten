@@ -21,8 +21,14 @@
 #include "piezas/mago.h"
 #include "transicion.h"
 
-
-enum class AccionTransicion { NINGUNA, EMPEZAR_PARTIDA, ENTRAR_ARENA, VOLVER_TABLERO };
+enum class AccionTransicion {
+	NINGUNA,
+	EMPEZAR_PARTIDA,
+	ABRIR_CARTEL_VERSUS,
+	ABRIR_CARTEL_RESULTADO,
+	CERRAR_CARTEL_VERSUS,
+	CERRAR_CARTEL_RESULTADO
+};
 
 class Mundo
 {
@@ -39,8 +45,14 @@ class Mundo
 	bool    enPausa = false;
 	Caja caja;
 	int opcionPausa = 0;
+
 	Transicion transicion;
 	AccionTransicion accionPendiente = AccionTransicion::NINGUNA;
+	bool     mostrandoCartel = false;
+	double   tiempoCartel = 0.0;
+	std::string rutaCartel = "";
+	AccionTransicion accionTrasCarte = AccionTransicion::NINGUNA;
+
 	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
 	hechizoHeal hechizoHeal;
 	Pieza* magoSeleccionado = nullptr;
@@ -58,6 +70,7 @@ class Mundo
 	hechizoTeleport hechizoTeleport;
 	bool eligiendoTeleportOrigen = false;
 	hechizoImprison hechizoImprison;
+	int ronda = 0;
 
 public:
 	void inicializa();

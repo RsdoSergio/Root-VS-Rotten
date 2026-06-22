@@ -67,6 +67,7 @@ void Pieza::actualizarAtaque(double dt)
 	{
 		tiempoAtaqueRestante = 0.0;
 		atacandoActivo = false;
+		accionActual = AccionPieza::IDLE; 
 	}
 }
 
