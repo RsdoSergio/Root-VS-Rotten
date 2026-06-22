@@ -207,6 +207,12 @@ void Mundo::jugarCasilla(Pos casilla)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
 	else
 		cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
+
+	if (combate) {
+		BandoVentaja ventaja = tablero.getBandoVentaja();
+		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), ventaja);
+		arena.activa();
+	}
 }
 void Mundo::mueve()
 {
@@ -240,7 +246,7 @@ void Mundo::mueve()
 			break;
 
 		case AccionTransicion::CERRAR_CARTEL_VERSUS:
-			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), tablero.getBandoVentaja());
 			arena.activa();
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
@@ -249,6 +255,7 @@ void Mundo::mueve()
 
 		case AccionTransicion::CERRAR_CARTEL_RESULTADO:
 			tablero.resolverCombate(arena.getPlantaGano());
+			tablero.avanzarCiclo();
 			arena.desactiva();
 			Audio::playMusicaTablero();
 			mostrandoCartel = false;

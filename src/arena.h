@@ -64,10 +64,13 @@ public:
 	void desactiva();
 
 	bool estaActiva() const { return activo; }
-	void fDatos(Pieza& p1, Pieza& p2);
+	void fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja);
 
 	void recibirMovimiento(int jugador, int dir, bool estado);
 	void procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto);
 	bool getPlantaGano() const { return plantaGano; } // getter para mundo
+	
+	void aplicarDanoExplosiones();
+
 	bool combateTerminado() const { return terminado; }
 };
