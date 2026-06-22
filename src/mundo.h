@@ -15,6 +15,7 @@
 #include "hechizos/hechizoRevive.h"
 #include "hechizos/hechizoExchange.h"
 #include "hechizos/hechizoHeal.h"
+#include "hechizos/hechzoTeleport.h"
 #include <string>
 #include "piezas/mago.h"
 #include "transicion.h"
@@ -51,6 +52,8 @@ class Mundo
 	void dibujaPanelHechizos() const;
 	hechizoExchange hechizoExchange;
 	bool eligiendoExchangeOrigen = false;
+	hechizoTeleport hechizoTeleport;
+	bool eligiendoTeleportOrigen = false;
 
 public:
 	void inicializa();

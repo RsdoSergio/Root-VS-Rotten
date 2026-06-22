@@ -86,7 +86,7 @@ void Mundo::tecla(unsigned char key)
 		jugarCasilla(posActiva);
 	}
 
-	if (magoSeleccionado != nullptr && !tablero.modoHechizoActivo() && !eligiendoRevive && !eligiendoExchangeOrigen)
+	if (magoSeleccionado != nullptr && !tablero.modoHechizoActivo() && !eligiendoRevive && !eligiendoExchangeOrigen && !eligiendoTeleportOrigen)
 	{
 		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
 		if (m != nullptr)
@@ -106,7 +106,11 @@ void Mundo::tecla(unsigned char key)
 				eligiendoExchangeOrigen = true; // paso 1: elegir la primera pieza en el tablero
 			}
 
-			// futuro: '1' TELEPORT, '4' IMPRISON, '5' SHIFT_TIME, '7' SUMMON
+			if (key == '1' && m->puedeUsarHechizo(Hechizo::TELEPORT)) {
+				eligiendoTeleportOrigen = true; // paso 1: elegir la pieza a teletransportar
+			}
+
+			// futuro: '4' IMPRISON, '5' SHIFT_TIME, '7' SUMMON
 		}
 	}
 
@@ -135,6 +139,8 @@ void Mundo::tecla(unsigned char key)
 		hechizoRevive.resetear();
 		eligiendoExchangeOrigen = false;
 		hechizoExchange.resetear();
+		eligiendoTeleportOrigen = false;
+		hechizoTeleport.resetear();
 		cursor.setBloqueado(false);
 		cursor2.setBloqueado(false);
 		if (key == 'v') arena.desactiva();
@@ -166,6 +172,19 @@ void Mundo::jugarCasilla(Pos casilla)
 			tablero.activarHechizo(m, &hechizoExchange); // el siguiente clic es el destino
 			m->usarHechizo(Hechizo::EXCHANGE);
 			eligiendoExchangeOrigen = false;
+			magoSeleccionado = nullptr;
+		}
+		return; // mientras se elige origen, este clic no se interpreta como movimiento normal
+	}
+
+	if (eligiendoTeleportOrigen)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr && hechizoTeleport.elegirOrigen(tablero, m, casilla))
+		{
+			tablero.activarHechizo(m, &hechizoTeleport); // el siguiente clic es la casilla destino
+			m->usarHechizo(Hechizo::TELEPORT);
+			eligiendoTeleportOrigen = false;
 			magoSeleccionado = nullptr;
 		}
 		return; // mientras se elige origen, este clic no se interpreta como movimiento normal
@@ -401,6 +420,9 @@ std::string Mundo::generarTextoPanel() const
 	if (eligiendoExchangeOrigen)
 		return "Elige la pieza aliada de origen";
 
+	if (eligiendoTeleportOrigen)
+		return "Elige la pieza aliada a teletransportar";
+
 	if (tablero.modoHechizoActivo())
 	{
 		HechizoBase* h = tablero.getHechizoActivo();
@@ -415,7 +437,7 @@ std::string Mundo::generarTextoPanel() const
 }
 void Mundo::dibujaPanelHechizos() const
 {
-	bool debeMostrarse = mostrarPanelHechizos || eligiendoRevive || eligiendoExchangeOrigen || tablero.modoHechizoActivo();
+	bool debeMostrarse = mostrarPanelHechizos || eligiendoRevive || eligiendoExchangeOrigen || eligiendoTeleportOrigen || tablero.modoHechizoActivo();
 	if (!debeMostrarse) return;
 	if (magoSeleccionado == nullptr && mensajeFeedback.empty()) return;
 
