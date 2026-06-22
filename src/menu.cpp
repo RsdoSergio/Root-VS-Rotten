@@ -13,7 +13,7 @@ struct OpcionMenu {
 static void dibujaPrincipal(int opcion)
 {
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_menu_inicio.png").id);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondos/fondo_menu_inicio.png").id);
 	// Forzar máxima calidad
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -152,20 +152,13 @@ void Menu::dibuja()
 	if (pantalla == 2) dibujaCreditos();
 }
 
-void Menu::dibujaTeclaMenu() const
-{
-	ETSIDI::setFont("fuentes/texto.ttf", 18);
-	ETSIDI::setTextColor(0.3f, 0.3f, 0.3f);
-	ETSIDI::printxy("M (Menu)", -25.f, -13.f);
-}
-
 void Menu::dibujaPausa(int opcion) const
 {
 	glEnable(GL_BLEND); 	// Activar transparencia para respetar el canal alfa del PNG (me lo ha dicho la IA)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_pausa.png").id);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondos/fondo_pausa.png").id);
 	// Forzar máxima calidad
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -1,21 +1,21 @@
 #include "gestorTexturas.h"
 #include "ETSIDI.h"
 #include "freeglut.h"
-#include"pieza.h"
+#include "piezas/pieza.h"
 
 void precargarTexturas() {
 	const char* texturas[] = {
-	"imagenes/fondo_menu_inicio.png",
-	"imagenes/fondo_pausa.png",
-	"imagenes/fondo_arena1.png",
-	"imagenes/fondo_arena2.png",
-	"imagenes/fondo_arena3.png",
-	"imagenes/fondo_arena4.png",
-	"imagenes/fondo_arena5.png",
-	"imagenes/fondo_arena6.png",
-	"imagenes/fondo_arena7.png",
-	"imagenes/fondo_arena8.png",
-	"imagenes/fondo_arena9.png",
+	"imagenes/fondos/fondo_menu_inicio.png",
+	"imagenes/fondos/fondo_pausa.png",
+	"imagenes/fondos/fondo_arena1.png",
+	"imagenes/fondos/fondo_arena2.png",
+	"imagenes/fondos/fondo_arena3.png",
+	"imagenes/fondos/fondo_arena4.png",
+	"imagenes/fondos/fondo_arena5.png",
+	"imagenes/fondos/fondo_arena6.png",
+	"imagenes/fondos/fondo_arena7.png",
+	"imagenes/fondos/fondo_arena8.png",
+	"imagenes/fondos/fondo_arena9.png",
 	"imagenes/sprites_plantas/seta_solar.png",
 	"imagenes/sprites_plantas/rabano_casillero.png",
 	"imagenes/sprites_plantas/rotinabo.png",
@@ -32,6 +32,15 @@ void precargarTexturas() {
 	"imagenes/sprites_zombies/zombie_gondola.png",
 	"imagenes/sprites_zombies/zombie_yeti.png",
 	"imagenes/sprites_zombies/zombie_doctor.png",
+	"imagenes/obstaculos/obs1.png",
+	"imagenes/obstaculos/obs2.png",
+	"imagenes/obstaculos/obs3.png",
+	"imagenes/obstaculos/obs4.png",
+	"imagenes/obstaculos/obs5.png",
+	"imagenes/obstaculos/obs6.png",
+	"imagenes/fondos/fondo_tablero.png",
+	"imagenes/turnos/turno_plantas.png",
+	"imagenes/turnos/turno_zombies.png",
 	};
 
 	int total = sizeof(texturas) / sizeof(texturas[0]); //nº elementos
@@ -58,7 +67,6 @@ void precargarTexturas() {
 		glutSwapBuffers();
 	}
 }
-
 
 void dibujarSprite(const std::string& ruta, float x, float y, float tam, int frame, int totalFrames)
 {

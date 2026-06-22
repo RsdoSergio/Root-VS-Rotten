@@ -7,6 +7,7 @@
 #include "audio.h"
 #include "gestorTexturas.h"
 #include <ctime>
+#include "hechizos/hechizoExchange.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
@@ -32,10 +33,19 @@ void Mundo::inicializa() {
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
+	if (transicion.estaActiva()) return;
+
 	if (!enPartida) {
 		menu.tecla(key);
-		if (menu.seEligeJugar())
-			enPartida = true;
+		if (menu.seEligeJugar() && accionPendiente == AccionTransicion::NINGUNA) {
+			accionPendiente = AccionTransicion::EMPEZAR_PARTIDA;
+			transicion.cubrir();
+		}
+		return;
+	}
+
+	if (key == ' ' && magoSeleccionado != nullptr) {
+		mostrarPanelHechizos = !mostrarPanelHechizos;
 		return;
 	}
 
@@ -76,8 +86,61 @@ void Mundo::tecla(unsigned char key)
 		jugarCasilla(posActiva);
 	}
 
+	if (magoSeleccionado != nullptr && !tablero.modoHechizoActivo() && !eligiendoRevive && !eligiendoExchangeOrigen && !eligiendoTeleportOrigen)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr)
+		{
+			if (key == '2' && m->puedeUsarHechizo(Hechizo::HEAL)) {
+				tablero.activarHechizo(m, &hechizoHeal);
+				m->usarHechizo(Hechizo::HEAL);
+				magoSeleccionado = nullptr;
+			}
+
+			if (key == '3' && m->puedeUsarHechizo(Hechizo::REVIVE)) {
+				eligiendoRevive = true;
+				mostrarPanelHechizos = true;
+			}
+
+			if (key == '6' && m->puedeUsarHechizo(Hechizo::EXCHANGE)) {
+				eligiendoExchangeOrigen = true; // paso 1: elegir la primera pieza en el tablero
+			}
+
+			if (key == '1' && m->puedeUsarHechizo(Hechizo::TELEPORT)) {
+				eligiendoTeleportOrigen = true; // paso 1: elegir la pieza a teletransportar
+			}
+
+			// futuro: '4' IMPRISON, '5' SHIFT_TIME, '7' SUMMON
+		}
+	}
+
+	// Sub-menu de Revive: el jugador elige QUE pieza revivir antes de elegir donde
+	if (eligiendoRevive)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr && key >= '1' && key <= '9')
+		{
+			int indice = key - '1'; // '1' -> indice 0, '2' -> indice 1...
+			if (hechizoRevive.elegirPieza(tablero, m, indice))
+			{
+				tablero.activarHechizo(m, &hechizoRevive); // ahora si, ya con pieza elegida
+				m->usarHechizo(Hechizo::REVIVE);
+				eligiendoRevive = false;
+				magoSeleccionado = nullptr;
+			}
+		}
+	}
+
 	if (key == 27) {
-		tablero.cancelarSeleccion(); //Escape para cancelar seleccion
+		tablero.cancelarSeleccion();
+		tablero.cancelarHechizo();
+		magoSeleccionado = nullptr;
+		eligiendoRevive = false;
+		hechizoRevive.resetear();
+		eligiendoExchangeOrigen = false;
+		hechizoExchange.resetear();
+		eligiendoTeleportOrigen = false;
+		hechizoTeleport.resetear();
 		cursor.setBloqueado(false);
 		cursor2.setBloqueado(false);
 		if (key == 'v') arena.desactiva();
@@ -89,34 +152,115 @@ void Mundo::tecla(unsigned char key)
 // La usan tanto el teclado (tecla(), con key==13) como el raton (clicRaton()).
 void Mundo::jugarCasilla(Pos casilla)
 {
+	if (tablero.modoHechizoActivo())
+	{
+		HechizoBase* usado = tablero.getHechizoActivo();
+		bool exito = tablero.aplicarHechizo(casilla);
+		if (exito && usado != nullptr) {
+			mensajeFeedback = usado->getMensajeExito();
+			tiempoFeedback = 3.0;
+		}
+		magoSeleccionado = nullptr; // cerramos el menu de hechizos
+		return;
+	}
+
+	if (eligiendoExchangeOrigen)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr && hechizoExchange.elegirOrigen(tablero, m, casilla))
+		{
+			tablero.activarHechizo(m, &hechizoExchange); // el siguiente clic es el destino
+			m->usarHechizo(Hechizo::EXCHANGE);
+			eligiendoExchangeOrigen = false;
+			magoSeleccionado = nullptr;
+		}
+		return; // mientras se elige origen, este clic no se interpreta como movimiento normal
+	}
+
+	if (eligiendoTeleportOrigen)
+	{
+		Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+		if (m != nullptr && hechizoTeleport.elegirOrigen(tablero, m, casilla))
+		{
+			tablero.activarHechizo(m, &hechizoTeleport); // el siguiente clic es la casilla destino
+			m->usarHechizo(Hechizo::TELEPORT);
+			eligiendoTeleportOrigen = false;
+			magoSeleccionado = nullptr;
+		}
+		return; // mientras se elige origen, este clic no se interpreta como movimiento normal
+	}
+
+	if (magoSeleccionado == nullptr)
+	{
+		Pieza* p = tablero.getPieza(casilla);
+		Mago* m = dynamic_cast<Mago*>(p);
+		if (m != nullptr && (int)m->getBando() == turno)
+		{
+			magoSeleccionado = m;
+			return;
+		}
+	}
+
 	bool combate = tablero.gestionarEntrada(casilla, turno);
+	magoSeleccionado = nullptr; // <-- añadir: cualquier movimiento normal limpia la seleccion de mago
 	if (turno == 0)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
 	else
 		cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
-
-	if (combate) {
-		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
-		arena.activa();
-	}
 }
-
 void Mundo::mueve()
 {
+	transicion.actualiza(0.025);
+
+	if (transicion.estaCubierta() && accionPendiente != AccionTransicion::NINGUNA)
+	{
+		switch (accionPendiente)
+		{
+		case AccionTransicion::EMPEZAR_PARTIDA:
+			enPartida = true;
+			Audio::playMusicaTablero();
+			break;
+		case AccionTransicion::ENTRAR_ARENA:
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+			arena.activa();
+			break;
+		case AccionTransicion::VOLVER_TABLERO:
+			tablero.resolverCombate(arena.getPlantaGano());
+			arena.desactiva();
+			Audio::playMusicaTablero();
+			break;
+		default:
+			break;
+		}
+		accionPendiente = AccionTransicion::NINGUNA;
+		transicion.descubrir();
+	}
+
 	if (!enPartida || enPausa) return;
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (estabaActiva && !arena.estaActiva())
-		tablero.resolverCombate(arena.getPlantaGano());
-
-	bool iniciarCombate = tablero.actualizarAnimacion(0.025);
-	if (iniciarCombate) {
-		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
-		arena.activa();
+	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA)
+	{
+		accionPendiente = AccionTransicion::VOLVER_TABLERO;
+		transicion.cubrir();
 	}
+
+	int resultado = tablero.actualizarAnimacion(0.025);
+	if (resultado == 1 && accionPendiente == AccionTransicion::NINGUNA)
+	{
+		accionPendiente = AccionTransicion::ENTRAR_ARENA;
+		transicion.cubrir();
+	}
+
+	if (tiempoFeedback > 0.0) {
+		tiempoFeedback -= 0.025;
+		if (tiempoFeedback <= 0.0) mensajeFeedback.clear();
+	}
+	if (resultado == 2)
+		turno = 1 - turno;
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -125,6 +269,7 @@ void Mundo::dibuja()
 	if (!enPartida)
 	{
 		menu.dibuja();
+		transicion.dibuja();
 		return;
 	}
 
@@ -136,17 +281,19 @@ void Mundo::dibuja()
 	glMatrixMode(GL_MODELVIEW);
 	glColor3ub(255, 255, 255);
 
-	tablero.dibuja(cursor);
+	tablero.dibuja(cursor, turno);
 	cursor.dibuja();   // borde amarillo
 	cursor2.dibuja();  // borde morado
 	//caja.dibuja();
 	arena.dibuja();
-	menu.dibujaTeclaMenu();
+	dibujaPanelHechizos();
 	if (enPausa) menu.dibujaPausa(opcionPausa);
+	transicion.dibuja();
 }
 // Flechas
 void Mundo::teclaEspecial(int key)
 {
+	if (transicion.estaActiva()) return;
 	if (!enPartida) return;
 
 	if (arena.estaActiva()) {
@@ -190,6 +337,7 @@ extern float G_YMAX;
 // tras mover el cursor con WASD/flechas).
 void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 {
+	if (transicion.estaActiva()) return;
 	if (boton != GLUT_LEFT_BUTTON || estado != GLUT_DOWN) return;
 	if (!enPartida || enPausa) return;
 	if (arena.estaActiva()) return;        // en la arena el raton no se usa
@@ -213,4 +361,115 @@ void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 	else            cursor2.setPosicion(casilla);
 
 	jugarCasilla(casilla);
+}
+
+static void dibujaTexto(float x, float y, const std::string& texto)
+{
+	glRasterPos2f(x, y);
+	for (char c : texto)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+}
+
+std::string Mundo::generarTextoPanel() const
+{
+	if (!mensajeFeedback.empty())
+		return mensajeFeedback;
+
+	Mago* m = dynamic_cast<Mago*>(magoSeleccionado);
+	if (m == nullptr) return "";
+
+	if (eligiendoRevive)
+	{
+		auto& candidatas = hechizoRevive.getCandidatas(const_cast<Tablero&>(tablero), m);
+		if (candidatas.empty())
+			return "No hay piezas que revivir";
+
+		// Agrupar por nombre para no repetir entradas (ej: 2 Zombis -> "Zombi x2")
+		std::vector<std::string> nombresUnicos;
+		std::vector<int> contadores;
+
+		for (Pieza* p : candidatas)
+		{
+			std::string nombre = p->getNombre();
+			bool encontrado = false;
+			for (size_t i = 0; i < nombresUnicos.size(); i++)
+			{
+				if (nombresUnicos[i] == nombre) {
+					contadores[i]++;
+					encontrado = true;
+					break;
+				}
+			}
+			if (!encontrado) {
+				nombresUnicos.push_back(nombre);
+				contadores.push_back(1);
+			}
+		}
+
+		std::string texto;
+		for (size_t i = 0; i < nombresUnicos.size(); i++)
+		{
+			texto += std::to_string(i + 1) + "." + nombresUnicos[i];
+			if (contadores[i] > 1)
+				texto += " x" + std::to_string(contadores[i]);
+			texto += "  ";
+		}
+		return texto;
+	}
+
+	if (eligiendoExchangeOrigen)
+		return "Elige la pieza aliada de origen";
+
+	if (eligiendoTeleportOrigen)
+		return "Elige la pieza aliada a teletransportar";
+
+	if (tablero.modoHechizoActivo())
+	{
+		HechizoBase* h = tablero.getHechizoActivo();
+		return h ? h->getMensajeSeleccion() : "";
+	}
+
+	std::string texto;
+	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Summon" };
+	for (int i = 0; i < 7; i++)
+		texto += std::to_string(i + 1) + "." + nombres[i] + "  ";
+	return texto;
+}
+void Mundo::dibujaPanelHechizos() const
+{
+	bool debeMostrarse = mostrarPanelHechizos || eligiendoRevive || eligiendoExchangeOrigen || eligiendoTeleportOrigen || tablero.modoHechizoActivo();
+	if (!debeMostrarse) return;
+	if (magoSeleccionado == nullptr && mensajeFeedback.empty()) return;
+
+	std::string texto = generarTextoPanel();
+	if (texto.empty()) return;
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_LIGHTING);
+
+	float anchoCaja = COLS * TAM_CELDA;
+	float altoCaja = 1.6f;
+	float x0 = -anchoCaja / 2.0f;
+	float y0 = -(FILAS * TAM_CELDA) / 2.0f - altoCaja - 0.4f;
+
+	glColor3ub(0, 0, 0);
+	glBegin(GL_QUADS);
+	glVertex2f(x0, y0);
+	glVertex2f(x0 + anchoCaja, y0);
+	glVertex2f(x0 + anchoCaja, y0 + altoCaja);
+	glVertex2f(x0, y0 + altoCaja);
+	glEnd();
+
+	glColor3ub(255, 255, 255);
+	glLineWidth(2.0f);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(x0, y0);
+	glVertex2f(x0 + anchoCaja, y0);
+	glVertex2f(x0 + anchoCaja, y0 + altoCaja);
+	glVertex2f(x0, y0 + altoCaja);
+	glEnd();
+	glLineWidth(1.0f);
+
+	glColor3ub(255, 255, 255);
+	dibujaTexto(x0 + 0.3f, y0 + altoCaja / 2.0f - 0.3f, texto);
 }

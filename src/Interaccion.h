@@ -1,5 +1,5 @@
 #pragma once
-#include "pieza.h"
+#include "piezas/pieza.h"
 #include "caja.h"
 #include "proyectil.h"
 #include "obstaculo.h"

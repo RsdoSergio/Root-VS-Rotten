@@ -15,7 +15,7 @@ public:
             b, pos),
         velocidadProyectil(8.0) {}
 
-    double getVelocidadProyectil() const { return velocidadProyectil; }
+    double getVelocidadProyectil() const override { return velocidadProyectil; }
 
     // Antes se dibujaba como cuadrado de color (cian LUZ / azul oscuro OSCURIDAD);
     // ahora usa sprite, ver Valquiria::getRutaSprite() en valquiria.cpp

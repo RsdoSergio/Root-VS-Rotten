@@ -15,7 +15,7 @@ public:
             b, pos),
         velocidadProyectil(6.0) {} // Proyectil medio
 
-    double getVelocidadProyectil() const { return velocidadProyectil; }
+    double getVelocidadProyectil() const override { return velocidadProyectil; }
 
     // Antes se dibujaba como cuadrado de color (rosa claro LUZ / rosa oscuro OSCURIDAD);
     // ahora usa sprite, ver Unicornio::getRutaSprite() en unicornio.cpp

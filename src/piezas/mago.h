@@ -27,7 +27,7 @@ public:
             b, pos),
         velocidadProyectil(6.0) {}
 
-    double getVelocidadProyectil() const { return velocidadProyectil; }
+    double getVelocidadProyectil() const override { return velocidadProyectil; }
 
     bool puedeUsarHechizo(Hechizo h) const {
         return !hechizosUsados[static_cast<int>(h)];
