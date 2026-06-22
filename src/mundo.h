@@ -16,6 +16,7 @@
 #include "hechizos/hechizoExchange.h"
 #include "hechizos/hechizoHeal.h"
 #include "hechizos/hechzoTeleport.h"
+#include "hechizos/hechizoImprison.h"
 #include <string>
 #include "piezas/mago.h"
 #include "transicion.h"
@@ -35,7 +36,8 @@ class Mundo
 	Cursor cursor{ 4, 4, 255, 220,   0 };  // amarillo
 	Cursor cursor2{ 4, 4, 180,   0, 255 };  //morado
 	listapieza ListaPieza;
-	int     turno = 0;
+	int turno = 0;
+	int numeroJugada = 0; 
 	std::vector<Pos> casillasValidas;
 	arena arena;
 	Menu    menu;
@@ -67,6 +69,7 @@ class Mundo
 	bool eligiendoExchangeOrigen = false;
 	hechizoTeleport hechizoTeleport;
 	bool eligiendoTeleportOrigen = false;
+	hechizoImprison hechizoImprison;
 	int ronda = 0;
 
 public:
