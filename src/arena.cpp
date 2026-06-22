@@ -3,6 +3,7 @@
 #include "piezas/piezatierra.h"
 #include"piezas/piezavuelo.h"
 #include"piezas/piezateletransporte.h"
+#include"piezas/fenix.h"
 #include "interaccion.h"
 #include"piezas/pieza.h"
 #include "audio.h"
@@ -242,21 +243,17 @@ void arena::mueve(double dt)
 	if (!activo) return;
 
 	auto mover = [&](Pieza* p, const std::vector<Proyectil*>& proyectiles)
-		{
+		{ 
 			if (!p) return;
-			if (terminado) return;
-			p->actualizarAtaque(dt);
-			if (p->estaAtacando())
-			{
-				p->setAccion(AccionPieza::ATACAR);
-				return;
-			}
-			PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);
-			if (pt) pt->actualizarArena(dt);
-			PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
-			if (pv) pv->actualizarArena(dt);
-			PiezaTeletransporte* pte = dynamic_cast<PiezaTeletransporte*>(p);
-			if (pte) pte->actualizarArena(dt);
+		if (terminado) return;
+		p->actualizarAtaque(dt);
+		p->actualizarEfectos(dt);
+		if (p->estaAtacando())
+		{
+			p->setAccion(AccionPieza::ATACAR);
+			return;
+		}
+		p->actualizarArena(dt);
 		};
 
 	mover(pieza1, proyectil1);
@@ -265,7 +262,7 @@ void arena::mueve(double dt)
 	if (pieza1)
 		for (int i = 0; i < MAX_OBSTACULOS; i++)
 			Interaccion::choque(*pieza1, obstaculos[i]);
-
+	
 	mover(pieza2, proyectil2);
 	if (pieza2)
 		Interaccion::choque(*pieza2, caja);
@@ -274,6 +271,8 @@ void arena::mueve(double dt)
 			Interaccion::choque(*pieza2, obstaculos[i]);
 
 	if (pieza1 && pieza2) Interaccion::choque(*pieza1, *pieza2);
+
+	aplicarDanoExplosiones();//para el fenix solo
 
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
@@ -410,6 +409,7 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 
 	if (p->esMelee())
 	{
+		p->activarExplosion();
 		int dirX = p->getUltimoEjeX();
 		int dirY = p->getUltimoEjeY();
 		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
@@ -439,5 +439,23 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 		proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
 	}
 	p->iniciarAtaque();
+	
 	tiempoDisparo = 0.0;
+}
+
+
+void arena::aplicarDanoExplosiones()
+{
+	auto aplicar = [&](Pieza* atacante, Pieza* defensor)
+		{
+			double dano = atacante->consumirDanoExplosion();
+			if (dano <= 0.0 || !defensor || !defensor->estaViva()) return;
+			double dx = defensor->getPosArena().getX() - atacante->getPosArena().getX();
+			double dy = defensor->getPosArena().getY() - atacante->getPosArena().getY();
+			if (std::sqrt(dx * dx + dy * dy) <= atacante->getRadioExplosionMax())
+				defensor->recibirDanio(dano);
+		};
+
+	if (pieza1 && pieza2) aplicar(pieza1, pieza2);
+	if (pieza1 && pieza2) aplicar(pieza2, pieza1);
 }

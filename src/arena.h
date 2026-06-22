@@ -69,5 +69,8 @@ public:
 	void recibirMovimiento(int jugador, int dir, bool estado);
 	void procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto);
 	bool getPlantaGano() const { return plantaGano; } // getter para mundo
+	
+	void aplicarDanoExplosiones();
+
 	bool combateTerminado() const { return terminado; }
 };
