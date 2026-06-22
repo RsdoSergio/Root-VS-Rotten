@@ -41,6 +41,9 @@ void precargarTexturas() {
 	"imagenes/fondos/fondo_tablero.png",
 	"imagenes/turnos/turno_plantas.png",
 	"imagenes/turnos/turno_zombies.png",
+	"imagenes/carteles/cartel_vs.png",
+	"imagenes/carteles/cartel_plantas_ganan.png",
+	"imagenes/carteles/cartel_plantas_pierden.png",
 	};
 
 	int total = sizeof(texturas) / sizeof(texturas[0]); //nº elementos
