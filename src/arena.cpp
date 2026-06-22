@@ -93,8 +93,9 @@ void arena::dibujaHUD() const
 	glVertex2d(0.0, HUD_TECHO);
 	glEnd();
 
-	double prop1 = (pieza1 && pieza1->getVidaMax() > 0.0) ? (pieza1->getVida() / pieza1->getVidaMax()) : 0.0;
-	double prop2 = (pieza2 && pieza2->getVidaMax() > 0.0) ? (pieza2->getVida() / pieza2->getVidaMax()) : 0.0;
+
+	double prop1 = (vidaMaxPieza1 > 0.0) ? (vidaPieza1 / vidaMaxPieza1) : 0.0;
+	double prop2 = (vidaMaxPieza2 > 0.0) ? (vidaPieza2 / vidaMaxPieza2) : 0.0;
 
 	const double margen = 0.3;
 	const double barAncho = SEMIANCHO - margen * 2.0;
@@ -174,6 +175,9 @@ void arena::desactiva()
 	terminado = false;
 	pieza1 = nullptr;
 	pieza2 = nullptr;
+
+	if (pieza1) pieza1->setVelocidad(pieza1->getVelocidad() / 1.3f);
+	if (pieza2) pieza2->setVelocidad(pieza2->getVelocidad() / 1.3f);
 }
 
 void arena::dibujaObstaculos() const
@@ -194,7 +198,7 @@ void arena::dibuja() const
 	dibujaProyectiles();
 }
 
-void arena::fDatos(Pieza& p1, Pieza& p2)
+void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja)
 {
 	if (p1.getBando() == Bando::planta) //esto hará que la pieza a la izquierda siempre sea planta
 	{
@@ -206,12 +210,33 @@ void arena::fDatos(Pieza& p1, Pieza& p2)
 		pieza2 = &p1;
 	}
 
-	nombrePieza1 = p1.getNombre();
-	nombrePieza2 = p2.getNombre();
-	vidaPieza1 = p1.getVida();
-	vidaPieza2 = p2.getVida();
-	vidaMaxPieza1 = p1.getVidaMax();
-	vidaMaxPieza2 = p2.getVidaMax();
+	nombrePieza1 = pieza1->getNombre();
+	nombrePieza2 = pieza2->getNombre();
+	vidaPieza1 = pieza1->getVida();
+	vidaPieza2 = pieza2->getVida();
+	vidaMaxPieza1 = pieza1->getVidaMax();
+	vidaMaxPieza2 = pieza2->getVidaMax();
+
+	float velPlanta = 4.0f;
+	float velZombi = 4.0f;
+	float bonus = 1.3f;
+
+	if (ventaja == BandoVentaja::PLANTA) {
+		pieza1->setVidaMax(pieza1->getVidaMax() * bonus); // ← primero aumentar el máximo
+		pieza1->curar(pieza1->getVidaMax()); // ← luego curar al nuevo máximo
+		vidaMaxPieza1 = pieza1->getVidaMax();
+		vidaPieza1 = pieza1->getVida();
+
+		pieza1->setVelocidad(pieza1->getVelocidad() * bonus);
+	}
+	else if (ventaja == BandoVentaja::ZOMBI) {
+		pieza2->setVidaMax(pieza2->getVidaMax() * bonus);
+		pieza2->curar(pieza2->getVidaMax());
+		vidaMaxPieza2 = pieza2->getVidaMax();
+		vidaPieza2 = pieza2->getVida();
+
+		pieza2->setVelocidad(pieza2->getVelocidad() * bonus);
+	}
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
@@ -310,6 +335,10 @@ void arena::mueve(double dt)
 			py < caja.getYmin() || py > caja.getYMAX())
 			pr->desactivar();
 	}
+
+	if (pieza1) vidaPieza1 = pieza1->getVida();
+	if (pieza2) vidaPieza2 = pieza2->getVida();
+
 
 	// Fin de combate
 	if (pieza1 && !pieza1->estaViva()) { plantaGano = false;  terminado = true; } // murió pieza1, ganó pieza2

@@ -3,6 +3,8 @@
 #include "pos.h"
 #include<iostream>
 
+enum class BandoVentaja { PLANTA, ZOMBI };
+
 enum class DirArena { ARRIBA, ABAJO, IZQUIERDA, DERECHA };
 
 constexpr int DIR_ARRIBA = 0;
@@ -104,4 +106,7 @@ public:
 	void actualizarAtaque(double dt);
 
 	virtual ~Pieza() {}
+
+	void setVelocidad(double v) { velocidad = v; }
+	void setVidaMax(double v) { vidaMax = v; }
 };
