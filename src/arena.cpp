@@ -262,14 +262,14 @@ void arena::mueve(double dt)
 	mover(pieza1, proyectil1);
 	if (pieza1)
 		Interaccion::choque(*pieza1, caja);
-	if (pieza1)
+	if (pieza1 && !dynamic_cast<PiezaVuelo*>(pieza1))
 		for (int i = 0; i < MAX_OBSTACULOS; i++)
 			Interaccion::choque(*pieza1, obstaculos[i]);
 
 	mover(pieza2, proyectil2);
 	if (pieza2)
 		Interaccion::choque(*pieza2, caja);
-	if (pieza2)
+	if (pieza2 && !dynamic_cast<PiezaVuelo*>(pieza2))
 		for (int i = 0; i < MAX_OBSTACULOS; i++)
 			Interaccion::choque(*pieza2, obstaculos[i]);
 
@@ -284,8 +284,9 @@ void arena::mueve(double dt)
 		pr->mueve(dt);
 		if (pieza2 && pieza2->estaViva())
 			Interaccion::choque(*pr, *pieza2);
-		for (int i = 0; i < MAX_OBSTACULOS; i++)
-			Interaccion::choque(*pr, obstaculos[i]);
+		if (!dynamic_cast<PiezaVuelo*>(pieza1))
+			for (int i = 0; i < MAX_OBSTACULOS; i++)
+				Interaccion::choque(*pr, obstaculos[i]);
 
 		//se desactiva el proyectil si sale de la arena
 		double px = pr->getPosProyectil().getX();
@@ -298,8 +299,9 @@ void arena::mueve(double dt)
 		pr->mueve(dt);
 		if (pieza1 && pieza1->estaViva())
 			Interaccion::choque(*pr, *pieza1);
-		for (int i = 0; i < MAX_OBSTACULOS; i++)
-			Interaccion::choque(*pr, obstaculos[i]);
+		if (!dynamic_cast<PiezaVuelo*>(pieza2))
+			for (int i = 0; i < MAX_OBSTACULOS; i++)
+				Interaccion::choque(*pr, obstaculos[i]);
 
 		//se desactiva el proyectil si sale de la arena
 		double px = pr->getPosProyectil().getX();
