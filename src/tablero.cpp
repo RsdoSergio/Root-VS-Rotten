@@ -2,18 +2,20 @@
 #include "tablero.h"
 #include "freeglut.h"
 #include "pos.h"
-#include "pieza.h"
-#include"peon.h"
-#include "golem.h"
-#include "arquero.h"
-#include "valquiria.h"
-#include "genio.h"
-#include "unicornio.h"
-#include "fenix.h"
-#include "mago.h"
+#include <cmath>
+#include "piezas/pieza.h"
+#include "piezas/peon.h"
+#include "piezas/golem.h"
+#include "piezas/arquero.h"
+#include "piezas/valquiria.h"
+#include "piezas/genio.h"
+#include "piezas/unicornio.h"
+#include "piezas/fenix.h"
+#include "piezas/mago.h"
 #include "listapieza.h"
-#include"cursor.h"
-
+#include "cursor.h"
+#include <iostream>
+#include "ETSIDI.h"
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -36,22 +38,24 @@ void Tablero::inicializaTablero() {
 	// Definicion de colores RGB para cada tipo
 	using byte = unsigned char;
 	byte colores[3][3] = {
-		{220, 255, 220},  // 0: verde muy claro
-		{34,  100,  34},  // 1: verde oscuro
-		{85, 140,  40},  // 2: verde medio
+		{136, 180, 10}, // 0: Casilla de Plantas
+		{80, 47, 84}, // 1: Casilla de Zombies
+		{235, 235, 235}, // 2: Casilla Neutral
 	};
 
 	byte colorPoder[3] = { 255, 215, 0 };
 
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
 		for (int j = 0; j < COLS; j++) {
+
+			patronOriginal[i][j] = patron[i][j];
 			Casilla::TipoCasilla tipo;
 
-			if ((i == 4 && j == 4) ||  // centro del tablero
-				(i == 0 && j == 4) ||  // arriba centro
-				(i == 8 && j == 4) ||  // abajo centro
-				(i == 4 && j == 0) ||  // izquierda centro
-				(i == 4 && j == 8))    // derecha centro
+			if ((i == 4 && j == 4) ||  // centro
+				(i == 0 && j == 4) ||  // arriba
+				(i == 8 && j == 4) ||  // abajo
+				(i == 4 && j == 0) ||  // izquierda
+				(i == 4 && j == 8))    // derecha
 				tipo = Casilla::PODER;
 			else
 				tipo = Casilla::NORMAL;
@@ -67,6 +71,22 @@ void Tablero::inicializaTablero() {
 }
 
 void Tablero::dibujaTablero(const Cursor& cursor) {
+	extern float G_XMAX;
+	extern float G_YMAX;
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondos/fondo_tablero.png").id);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+
 	// Dibuja las casillas
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
@@ -88,11 +108,9 @@ void Tablero::dibujaTablero(const Cursor& cursor) {
 	cursor.dibuja();
 }
 
-
 void Tablero::colocarPiezasIniciales() {
-
 	// --- BANDO LUZ (columna 0 - fila trasera, de esquina a centro) ---
-	
+
 	casillas[0][0].pieza = new Valquiria(Bando::planta, Pos(0, 0));  //A1 esquina
 	casillas[1][0].pieza = new Golem(Bando::planta, Pos(1, 0));      //A2
 	casillas[2][0].pieza = new Unicornio(Bando::planta, Pos(2, 0));  //A3
@@ -104,14 +122,13 @@ void Tablero::colocarPiezasIniciales() {
 	casillas[8][0].pieza = new Valquiria(Bando::planta, Pos(8, 0));  //A9 esquina
 
 	// --- BANDO LUZ (columna 1 - fila delantera) ---
-	
+
 	casillas[0][1].pieza = new Arquero(Bando::planta, Pos(0, 1));   //B1 esquina
-	for (int i = 1; i <= 7; i++)                      
+	for (int i = 1; i <= 7; i++)
 		casillas[i][1].pieza = new Peon(Bando::planta, Pos(i, 1));  //B2-B8 peones
 	casillas[8][1].pieza = new Arquero(Bando::planta, Pos(8, 1));   //B9 esquina
 
 	// --- BANDO OSCURIDAD (columna 8 - fila trasera, simétrico) ---
-	
 
 	casillas[0][8].pieza = new Valquiria(Bando::zombi, Pos(0, 8));
 	casillas[1][8].pieza = new Golem(Bando::zombi, Pos(1, 8));
@@ -124,45 +141,69 @@ void Tablero::colocarPiezasIniciales() {
 	casillas[8][8].pieza = new Valquiria(Bando::zombi, Pos(8, 8));
 
 	// --- BANDO OSCURIDAD (columna 7 - fila delantera, simétrico) ---
-	
+
 	casillas[0][7].pieza = new Arquero(Bando::zombi, Pos(0, 7));
 	for (int i = 1; i <= 7; i++)
 		casillas[i][7].pieza = new Peon(Bando::zombi, Pos(i, 7));
 	casillas[8][7].pieza = new Arquero(Bando::zombi, Pos(8, 7));
-
 }
-
-
 
 void Tablero::dibujaPiezas()
 {
 	for (int i = 0; i < FILAS; i++) {
 		for (int j = 0; j < COLS; j++) {
 			Pieza* p = casillas[i][j].pieza;
-			if (p != nullptr) {
-				// Centro de la casilla en coordenadas OpenGL
-				float x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
-				float y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
-				p->dibujaTablero(x, y); // Polimorfismo: cada pieza sabe cómo dibujarse
+			if (p != nullptr)
+			{
+				if (animando && p == piezaAnimando) // si es la pieza que se está animando -> usar posición visual
+					p->dibujaTablero(animX, animY);// Polimorfismo: cada pieza sabe cómo dibujarse
+				else
+				{
+					// Centro de la casilla en coordenadas OpenGL
+					float x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+					float y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+					p->dibujaTablero(x, y); // Polimorfismo: cada pieza sabe cómo dibujarse
+				}
 			}
 		}
 	}
 }
 
-Pieza* Tablero::getPieza(Pos p) const {
+Pieza* Tablero::getPieza(Pos p) const
+{
 	if (p.fila < 0 || p.fila >= FILAS || p.col < 0 || p.col >= COLS)
 		return nullptr; // Fuera del tablero
 	return casillas[p.fila][p.col].pieza;
 }
 
-bool Tablero::estaOcupada(Pos p) const {
+bool Tablero::estaOcupada(Pos p) const
+{
 	return casillas[p.fila][p.col].CasOcupada(); // ya tiene Casilla
 }
 
-std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
+Pos Tablero::screenToCell(float xMundo, float yMundo) const
+{
+	// Formula inversa a la usada en dibujaTablero():
+	//   x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f
+	//   y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f
+	float colF = (xMundo + (COLS * TAM_CELDA) / 2.0f) / TAM_CELDA;
+	float filaF = (yMundo + (FILAS * TAM_CELDA) / 2.0f) / TAM_CELDA;
+
+	int col = (int)std::floor(colF);
+	int fila = (int)std::floor(filaF);
+
+	if (fila < 0 || fila >= FILAS || col < 0 || col >= COLS)
+		return Pos(); // fuera del tablero -> Pos invalida
+
+	return Pos(fila, col);
+}
+
+std::vector<Pos> Tablero::movimientosValidos(Pos origen)
+{
 	std::vector<Pos> validos;
 	Pieza* p = getPieza(origen);
 	if (p == nullptr) return validos; // Sin pieza, sin movimientos
+	if (p->estaAprisionada()) return validos; 
 
 	int radio = p->getRadioMovimiento();
 	TipoMovimiento tipo = p->getTipoMovimiento();
@@ -174,7 +215,7 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
 			{1,0},{-1,0},{0,1},{0,-1},   // horizontal y vertical
 			{1,1},{1,-1},{-1,1},{-1,-1}  // diagonales (solo vuelo)
 		};
-		int numDirs = (tipo == TipoMovimiento::TIERRA) ? 4 : 8;
+		int numDirs = (tipo == TipoMovimiento::VUELO || p->puedeDiagonal()) ? 8 : 4; //numero de direcciones ahora depende tambien de puede diagonal
 
 		for (int d = 0; d < numDirs; d++) {
 			for (int i = 1; i <= radio; i++) {
@@ -216,7 +257,8 @@ std::vector<Pos> Tablero::movimientosValidos(Pos origen) {
 	return validos;
 }
 
-void Tablero::marcaCasillasValidas() {
+void Tablero::marcaCasillasValidas()
+{
 	for (Pos& p : casillasValidas) { // Usa el vector interno
 		float x = p.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
 		float y = p.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
@@ -232,38 +274,58 @@ void Tablero::marcaCasillasValidas() {
 	}
 }
 
-bool Tablero::moverPieza(Pos origen, Pos destino) {
+bool Tablero::moverPieza(Pos origen, Pos destino)
+{
 	Pieza* p = casillas[origen.fila][origen.col].pieza;
 	if (p == nullptr) return false;
 
 	Pieza* d = casillas[destino.fila][destino.col].pieza;
 
-
 	personaje1 = p;
 	personaje2 = d;
-	
+
 	bool hayCombate = (personaje2 != nullptr); // ¿Hay enemigo?
 
-	if (!hayCombate) { //Movimiento normal
-		casillas[destino.fila][destino.col].pieza = p; 
+	//posición visual de casilla de inicio (convierte fila y columna del tablero a coordenadas de pantalla)
+	animX = origen.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+	animY = origen.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+
+	//posición visual de casilla de destino
+	destX = destino.col * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+	destY = destino.fila * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f + TAM_CELDA / 2.0f;
+
+	piezaAnimando = p;
+	animando = true;
+
+	if (hayCombate) { //Hay combate, guardo posiciones
+		posOrigen = origen;
+		posDestino = destino;
+		combatePendiente = true;
+		return false;
+	}
+	else
+	{
+		casillas[destino.fila][destino.col].pieza = p;
 		casillas[origen.fila][origen.col].pieza = nullptr;
 		p->setCasilla(destino);
+		combatePendiente = false;
+		return false;
 	}
-	else { //Hay combate, guardo posiciones
-		posOrigen = origen;	
-		posDestino = destino;
-	}
-
-	return hayCombate;
 }
 
-bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
+bool Tablero::gestionarEntrada(Pos cursor, int& turno)
+{
 	if (!piezaSeleccionada.esValida()) {
 		// Intentar seleccionar pieza del turno actual
 		Pieza* p = getPieza(cursor);
 		if (p != nullptr && (int)p->getBando() == turno) {
 			piezaSeleccionada = cursor;
 			casillasValidas = movimientosValidos(cursor);
+			//guarda la última seleccionada por bando
+			if (p->getBando() == Bando::planta)
+				ultimaPiezaPlanta = p;
+			else
+				ultimaPiezaZombi = p;
 		}
 	}
 	else {
@@ -277,7 +339,6 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
 
 		if (destinoValido) {
 			bool hayCombate = moverPieza(piezaSeleccionada, cursor);
-			if (!hayCombate) turno = 1 - turno; // turno cambia solo si no hay combate
 			piezaSeleccionada = Pos();
 			casillasValidas.clear();
 			return hayCombate;
@@ -286,19 +347,178 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno) {
 	return false; // No se ha movido
 }
 
-bool Tablero::piezaBloqueada(Pos p) {
+bool Tablero::piezaBloqueada(Pos p)
+{
 	Pieza* pieza = getPieza(p);
 	if (pieza == nullptr) return false;
 	return movimientosValidos(p).empty();
 }
 
-void Tablero::cancelarSeleccion() {
+void Tablero::cancelarSeleccion()
+{
 	piezaSeleccionada = Pos();
 	casillasValidas.clear();
 }
 
-void Tablero::dibuja(const Cursor& cursor) {
-	dibujaTablero(cursor);     // casillas + cursor
-	dibujaPiezas();            // piezas encima
-	marcaCasillasValidas();    // casillas verdes encima de todo
+void Tablero::dibuja(const Cursor& cursor, int turno)
+{
+	dibujaTablero(cursor); // fondo + casillas + cursor
+	dibujaPiezas(); // piezas encima
+	marcaCasillasValidas(); // casillas verdes encima de todo
+	dibujarPiezaSeleccionada();
+	dibujarIndicadorTurno(turno); // indicador de turno, lo último
+}
+
+constexpr float VEL_ANIMACION = 3.0f; // movimiento casillas por segundo
+
+int Tablero::actualizarAnimacion(double dt)
+{
+	if (!animando || piezaAnimando == nullptr) return false;
+
+	float dx = destX - animX;
+	float dy = destY - animY;
+	float paso = VEL_ANIMACION * TAM_CELDA * (float)dt;
+
+	if (std::abs(dx) > 0.01f)
+	{
+		float moveX = (dx > 0) ? paso : -paso;
+		if (std::abs(moveX) > std::abs(dx)) moveX = dx;
+		animX += moveX;
+		piezaAnimando->setDireccion(dx > 0 ? DirMovimiento::ESTE : DirMovimiento::OESTE);
+	}
+	else if (std::abs(dy) > 0.01f)
+	{
+		float moveY = (dy > 0) ? paso : -paso;
+		if (std::abs(moveY) > std::abs(dy)) moveY = dy;
+		animY += moveY;
+		piezaAnimando->setDireccion(dy > 0 ? DirMovimiento::NORTE : DirMovimiento::SUR);
+	}
+	else {
+		piezaAnimando->setDireccion(DirMovimiento::IDLE);
+		animando = false;
+		piezaAnimando = nullptr;
+		if (combatePendiente) {
+			combatePendiente = false;
+			return 1; //hay combate
+		}
+		return 2; //terminó sin combate -> mundo cambia el turno
+	}
+	return 0;
+}
+
+void Tablero::resolverCombate(bool plantaGana)
+{
+	Pieza* atacante = casillas[posOrigen.fila][posOrigen.col].pieza;
+	Pieza* defensor = casillas[posDestino.fila][posDestino.col].pieza;
+
+	bool atacanteEsPlanta = (atacante && atacante->getBando() == Bando::planta);
+	bool ganadorEsAtacante = (plantaGana == atacanteEsPlanta);
+
+	// Mete la pieza en su lista según bando y confirma por consola
+	auto eliminar = [&](Pieza* p) {
+		if (p->getBando() == Bando::planta)
+			eliminadasPlanta.push_back(p);
+
+		else
+			eliminadasZombi.push_back(p);
+		};
+
+	if (ganadorEsAtacante)
+	{
+		// Gana el atacante: el defensor va a su lista, atacante ocupa su casilla
+		eliminar(defensor);
+		casillas[posDestino.fila][posDestino.col].pieza = atacante;
+		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
+		atacante->setCasilla(posDestino);
+		atacante->curar(atacante->getVidaMax());
+	}
+	else
+	{
+		// Gana el defensor: el atacante va a su lista, defensor se queda
+		eliminar(atacante);
+		casillas[posOrigen.fila][posOrigen.col].pieza = nullptr;
+		defensor->curar(defensor->getVidaMax());
+	}
+}
+
+void Tablero::activarHechizo(Pieza* mago, HechizoBase* hechizo)
+{
+	magoLanzando = mago;
+	hechizoActivo = hechizo;
+}
+
+bool Tablero::aplicarHechizo(Pos destino)
+{
+	if (hechizoActivo == nullptr || magoLanzando == nullptr) return false;
+
+	bool exito = hechizoActivo->ejecutar(*this, magoLanzando, destino);
+
+	if (exito) { hechizoActivo = nullptr; magoLanzando = nullptr; }
+	return exito;
+}
+
+void Tablero::dibujarIndicadorTurno(int turno) {
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	const char* ruta = (turno == 0) ? "imagenes/turnos/turno_plantas.png" : "imagenes/turnos/turno_zombies.png";
+
+	auto tex = ETSIDI::getTexture(ruta);
+	if (tex.id == 0) return;
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, tex.id);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+}
+
+void Tablero::dibujarPiezaSeleccionada() {
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	if (ultimaPiezaPlanta != nullptr)
+		ultimaPiezaPlanta->dibujaTableroGrande(-G_XMAX + 6.7f, -0.2f, 3.4f);
+
+	if (ultimaPiezaZombi != nullptr)
+		ultimaPiezaZombi->dibujaTableroGrande(G_XMAX - 6.7f, -0.2f, 3.4f);
+}
+void Tablero::avanzarCiclo() {
+	using byte = unsigned char;
+
+	byte ciclos[5][3] = {
+		{200, 200, 200},  // gris (inicial)
+		{0,   0,   139},  // azul marino
+		{0,   191, 255},  // azul claro
+		{128, 128, 128},  // gris medio
+		{255, 255, 255},  // blanco
+	};
+
+	indiceCiclo = (indiceCiclo + 1) % 5;
+
+	for (int i = 0; i < FILAS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			//if (casillas[i][j].tipo == Casilla::PODER) continue;
+			int p = patronOriginal[i][j];
+			if (p == 2) // solo las neutrales cambian
+				casillas[i][j].setColor(
+					ciclos[indiceCiclo][0],
+					ciclos[indiceCiclo][1],
+					ciclos[indiceCiclo][2]);
+		}
+	}
+}
+BandoVentaja Tablero::getBandoVentaja() const {
+	if (indiceCiclo == 0 || indiceCiclo == 2)
+		return BandoVentaja::ZOMBI;
+	else
+		return BandoVentaja::PLANTA;
 }

@@ -4,10 +4,16 @@
 extern float G_XMAX;
 extern float G_YMAX;
 
+struct OpcionMenu {
+	const char* texto;
+	float x;
+	float y;
+};
+
 static void dibujaPrincipal(int opcion)
 {
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_menu_inicio.png").id);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondos/fondo_menu_inicio.png").id);
 	// Forzar máxima calidad
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -28,52 +34,24 @@ static void dibujaPrincipal(int opcion)
 	ETSIDI::setFont("fuentes/titulo.ttf", 85);
 	ETSIDI::printxy("Root VS Rotten", -21.5f, 8.0f);
 
-	//JUGAR
-	if (opcion == 0) {
-		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("JUGAR", -4.5f, 1.5f);
-	}
-	else {
-		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("JUGAR", -4.f, 1.5f);
-	}
+	OpcionMenu opciones[] = {
+		{ "JUGAR",         -4.5f,  1.5f },
+		{ "INSTRUCCIONES", -9.5f, -2.5f },
+		{ "CREDITOS",      -6.0f, -5.5f },
+		{ "SALIR",         -4.0f, -8.0f }
+	};
+	int numOpciones = 4;
 
-	//INSTRUCCIONES
-	if (opcion == 1) {
-		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("INSTRUCCIONES", -9.5f, -2.5f);
-	}
-	else {
-		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("INSTRUCCIONES", -9.0f, -2.5f);
-	}
-
-	//CREDITOS
-	if (opcion == 2) {
-		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("CREDITOS", -6.f, -5.5f);
-	}
-	else {
-		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("CREDITOS", -6.f, -5.5f);
-	}
-
-	//SALIR
-	if (opcion == 3) {
-		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-		ETSIDI::printxy("SALIR", -4.f, -8.f);
-	}
-	else {
-		ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-		ETSIDI::printxy("SALIR", -4.f, -8.f);
+	for (int i = 0; i < numOpciones; i++) {
+		if (i == opcion) {
+			ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
+			ETSIDI::setFont("fuentes/texto.ttf", 48);
+		}
+		else {
+			ETSIDI::setTextColor(0.55f, 0.55f, 0.55f);
+			ETSIDI::setFont("fuentes/texto.ttf", 44);
+		}
+		ETSIDI::printxy(opciones[i].texto, opciones[i].x, opciones[i].y);
 	}
 
 	ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
@@ -141,28 +119,28 @@ static void dibujaCreditos()
 
 	ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
 	ETSIDI::setFont("fuentes/texto.ttf", 64);
-	ETSIDI::printxy("CREDITOS", -7.5f, 10.5f);
+	ETSIDI::printxy("CREDITOS", -8.5f, 10.5f);
 
 	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
-	ETSIDI::setFont("fuentes/texto.ttf", 30);
-	ETSIDI::printxy("Desarrollo:", -18.0f, 7.5f);
+	ETSIDI::setFont("fuentes/texto.ttf", 35);
+	ETSIDI::printxy("Desarrollo:", -6.0f, 7.5f);
 
 	ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
 	ETSIDI::setFont("fuentes/texto.ttf", 24);
-	ETSIDI::printxy("Emmanuel Molina", -18.0f, 5.5f);
-	ETSIDI::printxy("Mauricio Quinchuela", -18.0f, 3.5f);
-	ETSIDI::printxy("Pablo Paz", -18.0f, 1.5f);
-	ETSIDI::printxy("Tomás Estevez", -18.0f, -1.5f);
-	ETSIDI::printxy("Sergio Rosado", -18.0f, -3.5f);
+	ETSIDI::printxy("Emmanuel Molina", -6.0f, 5.5f);
+	ETSIDI::printxy("Mauricio Quinchuela", -8.0f, 2.5f);
+	ETSIDI::printxy("Pablo Paz", -4.0f, -1.5f);
+	ETSIDI::printxy("Tomas Estevez", -5.0f, -4.5f);
+	ETSIDI::printxy("Sergio Rosado", -5.0f, -7.5f);
 
 	ETSIDI::setTextColor(0.4f, 0.6f, 1.0f);
 	ETSIDI::setFont("fuentes/texto.ttf", 22);
-	ETSIDI::printxy("ETSIDI - UPM  |  Informatica Industrial", -11.0f, -10.5f);
+	ETSIDI::printxy("ETSIDI - UPM  |  Informatica Industrial", -12.0f, -10.5f);
 
 	// Volver
 	ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
 	ETSIDI::setFont("fuentes/texto.ttf", 20);
-	ETSIDI::printxy("ESC - Volver al menu", -5.0f, -14.5f);
+	ETSIDI::printxy("ESC - Volver al menu", -6.0f, -14.5f);
 
 	glColor3ub(255, 255, 255);
 }
@@ -174,20 +152,13 @@ void Menu::dibuja()
 	if (pantalla == 2) dibujaCreditos();
 }
 
-void Menu::dibujaTeclaMenu() const
-{
-	ETSIDI::setFont("fuentes/texto.ttf", 18);
-	ETSIDI::setTextColor(0.3f, 0.3f, 0.3f);
-	ETSIDI::printxy("M (Menu)", -25.f, -13.f);
-}
-
 void Menu::dibujaPausa(int opcion) const
 {
 	glEnable(GL_BLEND); 	// Activar transparencia para respetar el canal alfa del PNG (me lo ha dicho la IA)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondo_pausa.png").id);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/fondos/fondo_pausa.png").id);
 	// Forzar máxima calidad
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -208,31 +179,23 @@ void Menu::dibujaPausa(int opcion) const
 	ETSIDI::setTextColor(1.f, 1.f, 1.f);
 	ETSIDI::printxy("PAUSA", -7.0f, 4.0f);
 
-	if (opcion == 0)
-	{
-		ETSIDI::setTextColor(0.85f, 0.85f, 0.f);  // amarillo = seleccionado
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
-	}
-	else
-	{
-		ETSIDI::setTextColor(1.f, 1.f, 1.f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-	}
+	OpcionMenu opciones[] = {
+		{ "CONTINUAR", -7.6f, -3.0f },
+		{ "SALIR",     -4.2f, -6.5f }
+	};
+	int numOpciones = 2;
 
-	ETSIDI::printxy("CONTINUAR", -7.6f, -3.f);
-
-	if (opcion == 1)
-	{
-		ETSIDI::setTextColor(0.85f, 0.85f, 0.f);
-		ETSIDI::setFont("fuentes/texto.ttf", 48);
+	for (int i = 0; i < numOpciones; i++) {
+		if (i == opcion) {
+			ETSIDI::setTextColor(0.85f, 0.85f, 0.f);
+			ETSIDI::setFont("fuentes/texto.ttf", 48);
+		}
+		else {
+			ETSIDI::setTextColor(1.f, 1.f, 1.f);
+			ETSIDI::setFont("fuentes/texto.ttf", 44);
+		}
+		ETSIDI::printxy(opciones[i].texto, opciones[i].x, opciones[i].y);
 	}
-	else
-	{
-		ETSIDI::setTextColor(1.f, 1.f, 1.f);
-		ETSIDI::setFont("fuentes/texto.ttf", 44);
-	}
-
-	ETSIDI::printxy("SALIR", -4.2f, -6.5f);
 }
 
 void Menu::tecla(unsigned char key)
