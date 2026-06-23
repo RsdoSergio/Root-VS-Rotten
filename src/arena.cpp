@@ -4,6 +4,7 @@
 #include"piezas/piezavuelo.h"
 #include"piezas/piezateletransporte.h"
 #include"piezas/fenix.h"
+#include"piezas/unicornio.h"
 #include "interaccion.h"
 #include"piezas/pieza.h"
 #include "audio.h"
@@ -273,11 +274,12 @@ void arena::mueve(double dt)
 		if (terminado) return;
 		p->actualizarAtaque(dt);
 		p->actualizarEfectos(dt);
-		if (p->estaAtacando())
+		if (p->estaAtacando() && p->bloqueaMovimientoAlAtacar())
 		{
 			p->setAccion(AccionPieza::ATACAR);
 			return;
 		}
+		if (p->estaAtacando()) p->setAccion(AccionPieza::ATACAR);//poner esto para qse ponga el frame de atacar si no se bloquea al hacerlo
 		p->actualizarArena(dt);
 		};
 
@@ -302,6 +304,18 @@ void arena::mueve(double dt)
 	// Actualizar timers de cooldown
 	tiempoDisparo1 += dt;
 	tiempoDisparo2 += dt;
+
+	auto recoger = [&](Pieza* p, std::vector<Proyectil*>& proyectiles)
+		{
+			Unicornio* u = dynamic_cast<Unicornio*>(p);
+			if (u && u->tieneProyectilesPendientes())
+			{
+				auto nuevos = u->recogerProyectiles();
+				proyectiles.insert(proyectiles.end(), nuevos.begin(), nuevos.end());
+			}
+		};
+	recoger(pieza1, proyectil1);
+	recoger(pieza2, proyectil2);
 
 	// Mueve los proyectiles y comprueba colisión con la pieza contraria
 	for (Proyectil* pr : proyectil1) {
@@ -468,6 +482,18 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
 		Vector2D vel(dirX * p->getVelocidadProyectil(), dirY * p->getVelocidadProyectil());
 		proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
+		
+		// ... cálculo de dirección existente ...
+		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
+
+		Unicornio* u = dynamic_cast<Unicornio*>(p);
+		if (u)
+			u->iniciarRafaga(dirX, dirY);
+		else
+		{
+			Vector2D vel(dirX * p->getVelocidadProyectil(), dirY * p->getVelocidadProyectil());
+			proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
+		}
 	}
 	p->iniciarAtaque();
 	

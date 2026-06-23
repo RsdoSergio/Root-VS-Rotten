@@ -33,5 +33,11 @@ public:
 
     bool esMelee()const override { return true; }
 
+    void dibujaArena(float x, float y) const override
+    {
+        int frame = getFrame(getDireccion(), getAccion());
+        dibujarSprite(getRutaSprite(), x, y, 1.4f, frame, 6); 
+    }
+
     
 };
