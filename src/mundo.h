@@ -17,6 +17,7 @@
 #include "hechizos/hechizoHeal.h"
 #include "hechizos/hechzoTeleport.h"
 #include "hechizos/hechizoImprison.h"
+#include "hechizos/hechizoShiftTime.h"
 #include <string>
 #include "piezas/mago.h"
 #include "transicion.h"
@@ -71,6 +72,7 @@ class Mundo
 	bool eligiendoTeleportOrigen = false;
 	hechizoImprison hechizoImprison;
 	int ronda = 0;
+	hechizoShiftTime hechizoShiftTime;
 
 public:
 	void inicializa();

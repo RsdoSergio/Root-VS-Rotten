@@ -56,6 +56,8 @@ public:
 	void setTurnoActual(int t) { turnoActual = t; }
 	void avanzarCiclo();
 	BandoVentaja getBandoVentaja() const;
+	void forzarVentajaPara(Bando bando);
+
 
 private:
 
