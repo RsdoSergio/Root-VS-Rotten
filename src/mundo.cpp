@@ -337,13 +337,18 @@ void Mundo::mueve()
 		numeroJugada++;
 	}
 
-	// Provisional: libera piezas aprisionadas tras 3 turnos, hasta que exista el ciclo de color
+	BandoVentaja ventajaActual = tablero.getBandoVentaja();
 	for (int i = 0; i < FILAS; i++)
 		for (int j = 0; j < COLS; j++) {
 			Pieza* p = tablero.getPieza(Pos(i, j));
-			if (p && p->estaAprisionada() && (numeroJugada - p->getTurnoAprisionamiento() >= 3))
-				p->liberar();
+			if (p == nullptr || !p->estaAprisionada()) continue;
+
+			bool favorece = (p->getBando() == Bando::planta && ventajaActual == BandoVentaja::PLANTA)
+				|| (p->getBando() == Bando::zombi && ventajaActual == BandoVentaja::ZOMBI);
+
+			if (favorece) p->liberar();
 		}
+
 }
 
 //Metodo que gestiona el dibujo de la simulacion
