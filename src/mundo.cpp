@@ -123,7 +123,14 @@ void Mundo::tecla(unsigned char key)
 				magoSeleccionado = nullptr;
 			}
 
-			// futuro: '5' SHIFT_TIME, '7' SUMMON
+			if (key == '7' && m->puedeUsarHechizo(Hechizo::TRANSFORM)) {
+				hechizoTransform.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
+				m->usarHechizo(Hechizo::TRANSFORM);
+				mensajeFeedback = hechizoTransform.getMensajeExito();
+				tiempoFeedback = 3.0;
+				magoSeleccionado = nullptr;
+			}
+
 		}
 	}
 
@@ -268,14 +275,22 @@ void Mundo::mueve()
 			break;
 
 		case AccionTransicion::CERRAR_CARTEL_RESULTADO:
+		{
 			tablero.resolverCombate(arena.getPlantaGano());
 			tablero.avanzarCiclo();
+
+			Mago* m1 = dynamic_cast<Mago*>(tablero.getPersonaje1());
+			if (m1 && m1->estaTransformado()) m1->revertirTransformacion();
+			Mago* m2 = dynamic_cast<Mago*>(tablero.getPersonaje2());
+			if (m2 && m2->estaTransformado()) m2->revertirTransformacion();
+
 			arena.desactiva();
 			Audio::playMusicaTablero();
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
+		}
 
 		default:
 			break;
@@ -322,13 +337,18 @@ void Mundo::mueve()
 		numeroJugada++;
 	}
 
-	// Provisional: libera piezas aprisionadas tras 3 turnos, hasta que exista el ciclo de color
+	BandoVentaja ventajaActual = tablero.getBandoVentaja();
 	for (int i = 0; i < FILAS; i++)
 		for (int j = 0; j < COLS; j++) {
 			Pieza* p = tablero.getPieza(Pos(i, j));
-			if (p && p->estaAprisionada() && (numeroJugada - p->getTurnoAprisionamiento() >= 3))
-				p->liberar();
+			if (p == nullptr || !p->estaAprisionada()) continue;
+
+			bool favorece = (p->getBando() == Bando::planta && ventajaActual == BandoVentaja::PLANTA)
+				|| (p->getBando() == Bando::zombi && ventajaActual == BandoVentaja::ZOMBI);
+
+			if (favorece) p->liberar();
 		}
+
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -522,7 +542,7 @@ std::string Mundo::generarTextoPanel() const
 	}
 
 	std::string texto;
-	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Summon" };
+	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Transform" };
 	for (int i = 0; i < 7; i++)
 		texto += std::to_string(i + 1) + "." + nombres[i] + "  ";
 	return texto;

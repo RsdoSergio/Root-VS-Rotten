@@ -35,7 +35,7 @@
     <ClCompile Include="src\hechizos\hechizoImprison.cpp" />
     <ClCompile Include="src\hechizos\hechizoExchange.cpp" />
     <ClCompile Include="src\hechizos\hechizoShiftTime.cpp" />
-    <ClCompile Include="src\hechizos\hechizoSummon.cpp" />
+    <ClCompile Include="src\hechizos\hechizoTransform.cpp" />
     <ClCompile Include="src\transicion.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -77,7 +77,7 @@
     <ClInclude Include="src\hechizos\hechizoImprison.h" />
     <ClInclude Include="src\hechizos\hechizoExchange.h" />
     <ClInclude Include="src\hechizos\hechizoShiftTime.h" />
-    <ClInclude Include="src\hechizos\hechizoSummon.h" />
+    <ClInclude Include="src\hechizos\hechizoTransform.h" />
     <ClInclude Include="src\transicion.h" />
   </ItemGroup>
   <ItemGroup>
