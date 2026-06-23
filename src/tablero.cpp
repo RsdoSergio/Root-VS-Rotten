@@ -490,11 +490,11 @@ void Tablero::avanzarCiclo() {
 	using byte = unsigned char;
 
 	byte ciclos[5][3] = {
-		{200, 200, 200},  // gris (inicial)
-		{0,   0,   139},  // azul marino
-		{0,   191, 255},  // azul claro
-		{128, 128, 128},  // gris medio
-		{255, 255, 255},  // blanco
+		{128, 0,   128},  // indice 0 - violeta oscuro 
+	{144, 238, 144},  // indice 1 - verde clarito
+	{199, 21,  133},  // indice 2 - rosado-morado 
+	{34,  139, 34},   // indice 3 - verde césped oscuro 
+	{255, 255, 255},  // indice 4 - blanco 
 	};
 
 	indiceCiclo = (indiceCiclo + 1) % 5;
@@ -516,4 +516,13 @@ BandoVentaja Tablero::getBandoVentaja() const {
 		return BandoVentaja::ZOMBI;
 	else
 		return BandoVentaja::PLANTA;
+}
+
+void Tablero::forzarVentajaPara(Bando bando)
+{
+	BandoVentaja deseada = (bando == Bando::planta) ? BandoVentaja::PLANTA : BandoVentaja::ZOMBI;
+
+	do {
+		avanzarCiclo();
+	} while (getBandoVentaja() != deseada);
 }

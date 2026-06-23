@@ -56,6 +56,8 @@ public:
 	void setTurnoActual(int t) { turnoActual = t; }
 	void avanzarCiclo();
 	BandoVentaja getBandoVentaja() const;
+	void forzarVentajaPara(Bando bando);
+
 
 private:
 
@@ -100,5 +102,6 @@ private:
 	int turnoActual = 0;
 	int indiceCiclo = 0;
 	int patronOriginal[FILAS][COLS];
+
 	
 };
