@@ -76,6 +76,7 @@ class Mundo
 
 	bool partidaTerminada = false;
 	std::string mensajeFinPartida;
+	void comprobarFinPartida();
 
 public:
 	void inicializa();

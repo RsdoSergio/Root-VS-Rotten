@@ -57,6 +57,7 @@ public:
 	void avanzarCiclo();
 	BandoVentaja getBandoVentaja() const;
 	void forzarVentajaPara(Bando bando);
+	int comprobarPuntosDePoder() const; 
 
 
 private:

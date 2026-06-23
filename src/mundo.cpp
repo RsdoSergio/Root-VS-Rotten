@@ -156,7 +156,7 @@ void Mundo::tecla(unsigned char key)
 	//prueba para abrir pantalla de ganar, la tecla T dispara pantalla de fin de partida
 	if (key == 't' || key == 'T') {
 		partidaTerminada = true;
-		mensajeFinPartida = "HAS GANADO";
+		mensajeFinPartida = "ACUERDTE DE ELIMINAR ESTO";
 	}
 
 	if (key == 27) {
@@ -243,6 +243,21 @@ void Mundo::jugarCasilla(Pos casilla)
 		arena.activa();
 	}
 }
+void Mundo::comprobarFinPartida()
+{
+	if (partidaTerminada) return;
+
+	// algun bando controla los 5 puntos de poder
+	int ganador = tablero.comprobarPuntosDePoder();
+	if (ganador == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+	}
+	else if (ganador == 1) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+	}
+}
 void Mundo::mueve()
 {
 	transicion.actualiza(0.025);
@@ -290,6 +305,7 @@ void Mundo::mueve()
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
+			comprobarFinPartida();
 			break;
 
 		default:
@@ -335,6 +351,7 @@ void Mundo::mueve()
 		turno = 1 - turno;
 		tablero.setTurnoActual(numeroJugada); 
 		numeroJugada++;
+		comprobarFinPartida();
 	}
 
 	// Provisional: libera piezas aprisionadas tras 3 turnos, hasta que exista el ciclo de color
