@@ -76,6 +76,10 @@ class Mundo
 	hechizoShiftTime hechizoShiftTime;
 	hechizoTransform hechizoTransform;
 
+	bool partidaTerminada = false;
+	std::string mensajeFinPartida;
+	void comprobarFinPartida();
+
 public:
 	void inicializa();
 	void dibuja();
