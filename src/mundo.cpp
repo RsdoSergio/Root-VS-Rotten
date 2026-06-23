@@ -115,6 +115,13 @@ void Mundo::tecla(unsigned char key)
 				m->usarHechizo(Hechizo::IMPRISON);
 				magoSeleccionado = nullptr;
 			}
+			if (key == '5' && m->puedeUsarHechizo(Hechizo::SHIFT_TIME)) {
+				hechizoShiftTime.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
+				m->usarHechizo(Hechizo::SHIFT_TIME);
+				mensajeFeedback = hechizoShiftTime.getMensajeExito();
+				tiempoFeedback = 3.0;
+				magoSeleccionado = nullptr;
+			}
 
 			// futuro: '5' SHIFT_TIME, '7' SUMMON
 		}
