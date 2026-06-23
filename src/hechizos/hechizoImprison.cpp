@@ -1,6 +1,6 @@
 #include "hechizoImprison.h"
 #include "tablero.h"
-#include "../piezas/pieza.h"
+#include "piezas/pieza.h"
 
 bool hechizoImprison::ejecutar(Tablero& tablero, Pieza* caster, Pos objetivo)
 {

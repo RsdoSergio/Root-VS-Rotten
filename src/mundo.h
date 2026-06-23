@@ -18,6 +18,7 @@
 #include "hechizos/hechzoTeleport.h"
 #include "hechizos/hechizoImprison.h"
 #include "hechizos/hechizoShiftTime.h"
+#include "hechizos/hechizoTransform.h"
 #include <string>
 #include "piezas/mago.h"
 #include "transicion.h"
@@ -73,6 +74,7 @@ class Mundo
 	hechizoImprison hechizoImprison;
 	int ronda = 0;
 	hechizoShiftTime hechizoShiftTime;
+	hechizoTransform hechizoTransform;
 
 public:
 	void inicializa();
