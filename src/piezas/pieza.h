@@ -116,6 +116,8 @@ public:
 	void iniciarAtaque() { atacandoActivo = true; tiempoAtaqueRestante = tiempoAnimAtaque; }
 
 	virtual void actualizarEfectos(double dt) {}
+	virtual bool bloqueaMovimientoAlAtacar() const { return true; }
+
 
 	void actualizarAtaque(double dt);
 

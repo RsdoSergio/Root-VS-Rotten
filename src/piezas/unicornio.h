@@ -1,8 +1,19 @@
 #pragma once
 #include "piezaTierra.h"
+#include "proyectil.h"
+#include <vector>
 
 class Unicornio : public PiezaTierra {
     double velocidadProyectil; // Tiene proyectil además de melee
+
+    int proyectilesRafaga = 3;
+    int proyectilesRestantes = 0;
+    double tiempoEntreDisparos = 0.15;
+    double timerEntreDisparos = 0.0;
+    int dirX = 0;
+    int dirY = 0;
+
+    std::vector<Proyectil*> proyectilesPendientes;
 
 public:
     Unicornio(Bando b, Pos pos)
@@ -16,9 +27,6 @@ public:
         velocidadProyectil(6.0) {} // Proyectil medio
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
-
-    // Antes se dibujaba como cuadrado de color (rosa claro LUZ / rosa oscuro OSCURIDAD);
-    // ahora usa sprite, ver Unicornio::getRutaSprite() en unicornio.cpp
     std::string getRutaSprite() const override;
     
 
@@ -27,4 +35,17 @@ public:
         return bando == Bando::planta ? "Rabano Casillero" : "Zombidito Momia";
     }
     void usarAtaqueSecundario() override {};
+
+    void iniciarRafaga(int dx, int dy);
+    void actualizarEfectos(double dt) override;
+    std::vector<Proyectil*> recogerProyectiles();
+    bool tieneProyectilesPendientes() const { return !proyectilesPendientes.empty(); }
+    bool bloqueaMovimientoAlAtacar() const override { return false; }
+    bool enRafaga() const { return proyectilesRestantes > 0; }
+
+    int getFrame(DirMovimiento dir, AccionPieza accion) const override
+    {
+        if (enRafaga()) return 5; // frame de ataque
+        return Pieza::getFrame(dir, accion);
+    }
 };
