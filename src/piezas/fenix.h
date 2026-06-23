@@ -19,7 +19,16 @@ public:
             6.0,   // Vel. movimiento alta
             1.0,   // Enfriamiento medio
             5, //rad de mov
-            b, pos) {}
+            b, pos) 
+    {
+        rutaSpriteAtaque = bando == Bando::planta
+            ? "imagenes/sprites_plantas/boca_de_dragon_ataque.png"
+            : "imagenes/sprites_zombies/zombie_dragon_ataque.png";
+
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/boca_de_dragon.png"
+            : "imagenes/sprites_zombies/zombie_dragon.png";
+    }
 
     bool puedeUsarPoder() const { return !poderUsado; }
     void usarPoder() { poderUsado = true; }

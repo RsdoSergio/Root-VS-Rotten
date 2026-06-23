@@ -25,7 +25,19 @@ public:
             0.8,   // Enfriamiento medio
             -1,//rad de mov
             b, pos),
-        velocidadProyectil(6.0) {}
+        velocidadProyectil(6.0) 
+    
+    {
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/girasol_primitivo.png"
+            : "imagenes/sprites_zombies/zombie_doctor.png";
+
+        rutaSpriteAtaque = bando == Bando::planta
+            ? "imagenes/sprites_plantas/girasol_primitivo_ataque.png"
+            : "imagenes/sprites_zombies/zombie_doctor_ataque.png";
+
+        numFramesAtaque = 4;
+    }
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
 
@@ -38,7 +50,7 @@ public:
 
     // Antes se dibujaba como cuadrado de color (dorado LUZ / rojo oscuro OSCURIDAD);
     // ahora usa sprite, ver Mago::getRutaSprite() en mago.cpp
-    std::string getRutaSprite() const override;
+   
     
 
     std::string getNombre() const override {

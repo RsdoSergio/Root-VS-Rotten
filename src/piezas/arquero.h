@@ -17,14 +17,22 @@ public:
             b, pos),
         velocidadProyectil(8.0) // El proyectil viaja más rápido que la propia pieza
     {
-            
+        
+        rutaSpriteAtaque = bando==Bando::planta
+        ?"imagenes/sprites_plantas/guisantralladora_ataque.png"
+        :"imagenes/sprites_zombies/zombie_pertiga_ataque.png";
+
+        rutaSprite = bando == Bando::planta
+        ? "imagenes/sprites_plantas/guisantralladora.png"
+        : "imagenes/sprites_zombies/zombie_pertiga.png";
+        numFramesAtaque = 4;
+
+        
     } 
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
 
-    // Antes se dibujaba como cuadrado de color (amarillo LUZ / amarillo oscuro OSCURIDAD);
-    // ahora usa sprite, ver Arquero::getRutaSprite() en arquero.cpp
-    std::string getRutaSprite() const override;
+    
     
 
     std::string getNombre() const override {

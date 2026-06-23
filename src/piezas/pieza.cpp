@@ -37,7 +37,20 @@ void Pieza::resetEjes() {
 
 int Pieza::getFrame(DirMovimiento dir, AccionPieza accion) const
 {
-	if (accion == AccionPieza::ATACAR) return 5;
+	if (accion == AccionPieza::ATACAR)
+	{
+		if (!rutaSpriteAtaque.empty()) //direccion
+		{
+			switch (dir) {
+			case DirMovimiento::ESTE:  return 0;
+			case DirMovimiento::OESTE: return 1;
+			case DirMovimiento::NORTE: return 2;
+			case DirMovimiento::SUR:   return 3;
+			default:                   return 0;
+			}
+		}
+		return 5; // frame genérico de ataque
+	}
 	switch (dir) {
 	case DirMovimiento::ESTE:  return 1;
 	case DirMovimiento::OESTE: return 2;
@@ -47,18 +60,21 @@ int Pieza::getFrame(DirMovimiento dir, AccionPieza accion) const
 	}
 }
 
+void Pieza::dibujaArena(float x, float y) const
+{
+	bool atacando = (getAccion() == AccionPieza::ATACAR);
+	bool tieneAtaque = !rutaSpriteAtaque.empty();
+	std::string ruta = (atacando && tieneAtaque) ? rutaSpriteAtaque : rutaSprite;
+	int numFrames = (atacando && tieneAtaque) ? numFramesAtaque : numFramesNormal;
+	int frame = getFrame(getDireccion(), getAccion());
+	dibujarSprite(ruta, x, y, tamArena, frame, numFrames);
+}
+
 void Pieza::dibujaTablero(float x, float y) const
 {
 	int frame = getFrame(getDireccion(), getAccion());
-	dibujarSprite(getRutaSprite(), x, y, 1.1f, frame, 6);
+	dibujarSprite(rutaSprite, x, y, 1.1f, frame, numFramesNormal);
 }
-
-void Pieza::dibujaArena(float x, float y) const
-{
-	int frame = getFrame(getDireccion(), getAccion());
-	dibujarSprite(getRutaSprite(), x, y, 2.0f, frame, 6);
-}
-
 void Pieza::actualizarAtaque(double dt)
 {
 	if (!atacandoActivo) return;

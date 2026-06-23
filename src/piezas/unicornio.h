@@ -24,7 +24,18 @@ public:
             0.5,   // Enfriamiento bajo
             4, //rad de mov
             b, pos),
-        velocidadProyectil(6.0) {} // Proyectil medio
+        velocidadProyectil(6.0) 
+    {
+        rutaSpriteAtaque = bando == Bando::planta
+            ?"imagenes/sprites_plantas/rabano_casillero_ataque.png"
+            : "imagenes/sprites_zombies/zombie_momia_ataque.png";
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/rabano_casillero.png"
+            : "imagenes/sprites_zombies/zombie_momia.png";
+        numFramesAtaque = 4;
+
+    
+    } // Proyectil medio
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
     std::string getRutaSprite() const override;

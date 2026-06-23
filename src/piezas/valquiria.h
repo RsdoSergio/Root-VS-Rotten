@@ -13,13 +13,23 @@ public:
             0.2,   // Enfriamiento ráfaga muy bajo
             4,//rad de mov
             b, pos),
-        velocidadProyectil(8.0) {}
+        velocidadProyectil(8.0) 
+    {
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/rotinabo.png"
+            : "imagenes/sprites_zombies/zombie_globo.png";
+
+        rutaSpriteAtaque = bando == Bando::planta
+            ? "imagenes/sprites_plantas/rotinabo_ataque.png"
+            : "imagenes/sprites_zombies/zombie_globo_ataque.png";
+
+        numFramesAtaque = 4;
+    }
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
 
-    // Antes se dibujaba como cuadrado de color (cian LUZ / azul oscuro OSCURIDAD);
-    // ahora usa sprite, ver Valquiria::getRutaSprite() en valquiria.cpp
-    std::string getRutaSprite() const override;
+  
+   
    
     std::string getNombre() const override {
         return bando == Bando::planta ? "Rotinabo" : "Globador";
