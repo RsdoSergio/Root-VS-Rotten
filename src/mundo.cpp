@@ -320,6 +320,7 @@ void Mundo::mueve()
 		turno = 1 - turno;
 		tablero.setTurnoActual(numeroJugada); 
 		numeroJugada++;
+		tablero.curarEnCasillasdePoder();
 	}
 
 	// Provisional: libera piezas aprisionadas tras 3 turnos, hasta que exista el ciclo de color
