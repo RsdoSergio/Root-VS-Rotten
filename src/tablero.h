@@ -103,5 +103,6 @@ private:
 	int indiceCiclo = 0;
 	int patronOriginal[FILAS][COLS];
 
+	float tiempoParpadeo = 0.0f; // oscila entre 0 y 1
 	
 };
