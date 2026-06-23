@@ -77,8 +77,8 @@ void Mundo::tecla(unsigned char key)
 
 	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
 	// Cada cursor se mueve solo durante su turno
-	// Movimiento por teclado sustituido por el raton (ver Mundo::clicRaton)
-	// if (turno == 0) cursor.mover(key);  // WASD
+	// Movimiento por teclado ahora es complementario al raton
+	// 	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
 		// El cursor activo depende del turno
@@ -318,7 +318,7 @@ void Mundo::mueve()
 
 	if (resultado == 2) {
 		turno = 1 - turno;
-		tablero.setTurnoActual(numeroJugada); 
+		tablero.setTurnoActual(numeroJugada);
 		numeroJugada++;
 	}
 
@@ -396,8 +396,8 @@ void Mundo::teclaEspecial(int key)
 		return;
 	}
 	if (tablero.estaAnimando()) return;
-	// Movimiento por teclado sustituido por el raton (ver Mundo::clicRaton)
-	// if (turno == 1) cursor2.moverFlechas(key);
+	// Movimiento por teclado ahora es complementario al raton 
+	if (turno == 1) cursor2.moverFlechas(key);
 }
 
 void Mundo::teclaLevantada(unsigned char key)
