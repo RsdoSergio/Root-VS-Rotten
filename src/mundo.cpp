@@ -64,6 +64,15 @@ void Mundo::tecla(unsigned char key)
 		}
 		return;
 	}
+	// Partida terminada: solo la tecla C vuelve al menu
+	if (partidaTerminada) {
+		if (key == 'c' || key == 'C') {
+			partidaTerminada = false;
+			enPartida = false;
+			mensajeFinPartida.clear();
+		}
+		return;
+	}
 	if (arena.estaActiva()) {
 		if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, true);
 		if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, true);
@@ -77,8 +86,8 @@ void Mundo::tecla(unsigned char key)
 
 	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
 	// Cada cursor se mueve solo durante su turno
-	// Movimiento por teclado ahora es complementario al raton
-	// 	if (turno == 0) cursor.mover(key);  // WASD
+	// Movimiento por teclado ahora es complementario al raton 
+	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
 		// El cursor activo depende del turno
@@ -142,6 +151,12 @@ void Mundo::tecla(unsigned char key)
 				magoSeleccionado = nullptr;
 			}
 		}
+	}
+
+	//prueba para abrir pantalla de ganar, la tecla T dispara pantalla de fin de partida
+	if (key == 't' || key == 'T') {
+		partidaTerminada = true;
+		mensajeFinPartida = "HAS GANADO";
 	}
 
 	if (key == 27) {
@@ -292,7 +307,7 @@ void Mundo::mueve()
 		}
 	}
 
-	if (!enPartida || enPausa) return;
+	if (!enPartida || enPausa || partidaTerminada) return;
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
@@ -318,7 +333,7 @@ void Mundo::mueve()
 
 	if (resultado == 2) {
 		turno = 1 - turno;
-		tablero.setTurnoActual(numeroJugada);
+		tablero.setTurnoActual(numeroJugada); 
 		numeroJugada++;
 	}
 
@@ -380,6 +395,33 @@ void Mundo::dibuja()
 		}
 	}
 
+	// creacion de la pantalla de fin de partida 
+	if (partidaTerminada)
+	{
+		extern float G_XMAX;
+		extern float G_YMAX;
+
+		// Fondo semitransparente oscuro
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
+		glBegin(GL_QUADS);
+			glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glVertex3f( G_XMAX, -G_YMAX, 0);
+			glVertex3f( G_XMAX,  G_YMAX, 0);
+			glVertex3f(-G_XMAX,  G_YMAX, 0);
+		glEnd();
+		glDisable(GL_BLEND);
+
+		// Texto
+		ETSIDI::setTextColor(1, 1, 0);
+		ETSIDI::setFont("fuentes/titulo.ttf", 50);
+		ETSIDI::printxy(mensajeFinPartida.c_str(), -8, 3);
+		ETSIDI::setTextColor(1, 1, 1);
+		ETSIDI::setFont("fuentes/texto.ttf", 26);
+		ETSIDI::printxy("Pulsa C para volver al menu", -6, -2);
+	}
+
 	transicion.dibuja();
 }
 // Flechas
@@ -431,7 +473,7 @@ void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 {
 	if (transicion.estaActiva()) return;
 	if (boton != GLUT_LEFT_BUTTON || estado != GLUT_DOWN) return;
-	if (!enPartida || enPausa) return;
+	if (!enPartida || enPausa || partidaTerminada) return;
 	if (arena.estaActiva()) return;        // en la arena el raton no se usa
 	if (tablero.estaAnimando()) return;     // igual que con teclado: ignorar durante animacion
 

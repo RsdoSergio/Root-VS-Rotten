@@ -74,6 +74,9 @@ class Mundo
 	int ronda = 0;
 	hechizoShiftTime hechizoShiftTime;
 
+	bool partidaTerminada = false;
+	std::string mensajeFinPartida;
+
 public:
 	void inicializa();
 	void dibuja();
