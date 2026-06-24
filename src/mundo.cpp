@@ -308,15 +308,44 @@ void Mundo::comprobarFinPartida()
 {
 	if (partidaTerminada) return;
 
-	// algun bando controla los 5 puntos de poder
+	// Condicion 1: algun bando controla los 5 puntos de poder
 	int ganador = tablero.comprobarPuntosDePoder();
 	if (ganador == 0) {
 		partidaTerminada = true;
 		mensajeFinPartida = "ROOT GANAN";
+		return;
 	}
 	else if (ganador == 1) {
 		partidaTerminada = true;
 		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+
+	// Condicion 2: eliminar todas las piezas del rival
+	int piezasRoot = 0, piezasRotten = 0;
+
+	for (int i = 0; i < FILAS; i++)
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = tablero.getPieza(Pos(i, j));
+			if (p == nullptr) continue;
+			if (p->getBando() == Bando::planta) piezasRoot++;
+			else piezasRotten++;
+		}
+
+	if (piezasRoot == 0 && piezasRotten == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "EMPATE";
+		return;
+	}
+	if (piezasRoot == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+	if (piezasRotten == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+		return;
 	}
 }
 void Mundo::mueve()
