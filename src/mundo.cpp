@@ -95,11 +95,21 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	if (enPausa) {
-		if (key == 'w' || key == 'W') opcionPausa = 0;
-		if (key == 's' || key == 'S') opcionPausa = 1;
+		if (key == 'w' || key == 'W') {
+			opcionPausa = 0;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
+		if (key == 's' || key == 'S') {
+			opcionPausa = 1;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
 		if (key == 13) {
+			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcionPausa == 0) enPausa = false;
 			if (opcionPausa == 1) exit(0);
+
 		}
 		return;
 	}
