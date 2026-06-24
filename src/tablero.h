@@ -58,6 +58,7 @@ public:
 	BandoVentaja getBandoVentaja() const;
 	void forzarVentajaPara(Bando bando);
 	void curarEnCasillasdePoder();
+	int comprobarPuntosDePoder() const; 
 
 
 private:

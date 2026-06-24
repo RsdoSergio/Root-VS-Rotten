@@ -49,13 +49,17 @@ protected:
 	bool aprisionada = false;
 	int turnoAprisionamiento = -1;
 
+	double bonusVida = 0.0;
+	double bonusFuerza = 0.0;
+	double bonusVelocidad = 0.0;
+
 public:
 	Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos);
 
-	double getVida()      const { return vida; }
-	double getVidaMax()   const { return vidaMax; }
-	double getFuerza()    const { return fuerza; }
-	double getVelocidad() const { return velocidad; }
+	double getVida()      const { return vida + bonusVida; }
+	double getVidaMax()   const { return vidaMax + bonusVida; }
+	double getFuerza()    const { return fuerza + bonusFuerza; }
+	double getVelocidad() const { return velocidad + bonusVelocidad; }
 	Bando  getBando()     const { return bando; }
 	Pos    getCasilla()   const { return casilla; }
 	bool   estaViva()     const { return vida > 0; }
@@ -127,6 +131,7 @@ public:
 	void aprisionar(int turnoActual) { aprisionada = true; turnoAprisionamiento = turnoActual; }
 	void liberar() { aprisionada = false; turnoAprisionamiento = -1; }
 	int getTurnoAprisionamiento() const { return turnoAprisionamiento; }
+	void setFuerza(double f) { fuerza = f; }
 	void setVelocidad(double v) { velocidad = v; }
 	void setVidaMax(double v) { vidaMax = v; }
 };

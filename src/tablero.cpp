@@ -572,13 +572,22 @@ void Tablero::forzarVentajaPara(Bando bando)
 	} while (getBandoVentaja() != deseada);
 }
 
-void Tablero::curarEnCasillasdePoder() {
-	for (int i = 0; i < FILAS; i++) {
-		for (int j = 0; j < COLS; j++) {
-			if (casillas[i][j].tipo != Casilla::PODER) continue;
-			Pieza* p = casillas[i][j].pieza;
-			if (p != nullptr && p->estaViva())
-				p->curar(p->getVidaMax() * 0.1); // cura un 10% de vida máxima por turno
-		}
+int Tablero::comprobarPuntosDePoder() const
+{
+	// Las 5 posiciones de casillas de poder 
+	const Pos puntos[5] = { {4,4}, {0,4}, {8,4}, {4,0}, {4,8} };
+
+	Pieza* primera = casillas[puntos[0].fila][puntos[0].col].pieza;
+	if (primera == nullptr) return -1; // si el primero esta vacio, imposible controlar los 5
+
+	Bando b = primera->getBando();
+
+	for (int i = 1; i < 5; i++)
+	{
+		Pieza* p = casillas[puntos[i].fila][puntos[i].col].pieza;
+		if (p == nullptr) return -1;       // hay un punto vacio
+		if (p->getBando() != b) return -1; // hay mezcla de bandos
 	}
+
+	return (b == Bando::planta) ? 0 : 1;
 }

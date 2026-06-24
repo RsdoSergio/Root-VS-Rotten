@@ -64,6 +64,15 @@ void Mundo::tecla(unsigned char key)
 		}
 		return;
 	}
+	// Partida terminada: solo la tecla C vuelve al menu
+	if (partidaTerminada) {
+		if (key == 'c' || key == 'C') {
+			partidaTerminada = false;
+			enPartida = false;
+			mensajeFinPartida.clear();
+		}
+		return;
+	}
 	if (arena.estaActiva()) {
 		if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, true);
 		if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, true);
@@ -77,8 +86,8 @@ void Mundo::tecla(unsigned char key)
 
 	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
 	// Cada cursor se mueve solo durante su turno
-	// Movimiento por teclado sustituido por el raton (ver Mundo::clicRaton)
-	// if (turno == 0) cursor.mover(key);  // WASD
+	// Movimiento por teclado ahora es complementario al raton 
+	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
 		// El cursor activo depende del turno
@@ -123,7 +132,14 @@ void Mundo::tecla(unsigned char key)
 				magoSeleccionado = nullptr;
 			}
 
-			// futuro: '5' SHIFT_TIME, '7' SUMMON
+			if (key == '7' && m->puedeUsarHechizo(Hechizo::TRANSFORM)) {
+				hechizoTransform.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
+				m->usarHechizo(Hechizo::TRANSFORM);
+				mensajeFeedback = hechizoTransform.getMensajeExito();
+				tiempoFeedback = 3.0;
+				magoSeleccionado = nullptr;
+			}
+
 		}
 	}
 
@@ -142,6 +158,12 @@ void Mundo::tecla(unsigned char key)
 				magoSeleccionado = nullptr;
 			}
 		}
+	}
+
+	//prueba para abrir pantalla de ganar, la tecla T dispara pantalla de fin de partida
+	if (key == 't' || key == 'T') {
+		partidaTerminada = true;
+		mensajeFinPartida = "ACUERDTE DE ELIMINAR ESTO";
 	}
 
 	if (key == 27) {
@@ -228,6 +250,21 @@ void Mundo::jugarCasilla(Pos casilla)
 		arena.activa();
 	}
 }
+void Mundo::comprobarFinPartida()
+{
+	if (partidaTerminada) return;
+
+	// algun bando controla los 5 puntos de poder
+	int ganador = tablero.comprobarPuntosDePoder();
+	if (ganador == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+	}
+	else if (ganador == 1) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+	}
+}
 void Mundo::mueve()
 {
 	transicion.actualiza(0.025);
@@ -268,14 +305,23 @@ void Mundo::mueve()
 			break;
 
 		case AccionTransicion::CERRAR_CARTEL_RESULTADO:
+		{
 			tablero.resolverCombate(arena.getPlantaGano());
 			tablero.avanzarCiclo();
+
+			Mago* m1 = dynamic_cast<Mago*>(tablero.getPersonaje1());
+			if (m1 && m1->estaTransformado()) m1->revertirTransformacion();
+			Mago* m2 = dynamic_cast<Mago*>(tablero.getPersonaje2());
+			if (m2 && m2->estaTransformado()) m2->revertirTransformacion();
+
 			arena.desactiva();
 			Audio::playMusicaTablero();
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
+			comprobarFinPartida();
 			break;
+		}
 
 		default:
 			break;
@@ -292,7 +338,7 @@ void Mundo::mueve()
 		}
 	}
 
-	if (!enPartida || enPausa) return;
+	if (!enPartida || enPausa || partidaTerminada) return;
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
@@ -323,13 +369,18 @@ void Mundo::mueve()
 		tablero.curarEnCasillasdePoder();
 	}
 
-	// Provisional: libera piezas aprisionadas tras 3 turnos, hasta que exista el ciclo de color
+	BandoVentaja ventajaActual = tablero.getBandoVentaja();
 	for (int i = 0; i < FILAS; i++)
 		for (int j = 0; j < COLS; j++) {
 			Pieza* p = tablero.getPieza(Pos(i, j));
-			if (p && p->estaAprisionada() && (numeroJugada - p->getTurnoAprisionamiento() >= 3))
-				p->liberar();
+			if (p == nullptr || !p->estaAprisionada()) continue;
+
+			bool favorece = (p->getBando() == Bando::planta && ventajaActual == BandoVentaja::PLANTA)
+				|| (p->getBando() == Bando::zombi && ventajaActual == BandoVentaja::ZOMBI);
+
+			if (favorece) p->liberar();
 		}
+
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -381,6 +432,33 @@ void Mundo::dibuja()
 		}
 	}
 
+	// creacion de la pantalla de fin de partida 
+	if (partidaTerminada)
+	{
+		extern float G_XMAX;
+		extern float G_YMAX;
+
+		// Fondo semitransparente oscuro
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
+		glBegin(GL_QUADS);
+			glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glVertex3f( G_XMAX, -G_YMAX, 0);
+			glVertex3f( G_XMAX,  G_YMAX, 0);
+			glVertex3f(-G_XMAX,  G_YMAX, 0);
+		glEnd();
+		glDisable(GL_BLEND);
+
+		// Texto
+		ETSIDI::setTextColor(1, 1, 0);
+		ETSIDI::setFont("fuentes/titulo.ttf", 50);
+		ETSIDI::printxy(mensajeFinPartida.c_str(), -8, 3);
+		ETSIDI::setTextColor(1, 1, 1);
+		ETSIDI::setFont("fuentes/texto.ttf", 26);
+		ETSIDI::printxy("Pulsa C para volver al menu", -6, -2);
+	}
+
 	transicion.dibuja();
 }
 // Flechas
@@ -397,8 +475,8 @@ void Mundo::teclaEspecial(int key)
 		return;
 	}
 	if (tablero.estaAnimando()) return;
-	// Movimiento por teclado sustituido por el raton (ver Mundo::clicRaton)
-	// if (turno == 1) cursor2.moverFlechas(key);
+	// Movimiento por teclado ahora es complementario al raton 
+	if (turno == 1) cursor2.moverFlechas(key);
 }
 
 void Mundo::teclaLevantada(unsigned char key)
@@ -432,7 +510,7 @@ void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 {
 	if (transicion.estaActiva()) return;
 	if (boton != GLUT_LEFT_BUTTON || estado != GLUT_DOWN) return;
-	if (!enPartida || enPausa) return;
+	if (!enPartida || enPausa || partidaTerminada) return;
 	if (arena.estaActiva()) return;        // en la arena el raton no se usa
 	if (tablero.estaAnimando()) return;     // igual que con teclado: ignorar durante animacion
 
@@ -523,7 +601,7 @@ std::string Mundo::generarTextoPanel() const
 	}
 
 	std::string texto;
-	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Summon" };
+	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Transform" };
 	for (int i = 0; i < 7; i++)
 		texto += std::to_string(i + 1) + "." + nombres[i] + "  ";
 	return texto;
