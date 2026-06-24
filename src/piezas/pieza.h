@@ -134,4 +134,5 @@ public:
 	void setFuerza(double f) { fuerza = f; }
 	void setVelocidad(double v) { velocidad = v; }
 	void setVidaMax(double v) { vidaMax = v; }
+	void setIntervaloAtaque(double v) { intervaloAtaque = v; }
 };

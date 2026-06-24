@@ -59,7 +59,10 @@ public:
 	void forzarVentajaPara(Bando bando);
 	void curarEnCasillasdePoder();
 	int comprobarPuntosDePoder() const; 
-
+	
+	bool boostPieza1 = false; // pieza1 estaba en casilla de poder
+	bool boostPieza2 = false; // pieza2 estaba en casilla de poder
+	bool esCasillaDePoder(Pos p) const {return casillas[p.fila][p.col].tipo == Casilla::PODER;}
 
 private:
 

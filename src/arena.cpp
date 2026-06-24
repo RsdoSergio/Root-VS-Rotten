@@ -180,6 +180,9 @@ void arena::desactiva()
 
 	if (pieza1) pieza1->setVelocidad(pieza1->getVelocidad() / 1.3f);
 	if (pieza2) pieza2->setVelocidad(pieza2->getVelocidad() / 1.3f);
+
+	if (pieza1) pieza1->setIntervaloAtaque(intervaloOriginal1);
+	if (pieza2) pieza2->setIntervaloAtaque(intervaloOriginal2);
 }
 
 void arena::dibujaObstaculos() const
@@ -200,7 +203,7 @@ void arena::dibuja() const
 	dibujaProyectiles();
 }
 
-void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja)
+void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool boost2)
 {
 	if (p1.getBando() == Bando::planta) //esto hará que la pieza a la izquierda siempre sea planta
 	{
@@ -239,6 +242,13 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja)
 
 		pieza2->setVelocidad(pieza2->getVelocidad() * bonus);
 	}
+
+	intervaloOriginal1 = pieza1->getIntervaloAtaque();
+	intervaloOriginal2 = pieza2->getIntervaloAtaque();
+	if (boost1) pieza1->setIntervaloAtaque(pieza1->getIntervaloAtaque() * 1.3);
+	if (boost2) pieza2->setIntervaloAtaque(pieza2->getIntervaloAtaque() * 1.3);
+
+	
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
