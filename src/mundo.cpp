@@ -109,7 +109,6 @@ void Mundo::tecla(unsigned char key)
 			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcionPausa == 0) enPausa = false;
 			if (opcionPausa == 1) exit(0);
-
 		}
 		return;
 	}
@@ -331,7 +330,7 @@ void Mundo::mueve()
 		case AccionTransicion::EMPEZAR_PARTIDA:
 			enPartida = true;
 			tiempoPartida = 0.0;
-			Audio::playMusicaTablero();
+			pendienteMusicaTablero = true;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
@@ -341,12 +340,13 @@ void Mundo::mueve()
 			Audio::playSonido("audio/FIGHT.mp3");
 
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 3.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
+			Audio::stopMusica();
 			if (arena.getPlantaGano()) {
 				rutaCartel = "imagenes/carteles/cartel_plantas_ganan.png";
 				Audio::playSonido("audio/VICTORIA_PLANTAS.mp3");
@@ -356,7 +356,7 @@ void Mundo::mueve()
 				Audio::playSonido("audio/VICTORIA_ZOMBIS.mp3");
 			}
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 5.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
@@ -380,7 +380,7 @@ void Mundo::mueve()
 			if (m2 && m2->estaTransformado()) m2->revertirTransformacion();
 
 			arena.desactiva();
-			Audio::playMusicaTablero();
+			pendienteMusicaTablero = true;
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
@@ -391,6 +391,12 @@ void Mundo::mueve()
 		default:
 			break;
 		}
+	}
+
+	if (pendienteMusicaTablero && !transicion.estaActiva())
+	{
+		pendienteMusicaTablero = false;
+		Audio::playMusicaTablero();
 	}
 
 	if (mostrandoCartel && !transicion.estaActiva())
