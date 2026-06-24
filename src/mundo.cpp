@@ -338,6 +338,8 @@ void Mundo::mueve()
 
 		case AccionTransicion::ABRIR_CARTEL_VERSUS:
 			rutaCartel = "imagenes/carteles/cartel_vs.png";
+			Audio::playSonido("audio/FIGHT.mp3");
+
 			mostrandoCartel = true;
 			tiempoCartel = 2.0;
 			accionPendiente = AccionTransicion::NINGUNA;
@@ -345,7 +347,14 @@ void Mundo::mueve()
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
-			rutaCartel = arena.getPlantaGano() ? "imagenes/carteles/cartel_plantas_ganan.png" : "imagenes/carteles/cartel_plantas_pierden.png";
+			if (arena.getPlantaGano()) {
+				rutaCartel = "imagenes/carteles/cartel_plantas_ganan.png";
+				Audio::playSonido("audio/VICTORIA_PLANTAS.mp3");
+			}
+			else {
+				rutaCartel = "imagenes/carteles/cartel_plantas_pierden.png";
+				Audio::playSonido("audio/VICTORIA_ZOMBIS.mp3");
+			}
 			mostrandoCartel = true;
 			tiempoCartel = 2.0;
 			accionPendiente = AccionTransicion::NINGUNA;
