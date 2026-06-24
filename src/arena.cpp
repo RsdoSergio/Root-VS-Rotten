@@ -3,8 +3,7 @@
 #include "piezas/piezatierra.h"
 #include"piezas/piezavuelo.h"
 #include"piezas/piezateletransporte.h"
-#include"piezas/fenix.h"
-#include"piezas/unicornio.h"
+
 #include "interaccion.h"
 #include"piezas/pieza.h"
 #include "audio.h"
@@ -309,10 +308,9 @@ void arena::mueve(double dt)
 
 	auto recoger = [&](Pieza* p, std::vector<Proyectil*>& proyectiles)
 		{
-			Unicornio* u = dynamic_cast<Unicornio*>(p);
-			if (u && u->tieneProyectilesPendientes())
+			if (p && p->tieneProyectilesPendientes())
 			{
-				auto nuevos = u->recogerProyectiles();
+				auto nuevos = p->recogerProyectiles();
 				proyectiles.insert(proyectiles.end(), nuevos.begin(), nuevos.end());
 			}
 		};
@@ -478,50 +476,47 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 {
 	if (!p || tiempoDisparo < p->getIntervaloAtaque()) return;
 
+	int dirX = p->getUltimoEjeX();
+	int dirY = p->getUltimoEjeY();
+
+	// Calcular dirección con último eje para ranged
+	if (dirX != 0 && dirY != 0)
+	{
+		if (p->getUltimoEjeReciente() == 0) dirY = 0;
+		else dirX = 0;
+	}
+	if (dirX == 0 && dirY == 0) dirX = dirDefecto;
+
 	if (p->esMelee())
 	{
 		p->activarExplosion();
-		int dirX = p->getUltimoEjeX();
-		int dirY = p->getUltimoEjeY();
-		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
 
-		Vector2D pos(
-			p->getPosArena().getX() + dirX * 0.9,
-			p->getPosArena().getY() + dirY * 0.9
-		);
-		Vector2D vel(0.0, 0.0);
-		proyectiles.push_back(new Proyectil(pos, vel, p->getFuerza(), p->getTiempoAnimAtaque()));
-	}
-	else
-	{
-		int dirX = 0, dirY = 0;
-		if (p->getUltimoEjeX() != 0 && p->getUltimoEjeY() != 0)
+		if (p->tieneRafaga())
 		{
-			if (p->getUltimoEjeReciente() == 0) dirX = p->getUltimoEjeX();
-			else dirY = p->getUltimoEjeY();
+			p->iniciarRafaga(dirX, dirY);
+			// NO iniciarAtaque() — la ráfaga lo gestiona internamente
 		}
 		else
 		{
-			dirX = p->getUltimoEjeX();
-			dirY = p->getUltimoEjeY();
+			Vector2D pos(
+				p->getPosArena().getX() + dirX * 3.5,
+				p->getPosArena().getY() + dirY * 3.5
+			);
+			proyectiles.push_back(new Proyectil(pos, Vector2D(0.0, 0.0), p->getFuerza(), p->getTiempoAnimAtaque()));
+			p->iniciarAtaque();
 		}
-		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
-		Vector2D vel(dirX * p->getVelocidadProyectil(), dirY * p->getVelocidadProyectil());
-		proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
-
-		// ... cálculo de dirección existente ...
-		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
-
-		Unicornio* u = dynamic_cast<Unicornio*>(p);
-		if (u)
-			u->iniciarRafaga(dirX, dirY);
+	}
+	else
+	{
+		if (p->tieneRafaga())
+			p->iniciarRafaga(dirX, dirY);
 		else
 		{
 			Vector2D vel(dirX * p->getVelocidadProyectil(), dirY * p->getVelocidadProyectil());
 			proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
 		}
+		p->iniciarAtaque();
 	}
-	p->iniciarAtaque();
 
 	tiempoDisparo = 0.0;
 }
