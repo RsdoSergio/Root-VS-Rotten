@@ -416,7 +416,7 @@ void Mundo::mueve()
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
+	if (arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
 	{
 		accionPendiente = AccionTransicion::ABRIR_CARTEL_RESULTADO;
 		transicion.cubrir();
