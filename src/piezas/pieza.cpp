@@ -59,6 +59,12 @@ void Pieza::dibujaArena(float x, float y) const
 	dibujarSprite(getRutaSprite(), x, y, 2.0f, frame, 6);
 }
 
+Proyectil* Pieza::crearProyectil(int dirX, int dirY)
+{
+	Vector2D vel(dirX * getVelocidadProyectil(), dirY * getVelocidadProyectil());
+	return new Proyectil(getPosArena(), vel, getFuerza());
+}
+
 void Pieza::actualizarAtaque(double dt)
 {
 	if (!atacandoActivo) return;

@@ -64,7 +64,7 @@ public:
 	double getVelocidad() const { return velocidad + bonusVelocidad; }
 	Bando  getBando()     const { return bando; }
 	Pos    getCasilla()   const { return casilla; }
-	bool   estaViva()     const { return vida > 0; }
+	bool   estaViva()     const { return getVida() > 0;}
 	double getIntervaloAtaque() const { return intervaloAtaque; }//nuevo para el cooldown de ataque
 	double getTiempoAnimAtaque() const { return tiempoAnimAtaque; }
 
@@ -123,7 +123,7 @@ public:
 
 	virtual void actualizarEfectos(double dt) {}
 	virtual bool bloqueaMovimientoAlAtacar() const { return true; }
-
+	virtual Proyectil* crearProyectil(int dirX, int dirY);
 
 	void actualizarAtaque(double dt);
 

@@ -479,7 +479,6 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 	int dirX = p->getUltimoEjeX();
 	int dirY = p->getUltimoEjeY();
 
-	// Calcular dirección con último eje para ranged
 	if (dirX != 0 && dirY != 0)
 	{
 		if (p->getUltimoEjeReciente() == 0) dirY = 0;
@@ -493,15 +492,12 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 		p->activarExplosion();
 
 		if (p->tieneRafaga())
-		{
 			p->iniciarRafaga(dirX, dirY);
-			// NO iniciarAtaque() — la ráfaga lo gestiona internamente
-		}
 		else
 		{
 			Vector2D pos(
-				p->getPosArena().getX() + dirX * 3.5,
-				p->getPosArena().getY() + dirY * 3.5
+				p->getPosArena().getX() + dirX * 1.2,
+				p->getPosArena().getY() + dirY * 1.2
 			);
 			proyectiles.push_back(new Proyectil(pos, Vector2D(0.0, 0.0), p->getFuerza(), p->getTiempoAnimAtaque()));
 			p->iniciarAtaque();
@@ -510,13 +506,12 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 	else
 	{
 		Audio::playSonido("audio/ATAQUE_A_DISTANCIA.mp3");
+
 		if (p->tieneRafaga())
 			p->iniciarRafaga(dirX, dirY);
 		else
-		{
-			Vector2D vel(dirX * p->getVelocidadProyectil(), dirY * p->getVelocidadProyectil());
-			proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
-		}
+			proyectiles.push_back(p->crearProyectil(dirX, dirY));
+
 		p->iniciarAtaque();
 	}
 
