@@ -8,6 +8,7 @@
 #include "gestorTexturas.h"
 #include <ctime>
 #include "hechizos/hechizoExchange.h"
+#include "audio.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
@@ -139,30 +140,36 @@ void Mundo::tecla(unsigned char key)
 		if (m != nullptr)
 		{
 			if (key == '2' && m->puedeUsarHechizo(Hechizo::HEAL)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoHeal);
 				m->usarHechizo(Hechizo::HEAL);
 				magoSeleccionado = nullptr;
 			}
 
 			if (key == '3' && m->puedeUsarHechizo(Hechizo::REVIVE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoRevive = true;
 				mostrarPanelHechizos = true;
 			}
 
 			if (key == '6' && m->puedeUsarHechizo(Hechizo::EXCHANGE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoExchangeOrigen = true; // paso 1: elegir la primera pieza en el tablero
 			}
 
 			if (key == '1' && m->puedeUsarHechizo(Hechizo::TELEPORT)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoTeleportOrigen = true; // paso 1: elegir la pieza a teletransportar
 			}
 
 			if (key == '4' && m->puedeUsarHechizo(Hechizo::IMPRISON)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoImprison);
 				m->usarHechizo(Hechizo::IMPRISON);
 				magoSeleccionado = nullptr;
 			}
 			if (key == '5' && m->puedeUsarHechizo(Hechizo::SHIFT_TIME)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				hechizoShiftTime.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
 				m->usarHechizo(Hechizo::SHIFT_TIME);
 				mensajeFeedback = hechizoShiftTime.getMensajeExito();
@@ -171,6 +178,7 @@ void Mundo::tecla(unsigned char key)
 			}
 
 			if (key == '7' && m->puedeUsarHechizo(Hechizo::TRANSFORM)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				hechizoTransform.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
 				m->usarHechizo(Hechizo::TRANSFORM);
 				mensajeFeedback = hechizoTransform.getMensajeExito();
