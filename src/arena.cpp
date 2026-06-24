@@ -94,7 +94,6 @@ void arena::dibujaHUD() const
 	glVertex2d(0.0, HUD_TECHO);
 	glEnd();
 
-
 	double prop1 = (vidaMaxPieza1 > 0.0) ? (vidaPieza1 / vidaMaxPieza1) : 0.0;
 	double prop2 = (vidaMaxPieza2 > 0.0) ? (vidaPieza2 / vidaMaxPieza2) : 0.0;
 
@@ -142,6 +141,8 @@ void arena::activa()
 	activo = true;
 	terminado = false;
 	indiceFondo = 1 + rand() % 9;
+	indiceCombate = 0;
+	musicaViolentaActiva = false;
 	numObstaculos = 3 + rand() % 4;
 
 	for (int i = 0; i < MAX_OBSTACULOS; i++)
@@ -191,6 +192,7 @@ void arena::dibuja() const
 {
 	if (!activo) return;
 	dibujaFondo();
+	dibujaOverlayCombate();
 	dibujaInterior();
 	dibujaMarco();
 	dibujaHUD();
@@ -268,18 +270,18 @@ void arena::mueve(double dt)
 	if (!activo) return;
 
 	auto mover = [&](Pieza* p, const std::vector<Proyectil*>& proyectiles)
-		{ 
-			if (!p) return;
-		if (terminado) return;
-		p->actualizarAtaque(dt);
-		p->actualizarEfectos(dt);
-		if (p->estaAtacando() && p->bloqueaMovimientoAlAtacar())
 		{
-			p->setAccion(AccionPieza::ATACAR);
-			return;
-		}
-		if (p->estaAtacando()) p->setAccion(AccionPieza::ATACAR);//poner esto para qse ponga el frame de atacar si no se bloquea al hacerlo
-		p->actualizarArena(dt);
+			if (!p) return;
+			if (terminado) return;
+			p->actualizarAtaque(dt);
+			p->actualizarEfectos(dt);
+			if (p->estaAtacando() && p->bloqueaMovimientoAlAtacar())
+			{
+				p->setAccion(AccionPieza::ATACAR);
+				return;
+			}
+			if (p->estaAtacando()) p->setAccion(AccionPieza::ATACAR);//poner esto para qse ponga el frame de atacar si no se bloquea al hacerlo
+			p->actualizarArena(dt);
 		};
 
 	mover(pieza1, proyectil1);
@@ -288,7 +290,7 @@ void arena::mueve(double dt)
 	if (pieza1 && !dynamic_cast<PiezaVuelo*>(pieza1))
 		for (int i = 0; i < MAX_OBSTACULOS; i++)
 			Interaccion::choque(*pieza1, obstaculos[i]);
-	
+
 	mover(pieza2, proyectil2);
 	if (pieza2)
 		Interaccion::choque(*pieza2, caja);
@@ -350,6 +352,30 @@ void arena::mueve(double dt)
 	if (pieza1) vidaPieza1 = pieza1->getVida();
 	if (pieza2) vidaPieza2 = pieza2->getVida();
 
+	if (pieza1 && pieza2) //eventos circustanciales arena
+	{
+		//proporción de vida restante pieza 0: muerta, 1: full vida
+		double prop1 = (vidaMaxPieza1 > 0.0) ? (vidaPieza1 / vidaMaxPieza1) : 1.0;
+		double prop2 = (vidaMaxPieza2 > 0.0) ? (vidaPieza2 / vidaMaxPieza2) : 1.0;
+
+		double propMin = (prop1 < prop2) ? prop1 : prop2;
+
+		int nuevoIndice = 0;
+		if (propMin <= 0.0)  nuevoIndice = 5;
+		else if (propMin <= 0.2)  nuevoIndice = 4;
+		else if (propMin <= 0.4)  nuevoIndice = 3;
+		else if (propMin <= 0.6)  nuevoIndice = 2;
+		else if (propMin <= 0.8)  nuevoIndice = 1;
+
+		if (nuevoIndice > indiceCombate)
+			indiceCombate = nuevoIndice;
+
+		if (!musicaViolentaActiva && (prop1 < 0.35 || prop2 < 0.35))
+		{
+			musicaViolentaActiva = true;
+			Audio::playMusicaViolenta();
+		}
+	}
 
 	// Fin de combate
 	if (pieza1 && !pieza1->estaViva()) { plantaGano = false;  terminado = true; } // murió pieza1, ganó pieza2
@@ -495,7 +521,6 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 	tiempoDisparo = 0.0;
 }
 
-
 void arena::aplicarDanoExplosiones()
 {
 	auto aplicar = [&](Pieza* atacante, Pieza* defensor)
@@ -510,4 +535,36 @@ void arena::aplicarDanoExplosiones()
 
 	if (pieza1 && pieza2) aplicar(pieza1, pieza2);
 	if (pieza1 && pieza2) aplicar(pieza2, pieza1);
+}
+
+void arena::dibujaOverlayCombate() const
+{
+	if (indiceCombate <= 0) return;
+
+	const char* rutas[] = {
+		"",                                     // 0
+		"imagenes/fondos/combate_20.png",       // 1
+		"imagenes/fondos/combate_40.png",       // 2
+		"imagenes/fondos/combate_60.png",       // 3
+		"imagenes/fondos/combate_80.png",       // 4
+		"imagenes/fondos/combate_100.png"       // 5
+	};
+
+	const char* ruta = rutas[indiceCombate];
+
+	extern float G_XMAX;
+	extern float G_YMAX;
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture(ruta).id);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
 }
