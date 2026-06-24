@@ -24,7 +24,7 @@ public:
             0.5,   // Enfriamiento bajo
             4, //rad de mov
             b, pos),
-        velocidadProyectil(6.0) {} // Proyectil medio
+        velocidadProyectil(9.0) {} // Proyectil medio
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
     std::string getRutaSprite() const override;
@@ -36,12 +36,13 @@ public:
     }
     void usarAtaqueSecundario() override {};
 
-    void iniciarRafaga(int dx, int dy);
+    void iniciarRafaga(int dx, int dy) override;
     void actualizarEfectos(double dt) override;
-    std::vector<Proyectil*> recogerProyectiles();
-    bool tieneProyectilesPendientes() const { return !proyectilesPendientes.empty(); }
+    std::vector<Proyectil*> recogerProyectiles() override;
+    bool tieneProyectilesPendientes() const override { return !proyectilesPendientes.empty(); }
     bool bloqueaMovimientoAlAtacar() const override { return false; }
     bool enRafaga() const { return proyectilesRestantes > 0; }
+    bool tieneRafaga() const override { return true; }
 
     int getFrame(DirMovimiento dir, AccionPieza accion) const override
     {
