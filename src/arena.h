@@ -52,6 +52,9 @@ class arena
 
 	int indiceFondo = 1; //para el fondo
 
+	int indiceCombate = 0;        // 0=normal, 1=20%, 2=40%, 3=60%, 4=80%, 5=100% (para la ambientación circustancial)
+	bool musicaViolentaActiva = false;
+
 public:
 	arena() {};
 
@@ -69,8 +72,10 @@ public:
 	void recibirMovimiento(int jugador, int dir, bool estado);
 	void procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto);
 	bool getPlantaGano() const { return plantaGano; } // getter para mundo
-	
+
 	void aplicarDanoExplosiones();
 
 	bool combateTerminado() const { return terminado; }
+
+	void dibujaOverlayCombate() const;
 };
