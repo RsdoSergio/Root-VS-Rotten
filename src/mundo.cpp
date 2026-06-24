@@ -248,6 +248,7 @@ void Mundo::jugarCasilla(Pos casilla)
 		if (exito && usado != nullptr) {
 			mensajeFeedback = usado->getMensajeExito();
 			tiempoFeedback = 3.0;
+			comprobarFinPartida();
 		}
 		magoSeleccionado = nullptr; // cerramos el menu de hechizos
 		return;
@@ -321,17 +322,25 @@ void Mundo::comprobarFinPartida()
 		return;
 	}
 
-	// Condicion 2: eliminar todas las piezas del rival
+	
 	int piezasRoot = 0, piezasRotten = 0;
+	bool hayRootLibre = false, hayRottenLibre = false;
 
 	for (int i = 0; i < FILAS; i++)
 		for (int j = 0; j < COLS; j++) {
 			Pieza* p = tablero.getPieza(Pos(i, j));
 			if (p == nullptr) continue;
-			if (p->getBando() == Bando::planta) piezasRoot++;
-			else piezasRotten++;
+			if (p->getBando() == Bando::planta) {
+				piezasRoot++;
+				if (!p->estaAprisionada()) hayRootLibre = true;
+			}
+			else {
+				piezasRotten++;
+				if (!p->estaAprisionada()) hayRottenLibre = true;
+			}
 		}
 
+	//eliminar todas las piezas del rival
 	if (piezasRoot == 0 && piezasRotten == 0) {
 		partidaTerminada = true;
 		mensajeFinPartida = "EMPATE";
@@ -343,6 +352,18 @@ void Mundo::comprobarFinPartida()
 		return;
 	}
 	if (piezasRotten == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+		return;
+	}
+
+	// las piezas restantes del rival estan aprisionadas
+	if (!hayRootLibre) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+	if (!hayRottenLibre) {
 		partidaTerminada = true;
 		mensajeFinPartida = "ROOT GANAN";
 		return;
