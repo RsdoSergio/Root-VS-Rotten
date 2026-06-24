@@ -463,6 +463,7 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 
 	if (p->esMelee())
 	{
+		Audio::playSonido("audio/ATAQUE_A_MELEE.mp3");
 		p->activarExplosion();
 
 		if (p->tieneRafaga())
@@ -482,6 +483,7 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 	}
 	else
 	{
+		Audio::playSonido("audio/ATAQUE_A_DISTANCIA.mp3");
 		if (p->tieneRafaga())
 			p->iniciarRafaga(dirX, dirY);
 		else
