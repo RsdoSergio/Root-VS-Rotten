@@ -16,6 +16,7 @@
 #include "cursor.h"
 #include <iostream>
 #include "ETSIDI.h"
+#include "audio.h"
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -386,8 +387,8 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 		Pieza* p = getPieza(cursor);
 		if (p != nullptr && (int)p->getBando() == turno) {
 			piezaSeleccionada = cursor;
-			casillasValidas = movimientosValidos(cursor);
-			//guarda la última seleccionada por bando
+			casillasValidas = movimientosValidos(cursor);			//guarda la última seleccionada por bando
+			Audio::playSonido("audio/SELECCION_CASILLA.mp3");
 			if (p->getBando() == Bando::planta)
 				ultimaPiezaPlanta = p;
 			else
@@ -404,6 +405,7 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 			}
 
 		if (destinoValido) {
+			Audio::playSonido("audio/SELECCION_CASILLA.mp3");
 			bool hayCombate = moverPieza(piezaSeleccionada, cursor);
 			piezaSeleccionada = Pos();
 			casillasValidas.clear();
