@@ -340,13 +340,13 @@ void Mundo::mueve()
 			Audio::playSonido("audio/FIGHT.mp3");
 
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 3.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
-			Audio::stopMusica();   // <-- AÑADIR ESTO
+			Audio::stopMusica();
 			if (arena.getPlantaGano()) {
 				rutaCartel = "imagenes/carteles/cartel_plantas_ganan.png";
 				Audio::playSonido("audio/VICTORIA_PLANTAS.mp3");
@@ -356,7 +356,7 @@ void Mundo::mueve()
 				Audio::playSonido("audio/VICTORIA_ZOMBIS.mp3");
 			}
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 5.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
