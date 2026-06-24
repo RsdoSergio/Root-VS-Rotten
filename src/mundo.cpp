@@ -109,7 +109,6 @@ void Mundo::tecla(unsigned char key)
 			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcionPausa == 0) enPausa = false;
 			if (opcionPausa == 1) exit(0);
-
 		}
 		return;
 	}
@@ -331,7 +330,7 @@ void Mundo::mueve()
 		case AccionTransicion::EMPEZAR_PARTIDA:
 			enPartida = true;
 			tiempoPartida = 0.0;
-			Audio::playMusicaTablero();
+			pendienteMusicaTablero = true;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
@@ -347,6 +346,7 @@ void Mundo::mueve()
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
+			Audio::stopMusica();   // <-- AÑADIR ESTO
 			if (arena.getPlantaGano()) {
 				rutaCartel = "imagenes/carteles/cartel_plantas_ganan.png";
 				Audio::playSonido("audio/VICTORIA_PLANTAS.mp3");
@@ -380,7 +380,7 @@ void Mundo::mueve()
 			if (m2 && m2->estaTransformado()) m2->revertirTransformacion();
 
 			arena.desactiva();
-			Audio::playMusicaTablero();
+			pendienteMusicaTablero = true;
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
@@ -391,6 +391,12 @@ void Mundo::mueve()
 		default:
 			break;
 		}
+	}
+
+	if (pendienteMusicaTablero && !transicion.estaActiva())
+	{
+		pendienteMusicaTablero = false;
+		Audio::playMusicaTablero();
 	}
 
 	if (mostrandoCartel && !transicion.estaActiva())
