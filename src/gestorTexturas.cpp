@@ -41,12 +41,20 @@ void precargarTexturas() {
 	"imagenes/fondos/fondo_tablero.png",
 	"imagenes/turnos/turno_plantas.png",
 	"imagenes/turnos/turno_zombies.png",
+	"imagenes/carteles/cartel_vs.png",
+	"imagenes/carteles/cartel_plantas_ganan.png",
+	"imagenes/carteles/cartel_plantas_pierden.png",
+	"imagenes/fondos/combate_20.png",
+	"imagenes/fondos/combate_40.png",
+	"imagenes/fondos/combate_60.png",
+	"imagenes/fondos/combate_80.png",
+	"imagenes/fondos/combate_100.png"
 	};
 
 	int total = sizeof(texturas) / sizeof(texturas[0]); //nº elementos
 
 	glClear(GL_COLOR_BUFFER_BIT);
-	ETSIDI::setFont("fuentes/texto.ttf", 50);
+	ETSIDI::setFont("fuentes/auxiliar.ttf", 70);
 	ETSIDI::setTextColor(1.f, 1.f, 1.f);
 	ETSIDI::printxy("Cargando...  0%", -10.0f, 0.0f);
 	glutSwapBuffers();
@@ -61,7 +69,7 @@ void precargarTexturas() {
 		glutSwapBuffers();
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		ETSIDI::setFont("fuentes/texto.ttf", 50);
+		ETSIDI::setFont("fuentes/auxiliar.ttf", 70);
 		ETSIDI::setTextColor(1.f, 1.f, 1.f);
 		ETSIDI::printxy(msg.c_str(), -10.0f, 0.0f);
 		glutSwapBuffers();

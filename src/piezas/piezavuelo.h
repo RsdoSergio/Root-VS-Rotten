@@ -19,8 +19,9 @@ public:
 
    
 
-    void setMovimiento(int dir, bool estado);
-    void actualizarArena(double dt);
+    void setMovimiento(int dir, bool estado)override;
+    void actualizarArena(double dt) override;
+
 
     
 };

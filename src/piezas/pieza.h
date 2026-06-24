@@ -1,7 +1,11 @@
 #pragma once
 #include "vector2d.h"
 #include "pos.h"
+#include "proyectil.h"
 #include<iostream>
+#include<vector>
+
+enum class BandoVentaja { PLANTA, ZOMBI };
 
 enum class DirArena { ARRIBA, ABAJO, IZQUIERDA, DERECHA };
 
@@ -42,14 +46,22 @@ protected:
 
 	bool   atacandoActivo = false;
 	double tiempoAtaqueRestante = 0.0;
+	
+
+	bool aprisionada = false;
+	int turnoAprisionamiento = -1;
+
+	double bonusVida = 0.0;
+	double bonusFuerza = 0.0;
+	double bonusVelocidad = 0.0;
 
 public:
 	Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos);
 
-	double getVida()      const { return vida; }
-	double getVidaMax()   const { return vidaMax; }
-	double getFuerza()    const { return fuerza; }
-	double getVelocidad() const { return velocidad; }
+	double getVida()      const { return vida + bonusVida; }
+	double getVidaMax()   const { return vidaMax + bonusVida; }
+	double getFuerza()    const { return fuerza + bonusFuerza; }
+	double getVelocidad() const { return velocidad + bonusVelocidad; }
 	Bando  getBando()     const { return bando; }
 	Pos    getCasilla()   const { return casilla; }
 	bool   estaViva()     const { return vida > 0; }
@@ -96,12 +108,36 @@ public:
 	virtual double getVelocidadProyectil() const { return 12.0; } // valor por defecto, igual que VEL_PROYECTIL de arena
 	virtual void moverArena(DirArena dir, double xMin, double xMax, double yMin, double yMax) {}
 
+	virtual void actualizarArena(double dt) {}
+	virtual void setMovimiento(int dir, bool estado) {}
+
+	virtual void activarExplosion() {}
+	virtual double consumirDanoExplosion() { return 0.0; }
+
+	virtual double getRadioExplosionMax() const { return 0.0; }
+
 	virtual int getFrame(DirMovimiento dir, AccionPieza accion) const;
 
 	bool estaAtacando() const { return atacandoActivo; }
 	void iniciarAtaque() { atacandoActivo = true; tiempoAtaqueRestante = tiempoAnimAtaque; }
 
+	virtual void actualizarEfectos(double dt) {}
+	virtual bool bloqueaMovimientoAlAtacar() const { return true; }
+
+
 	void actualizarAtaque(double dt);
 
+	virtual std::vector<Proyectil*> recogerProyectiles() { return {}; }
+	virtual bool tieneProyectilesPendientes() const { return false; }
+	virtual void iniciarRafaga(int dirX, int dirY) {}
+	virtual bool tieneRafaga() const { return false; }
+
+	bool estaAprisionada() const { return aprisionada; }
+	void aprisionar(int turnoActual) { aprisionada = true; turnoAprisionamiento = turnoActual; }
+	void liberar() { aprisionada = false; turnoAprisionamiento = -1; }
+	int getTurnoAprisionamiento() const { return turnoAprisionamiento; }
+	void setFuerza(double f) { fuerza = f; }
+	void setVelocidad(double v) { velocidad = v; }
+	void setVidaMax(double v) { vidaMax = v; }
 	virtual ~Pieza() {}
 };

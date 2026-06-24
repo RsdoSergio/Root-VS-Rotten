@@ -30,6 +30,44 @@ void Mundo::inicializa() {
 	Audio::playMusica("audio/INTRO.mp3", true);
 };
 
+void Mundo::dibujaTimer() const
+{
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	int totalSeg = (int)tiempoPartida;
+	int minutos = totalSeg / 60;
+	int segundos = totalSeg % 60;
+
+	std::string textoMin = std::to_string(minutos);
+	std::string textoSeg = std::to_string(segundos);
+
+	if (minutos < 10)  textoMin = "0" + textoMin;
+	if (segundos < 10) textoSeg = "0" + textoSeg;
+
+	std::string buf = textoMin + "." + textoSeg;
+
+	float bx = G_XMAX - 5.8f;
+	float by = -G_YMAX + 1.0f;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(0.0f, 0.0f, 0.0f, 0.55f);
+	glBegin(GL_QUADS);
+	glVertex2f(bx - 0.f, by - 0.4f);
+	glVertex2f(bx + 5.4f, by - 0.4f);
+	glVertex2f(bx + 5.4f, by + 1.6f);
+	glVertex2f(bx - 0.f, by + 1.6f);
+	glEnd();
+	glDisable(GL_BLEND);
+
+	ETSIDI::setTextColor(1.f, 1.f, 1.f);
+	ETSIDI::setFont("fuentes/auxiliar.ttf", 40);
+	ETSIDI::printxy(buf.c_str(), bx + 2, by);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glDisable(GL_BLEND);
+}
+
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
@@ -64,6 +102,15 @@ void Mundo::tecla(unsigned char key)
 		}
 		return;
 	}
+	// Partida terminada: solo la tecla C vuelve al menu
+	if (partidaTerminada) {
+		if (key == 'c' || key == 'C') {
+			partidaTerminada = false;
+			enPartida = false;
+			mensajeFinPartida.clear();
+		}
+		return;
+	}
 	if (arena.estaActiva()) {
 		if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, true);
 		if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, true);
@@ -77,8 +124,8 @@ void Mundo::tecla(unsigned char key)
 
 	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
 	// Cada cursor se mueve solo durante su turno
-	// Movimiento por teclado sustituido por el raton (ver Mundo::clicRaton)
-	// if (turno == 0) cursor.mover(key);  // WASD
+	// Movimiento por teclado ahora es complementario al raton
+	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
 		// El cursor activo depende del turno
@@ -110,7 +157,26 @@ void Mundo::tecla(unsigned char key)
 				eligiendoTeleportOrigen = true; // paso 1: elegir la pieza a teletransportar
 			}
 
-			// futuro: '4' IMPRISON, '5' SHIFT_TIME, '7' SUMMON
+			if (key == '4' && m->puedeUsarHechizo(Hechizo::IMPRISON)) {
+				tablero.activarHechizo(m, &hechizoImprison);
+				m->usarHechizo(Hechizo::IMPRISON);
+				magoSeleccionado = nullptr;
+			}
+			if (key == '5' && m->puedeUsarHechizo(Hechizo::SHIFT_TIME)) {
+				hechizoShiftTime.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
+				m->usarHechizo(Hechizo::SHIFT_TIME);
+				mensajeFeedback = hechizoShiftTime.getMensajeExito();
+				tiempoFeedback = 3.0;
+				magoSeleccionado = nullptr;
+			}
+
+			if (key == '7' && m->puedeUsarHechizo(Hechizo::TRANSFORM)) {
+				hechizoTransform.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
+				m->usarHechizo(Hechizo::TRANSFORM);
+				mensajeFeedback = hechizoTransform.getMensajeExito();
+				tiempoFeedback = 3.0;
+				magoSeleccionado = nullptr;
+			}
 		}
 	}
 
@@ -129,6 +195,12 @@ void Mundo::tecla(unsigned char key)
 				magoSeleccionado = nullptr;
 			}
 		}
+	}
+
+	//prueba para abrir pantalla de ganar, la tecla T dispara pantalla de fin de partida
+	if (key == 't' || key == 'T') {
+		partidaTerminada = true;
+		mensajeFinPartida = "ACUERDTE DE ELIMINAR ESTO";
 	}
 
 	if (key == 27) {
@@ -202,11 +274,33 @@ void Mundo::jugarCasilla(Pos casilla)
 	}
 
 	bool combate = tablero.gestionarEntrada(casilla, turno);
+	tablero.setTurnoActual(numeroJugada);
 	magoSeleccionado = nullptr; // <-- añadir: cualquier movimiento normal limpia la seleccion de mago
 	if (turno == 0)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
 	else
 		cursor2.setBloqueado(tablero.piezaBloqueada(cursor2.getPosicion()));
+
+	if (combate) {
+		BandoVentaja ventaja = tablero.getBandoVentaja();
+		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), ventaja);
+		arena.activa();
+	}
+}
+void Mundo::comprobarFinPartida()
+{
+	if (partidaTerminada) return;
+
+	// algun bando controla los 5 puntos de poder
+	int ganador = tablero.comprobarPuntosDePoder();
+	if (ganador == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+	}
+	else if (ganador == 1) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+	}
 }
 void Mundo::mueve()
 {
@@ -218,40 +312,87 @@ void Mundo::mueve()
 		{
 		case AccionTransicion::EMPEZAR_PARTIDA:
 			enPartida = true;
+			tiempoPartida = 0.0;
 			Audio::playMusicaTablero();
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
 			break;
-		case AccionTransicion::ENTRAR_ARENA:
-			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2());
+
+		case AccionTransicion::ABRIR_CARTEL_VERSUS:
+			rutaCartel = "imagenes/carteles/cartel_vs.png";
+			mostrandoCartel = true;
+			tiempoCartel = 2.0;
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
+			break;
+
+		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
+			rutaCartel = arena.getPlantaGano() ? "imagenes/carteles/cartel_plantas_ganan.png" : "imagenes/carteles/cartel_plantas_pierden.png";
+			mostrandoCartel = true;
+			tiempoCartel = 2.0;
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
+			break;
+
+		case AccionTransicion::CERRAR_CARTEL_VERSUS:
+			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), tablero.getBandoVentaja());
 			arena.activa();
+			mostrandoCartel = false;
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
 			break;
-		case AccionTransicion::VOLVER_TABLERO:
+
+		case AccionTransicion::CERRAR_CARTEL_RESULTADO:
+		{
 			tablero.resolverCombate(arena.getPlantaGano());
+			tablero.avanzarCiclo();
+
+			Mago* m1 = dynamic_cast<Mago*>(tablero.getPersonaje1());
+			if (m1 && m1->estaTransformado()) m1->revertirTransformacion();
+			Mago* m2 = dynamic_cast<Mago*>(tablero.getPersonaje2());
+			if (m2 && m2->estaTransformado()) m2->revertirTransformacion();
+
 			arena.desactiva();
 			Audio::playMusicaTablero();
+			mostrandoCartel = false;
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
+			comprobarFinPartida();
 			break;
+		}
+
 		default:
 			break;
 		}
-		accionPendiente = AccionTransicion::NINGUNA;
-		transicion.descubrir();
 	}
 
-	if (!enPartida || enPausa) return;
+	if (mostrandoCartel && !transicion.estaActiva())
+	{
+		tiempoCartel -= 0.025;
+		if (tiempoCartel <= 0.0)
+		{
+			accionPendiente = (rutaCartel.find("cartel_vs") != std::string::npos) ? AccionTransicion::CERRAR_CARTEL_VERSUS : AccionTransicion::CERRAR_CARTEL_RESULTADO;
+			transicion.cubrir();
+		}
+	}
+
+	if (!enPartida || enPausa || partidaTerminada) return;
+	tiempoPartida += 0.025;
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA)
+	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
 	{
-		accionPendiente = AccionTransicion::VOLVER_TABLERO;
+		accionPendiente = AccionTransicion::ABRIR_CARTEL_RESULTADO;
 		transicion.cubrir();
 	}
 
 	int resultado = tablero.actualizarAnimacion(0.025);
 	if (resultado == 1 && accionPendiente == AccionTransicion::NINGUNA)
 	{
-		accionPendiente = AccionTransicion::ENTRAR_ARENA;
+		accionPendiente = AccionTransicion::ABRIR_CARTEL_VERSUS;
 		transicion.cubrir();
 	}
 
@@ -259,8 +400,25 @@ void Mundo::mueve()
 		tiempoFeedback -= 0.025;
 		if (tiempoFeedback <= 0.0) mensajeFeedback.clear();
 	}
-	if (resultado == 2)
+
+	if (resultado == 2) {
 		turno = 1 - turno;
+		tablero.setTurnoActual(numeroJugada);
+		numeroJugada++;
+		comprobarFinPartida();
+	}
+
+	BandoVentaja ventajaActual = tablero.getBandoVentaja();
+	for (int i = 0; i < FILAS; i++)
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = tablero.getPieza(Pos(i, j));
+			if (p == nullptr || !p->estaAprisionada()) continue;
+
+			bool favorece = (p->getBando() == Bando::planta && ventajaActual == BandoVentaja::PLANTA)
+				|| (p->getBando() == Bando::zombi && ventajaActual == BandoVentaja::ZOMBI);
+
+			if (favorece) p->liberar();
+		}
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -287,7 +445,62 @@ void Mundo::dibuja()
 	//caja.dibuja();
 	arena.dibuja();
 	dibujaPanelHechizos();
+
+	if (!enPausa && !mostrandoCartel && !transicion.estaActiva())
+		dibujaTimer();
+
 	if (enPausa) menu.dibujaPausa(opcionPausa);
+
+	if (mostrandoCartel && !rutaCartel.empty())
+	{
+		extern float G_XMAX;
+		extern float G_YMAX;
+		auto tex = ETSIDI::getTexture(rutaCartel.c_str());
+		if (tex.id != 0)
+		{
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBindTexture(GL_TEXTURE_2D, tex.id);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+			glEnd();
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		}
+	}
+
+	// creacion de la pantalla de fin de partida
+	if (partidaTerminada)
+	{
+		extern float G_XMAX;
+		extern float G_YMAX;
+
+		// Fondo semitransparente oscuro
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
+		glBegin(GL_QUADS);
+		glVertex3f(-G_XMAX, -G_YMAX, 0);
+		glVertex3f(G_XMAX, -G_YMAX, 0);
+		glVertex3f(G_XMAX, G_YMAX, 0);
+		glVertex3f(-G_XMAX, G_YMAX, 0);
+		glEnd();
+		glDisable(GL_BLEND);
+
+		// Texto
+		ETSIDI::setTextColor(1, 1, 0);
+		ETSIDI::setFont("fuentes/titulo.ttf", 50);
+		ETSIDI::printxy(mensajeFinPartida.c_str(), -8, 3);
+		ETSIDI::setTextColor(1, 1, 1);
+		ETSIDI::setFont("fuentes/texto.ttf", 26);
+		ETSIDI::printxy("Pulsa C para volver al menu", -6, -2);
+	}
+
 	transicion.dibuja();
 }
 // Flechas
@@ -304,8 +517,8 @@ void Mundo::teclaEspecial(int key)
 		return;
 	}
 	if (tablero.estaAnimando()) return;
-	// Movimiento por teclado sustituido por el raton (ver Mundo::clicRaton)
-	// if (turno == 1) cursor2.moverFlechas(key);
+	// Movimiento por teclado ahora es complementario al raton
+	if (turno == 1) cursor2.moverFlechas(key);
 }
 
 void Mundo::teclaLevantada(unsigned char key)
@@ -339,7 +552,7 @@ void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 {
 	if (transicion.estaActiva()) return;
 	if (boton != GLUT_LEFT_BUTTON || estado != GLUT_DOWN) return;
-	if (!enPartida || enPausa) return;
+	if (!enPartida || enPausa || partidaTerminada) return;
 	if (arena.estaActiva()) return;        // en la arena el raton no se usa
 	if (tablero.estaAnimando()) return;     // igual que con teclado: ignorar durante animacion
 
@@ -430,7 +643,7 @@ std::string Mundo::generarTextoPanel() const
 	}
 
 	std::string texto;
-	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Summon" };
+	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Transform" };
 	for (int i = 0; i < 7; i++)
 		texto += std::to_string(i + 1) + "." + nombres[i] + "  ";
 	return texto;
@@ -439,8 +652,7 @@ void Mundo::dibujaPanelHechizos() const
 {
 	bool debeMostrarse = mostrarPanelHechizos || eligiendoRevive || eligiendoExchangeOrigen || eligiendoTeleportOrigen || tablero.modoHechizoActivo();
 	if (!debeMostrarse) return;
-	if (magoSeleccionado == nullptr && mensajeFeedback.empty()) return;
-
+	if (magoSeleccionado == nullptr && mensajeFeedback.empty() && !tablero.modoHechizoActivo()) return;
 	std::string texto = generarTextoPanel();
 	if (texto.empty()) return;
 

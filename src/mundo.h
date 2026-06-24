@@ -16,11 +16,21 @@
 #include "hechizos/hechizoExchange.h"
 #include "hechizos/hechizoHeal.h"
 #include "hechizos/hechzoTeleport.h"
+#include "hechizos/hechizoImprison.h"
+#include "hechizos/hechizoShiftTime.h"
+#include "hechizos/hechizoTransform.h"
 #include <string>
 #include "piezas/mago.h"
 #include "transicion.h"
 
-enum class AccionTransicion { NINGUNA, EMPEZAR_PARTIDA, ENTRAR_ARENA, VOLVER_TABLERO };
+enum class AccionTransicion {
+	NINGUNA,
+	EMPEZAR_PARTIDA,
+	ABRIR_CARTEL_VERSUS,
+	ABRIR_CARTEL_RESULTADO,
+	CERRAR_CARTEL_VERSUS,
+	CERRAR_CARTEL_RESULTADO
+};
 
 class Mundo
 {
@@ -28,7 +38,8 @@ class Mundo
 	Cursor cursor{ 4, 4, 255, 220,   0 };  // amarillo
 	Cursor cursor2{ 4, 4, 180,   0, 255 };  //morado
 	listapieza ListaPieza;
-	int     turno = 0;
+	int turno = 0;
+	int numeroJugada = 0;
 	std::vector<Pos> casillasValidas;
 	arena arena;
 	Menu    menu;
@@ -36,8 +47,14 @@ class Mundo
 	bool    enPausa = false;
 	Caja caja;
 	int opcionPausa = 0;
+
 	Transicion transicion;
 	AccionTransicion accionPendiente = AccionTransicion::NINGUNA;
+	bool     mostrandoCartel = false;
+	double   tiempoCartel = 0.0;
+	std::string rutaCartel = "";
+	AccionTransicion accionTrasCarte = AccionTransicion::NINGUNA;
+
 	void jugarCasilla(Pos casilla); // logica comun: seleccionar/mover pieza en esa casilla del turno actual
 	hechizoHeal hechizoHeal;
 	Pieza* magoSeleccionado = nullptr;
@@ -54,6 +71,17 @@ class Mundo
 	bool eligiendoExchangeOrigen = false;
 	hechizoTeleport hechizoTeleport;
 	bool eligiendoTeleportOrigen = false;
+	hechizoImprison hechizoImprison;
+	int ronda = 0;
+	hechizoShiftTime hechizoShiftTime;
+	hechizoTransform hechizoTransform;
+
+	bool partidaTerminada = false;
+	std::string mensajeFinPartida;
+	void comprobarFinPartida();
+
+	double tiempoPartida = 0.0;
+	void   dibujaTimer() const;
 
 public:
 	void inicializa();

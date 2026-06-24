@@ -15,7 +15,7 @@ public:
             1, //rad de mov
             b, pos)
     {
-        radioGolpe = 2.5;
+        radioGolpe = 3.5;
         tiempoAnimAtaque = 0.3;
        
     };
@@ -32,6 +32,12 @@ public:
     bool puedeDiagonal() const override { return true; };
 
     bool esMelee()const override { return true; }
+
+    void dibujaArena(float x, float y) const override
+    {
+        int frame = getFrame(getDireccion(), getAccion());
+        dibujarSprite(getRutaSprite(), x, y, 1.4f, frame, 6); 
+    }
 
     
 };

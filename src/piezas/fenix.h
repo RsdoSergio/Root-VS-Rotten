@@ -4,6 +4,13 @@
 class Fenix : public PiezaVuelo {
     bool poderUsado = false; // Revive una vez con 15% PV, x1.5 vel y x2 daño durante 5s
 
+    bool explosionActiva = false;
+    double radioExplosionActual = 0.0;
+    double radioExplosionMax = 5.0;
+    double tiempoExplosion = 0.0;
+    double duracionExplosion = 0.5;
+
+    bool danoExplosionPendiente = false;    
 public:
     Fenix(Bando b, Pos pos)
         : PiezaVuelo(
@@ -26,4 +33,19 @@ public:
         return bando == Bando::planta ? "Boca de Dragon" : "Zombidito Dragon";
     }
     void usarAtaqueSecundario() override {};
+
+    bool esMelee() const override { return true; }
+
+    void actualizarEfectos(double dt) override;
+
+    double getRadioExplosionMax() const { return radioExplosionMax; }
+    bool getDanoExplosionPendiente() const { return danoExplosionPendiente; }
+    
+    void resetDanoExplosion() { danoExplosionPendiente = false; }
+    double consumirDanoExplosion() override;
+    
+
+    void activarExplosion() override;
+    void dibujaArena(float x, float y) const override;
+    void actualizarArena(double dt) override;
 };
