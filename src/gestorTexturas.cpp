@@ -49,7 +49,7 @@ void precargarTexturas() {
 	int total = sizeof(texturas) / sizeof(texturas[0]); //nº elementos
 
 	glClear(GL_COLOR_BUFFER_BIT);
-	ETSIDI::setFont("fuentes/texto.ttf", 50);
+	ETSIDI::setFont("fuentes/auxiliar.ttf", 70);
 	ETSIDI::setTextColor(1.f, 1.f, 1.f);
 	ETSIDI::printxy("Cargando...  0%", -10.0f, 0.0f);
 	glutSwapBuffers();
@@ -64,7 +64,7 @@ void precargarTexturas() {
 		glutSwapBuffers();
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		ETSIDI::setFont("fuentes/texto.ttf", 50);
+		ETSIDI::setFont("fuentes/auxiliar.ttf", 70);
 		ETSIDI::setTextColor(1.f, 1.f, 1.f);
 		ETSIDI::printxy(msg.c_str(), -10.0f, 0.0f);
 		glutSwapBuffers();

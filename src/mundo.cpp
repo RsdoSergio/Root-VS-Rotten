@@ -30,6 +30,44 @@ void Mundo::inicializa() {
 	Audio::playMusica("audio/INTRO.mp3", true);
 };
 
+void Mundo::dibujaTimer() const
+{
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	int totalSeg = (int)tiempoPartida;
+	int minutos = totalSeg / 60;
+	int segundos = totalSeg % 60;
+
+	std::string textoMin = std::to_string(minutos);
+	std::string textoSeg = std::to_string(segundos);
+
+	if (minutos < 10)  textoMin = "0" + textoMin;
+	if (segundos < 10) textoSeg = "0" + textoSeg;
+
+	std::string buf = textoMin + "." + textoSeg;
+
+	float bx = G_XMAX - 5.8f;
+	float by = -G_YMAX + 1.0f;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(0.0f, 0.0f, 0.0f, 0.55f);
+	glBegin(GL_QUADS);
+	glVertex2f(bx - 0.f, by - 0.4f);
+	glVertex2f(bx + 5.4f, by - 0.4f);
+	glVertex2f(bx + 5.4f, by + 1.6f);
+	glVertex2f(bx - 0.f, by + 1.6f);
+	glEnd();
+	glDisable(GL_BLEND);
+
+	ETSIDI::setTextColor(1.f, 1.f, 1.f);
+	ETSIDI::setFont("fuentes/auxiliar.ttf", 40);
+	ETSIDI::printxy(buf.c_str(), bx + 2, by);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glDisable(GL_BLEND);
+}
+
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
 {
@@ -86,7 +124,7 @@ void Mundo::tecla(unsigned char key)
 
 	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
 	// Cada cursor se mueve solo durante su turno
-	// Movimiento por teclado ahora es complementario al raton 
+	// Movimiento por teclado ahora es complementario al raton
 	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
@@ -139,7 +177,6 @@ void Mundo::tecla(unsigned char key)
 				tiempoFeedback = 3.0;
 				magoSeleccionado = nullptr;
 			}
-
 		}
 	}
 
@@ -275,6 +312,7 @@ void Mundo::mueve()
 		{
 		case AccionTransicion::EMPEZAR_PARTIDA:
 			enPartida = true;
+			tiempoPartida = 0.0;
 			Audio::playMusicaTablero();
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
@@ -339,6 +377,7 @@ void Mundo::mueve()
 	}
 
 	if (!enPartida || enPausa || partidaTerminada) return;
+	tiempoPartida += 0.025;
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
@@ -364,7 +403,7 @@ void Mundo::mueve()
 
 	if (resultado == 2) {
 		turno = 1 - turno;
-		tablero.setTurnoActual(numeroJugada); 
+		tablero.setTurnoActual(numeroJugada);
 		numeroJugada++;
 		comprobarFinPartida();
 	}
@@ -380,7 +419,6 @@ void Mundo::mueve()
 
 			if (favorece) p->liberar();
 		}
-
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -407,6 +445,10 @@ void Mundo::dibuja()
 	//caja.dibuja();
 	arena.dibuja();
 	dibujaPanelHechizos();
+
+	if (!enPausa && !mostrandoCartel && !transicion.estaActiva())
+		dibujaTimer();
+
 	if (enPausa) menu.dibujaPausa(opcionPausa);
 
 	if (mostrandoCartel && !rutaCartel.empty())
@@ -432,7 +474,7 @@ void Mundo::dibuja()
 		}
 	}
 
-	// creacion de la pantalla de fin de partida 
+	// creacion de la pantalla de fin de partida
 	if (partidaTerminada)
 	{
 		extern float G_XMAX;
@@ -443,10 +485,10 @@ void Mundo::dibuja()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
 		glBegin(GL_QUADS);
-			glVertex3f(-G_XMAX, -G_YMAX, 0);
-			glVertex3f( G_XMAX, -G_YMAX, 0);
-			glVertex3f( G_XMAX,  G_YMAX, 0);
-			glVertex3f(-G_XMAX,  G_YMAX, 0);
+		glVertex3f(-G_XMAX, -G_YMAX, 0);
+		glVertex3f(G_XMAX, -G_YMAX, 0);
+		glVertex3f(G_XMAX, G_YMAX, 0);
+		glVertex3f(-G_XMAX, G_YMAX, 0);
 		glEnd();
 		glDisable(GL_BLEND);
 
@@ -475,7 +517,7 @@ void Mundo::teclaEspecial(int key)
 		return;
 	}
 	if (tablero.estaAnimando()) return;
-	// Movimiento por teclado ahora es complementario al raton 
+	// Movimiento por teclado ahora es complementario al raton
 	if (turno == 1) cursor2.moverFlechas(key);
 }
 
