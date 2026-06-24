@@ -8,6 +8,7 @@
 #include "gestorTexturas.h"
 #include <ctime>
 #include "hechizos/hechizoExchange.h"
+#include "audio.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
@@ -94,11 +95,21 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	if (enPausa) {
-		if (key == 'w' || key == 'W') opcionPausa = 0;
-		if (key == 's' || key == 'S') opcionPausa = 1;
+		if (key == 'w' || key == 'W') {
+			opcionPausa = 0;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
+		if (key == 's' || key == 'S') {
+			opcionPausa = 1;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
 		if (key == 13) {
+			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcionPausa == 0) enPausa = false;
 			if (opcionPausa == 1) exit(0);
+
 		}
 		return;
 	}
@@ -139,30 +150,36 @@ void Mundo::tecla(unsigned char key)
 		if (m != nullptr)
 		{
 			if (key == '2' && m->puedeUsarHechizo(Hechizo::HEAL)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoHeal);
 				m->usarHechizo(Hechizo::HEAL);
 				magoSeleccionado = nullptr;
 			}
 
 			if (key == '3' && m->puedeUsarHechizo(Hechizo::REVIVE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoRevive = true;
 				mostrarPanelHechizos = true;
 			}
 
 			if (key == '6' && m->puedeUsarHechizo(Hechizo::EXCHANGE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoExchangeOrigen = true; // paso 1: elegir la primera pieza en el tablero
 			}
 
 			if (key == '1' && m->puedeUsarHechizo(Hechizo::TELEPORT)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoTeleportOrigen = true; // paso 1: elegir la pieza a teletransportar
 			}
 
 			if (key == '4' && m->puedeUsarHechizo(Hechizo::IMPRISON)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoImprison);
 				m->usarHechizo(Hechizo::IMPRISON);
 				magoSeleccionado = nullptr;
 			}
 			if (key == '5' && m->puedeUsarHechizo(Hechizo::SHIFT_TIME)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				hechizoShiftTime.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
 				m->usarHechizo(Hechizo::SHIFT_TIME);
 				mensajeFeedback = hechizoShiftTime.getMensajeExito();
@@ -171,6 +188,7 @@ void Mundo::tecla(unsigned char key)
 			}
 
 			if (key == '7' && m->puedeUsarHechizo(Hechizo::TRANSFORM)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				hechizoTransform.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
 				m->usarHechizo(Hechizo::TRANSFORM);
 				mensajeFeedback = hechizoTransform.getMensajeExito();
@@ -320,6 +338,8 @@ void Mundo::mueve()
 
 		case AccionTransicion::ABRIR_CARTEL_VERSUS:
 			rutaCartel = "imagenes/carteles/cartel_vs.png";
+			Audio::playSonido("audio/FIGHT.mp3");
+
 			mostrandoCartel = true;
 			tiempoCartel = 2.0;
 			accionPendiente = AccionTransicion::NINGUNA;
@@ -327,7 +347,14 @@ void Mundo::mueve()
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
-			rutaCartel = arena.getPlantaGano() ? "imagenes/carteles/cartel_plantas_ganan.png" : "imagenes/carteles/cartel_plantas_pierden.png";
+			if (arena.getPlantaGano()) {
+				rutaCartel = "imagenes/carteles/cartel_plantas_ganan.png";
+				Audio::playSonido("audio/VICTORIA_PLANTAS.mp3");
+			}
+			else {
+				rutaCartel = "imagenes/carteles/cartel_plantas_pierden.png";
+				Audio::playSonido("audio/VICTORIA_ZOMBIS.mp3");
+			}
 			mostrandoCartel = true;
 			tiempoCartel = 2.0;
 			accionPendiente = AccionTransicion::NINGUNA;
