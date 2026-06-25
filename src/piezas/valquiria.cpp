@@ -30,19 +30,19 @@ void Valquiria::actualizarEfectos(double dt)
 	auto* golpe = new Proyectil(pos, Vector2D(0.0, 0.0), fuerza, tiempoAnimAtaque);
 	golpe->setInvisible();
 	proyectilesPendientes.push_back(golpe);
+}
 
 void Valquiria::iniciarRafaga(int dx, int dy)
 {
-    golpesPendientes = 3;
-    timerEntreGolpes = 0.3;
-    dirX = dx;
-    dirY = dy;
+	golpesPendientes = 3;
+	timerEntreGolpes = 0.3;
+	dirX = dx;
+	dirY = dy;
 }
 
 std::vector<Proyectil*> Valquiria::recogerProyectiles()
 {
-    std::vector<Proyectil*> tmp = proyectilesPendientes;
-    proyectilesPendientes.clear();
-    return tmp;
+	std::vector<Proyectil*> tmp = proyectilesPendientes;
+	proyectilesPendientes.clear();
+	return tmp;
 }
-

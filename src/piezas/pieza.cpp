@@ -35,8 +35,6 @@ void Pieza::resetEjes() {
 	ultimo_eje_reciente = 0;
 }
 
-
-
 void Pieza::dibujaArena(float x, float y) const
 {
 	bool atacando = (getAccion() == AccionPieza::ATACAR);
@@ -50,7 +48,7 @@ void Pieza::dibujaArena(float x, float y) const
 void Pieza::dibujaTablero(float x, float y) const
 {
 	int frame = getFrame(getDireccion(), getAccion());
-	dibujarSprite(rutaSprite, x, y, 1.1f, frame, numFramesNormal);
+	dibujarSprite(rutaSprite, x, y, 1.3f, frame, numFramesNormal);
 }
 void Pieza::actualizarAtaque(double dt)
 {
