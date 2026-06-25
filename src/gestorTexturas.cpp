@@ -44,12 +44,17 @@ void precargarTexturas() {
 	"imagenes/carteles/cartel_vs.png",
 	"imagenes/carteles/cartel_plantas_ganan.png",
 	"imagenes/carteles/cartel_plantas_pierden.png",
+	"imagenes/fondos/combate_20.png",
+	"imagenes/fondos/combate_40.png",
+	"imagenes/fondos/combate_60.png",
+	"imagenes/fondos/combate_80.png",
+	"imagenes/fondos/combate_100.png"
 	};
 
 	int total = sizeof(texturas) / sizeof(texturas[0]); //nº elementos
 
 	glClear(GL_COLOR_BUFFER_BIT);
-	ETSIDI::setFont("fuentes/texto.ttf", 50);
+	ETSIDI::setFont("fuentes/auxiliar.ttf", 70);
 	ETSIDI::setTextColor(1.f, 1.f, 1.f);
 	ETSIDI::printxy("Cargando...  0%", -10.0f, 0.0f);
 	glutSwapBuffers();
@@ -64,7 +69,7 @@ void precargarTexturas() {
 		glutSwapBuffers();
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		ETSIDI::setFont("fuentes/texto.ttf", 50);
+		ETSIDI::setFont("fuentes/auxiliar.ttf", 70);
 		ETSIDI::setTextColor(1.f, 1.f, 1.f);
 		ETSIDI::printxy(msg.c_str(), -10.0f, 0.0f);
 		glutSwapBuffers();
@@ -83,7 +88,7 @@ void dibujarSprite(const std::string& ruta, float x, float y, float tam, int fra
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture(ruta.c_str()).id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
 	glTexCoord2f(u0, 1.0f); glVertex3f(x - tam, y - tam, 0);

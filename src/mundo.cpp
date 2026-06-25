@@ -8,6 +8,7 @@
 #include "gestorTexturas.h"
 #include <ctime>
 #include "hechizos/hechizoExchange.h"
+#include "audio.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
@@ -29,6 +30,44 @@ void Mundo::inicializa() {
 	const float pos = (9 * TAM) / 2.0f;
 	Audio::playMusica("audio/INTRO.mp3", true);
 };
+
+void Mundo::dibujaTimer() const
+{
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	int totalSeg = (int)tiempoPartida;
+	int minutos = totalSeg / 60;
+	int segundos = totalSeg % 60;
+
+	std::string textoMin = std::to_string(minutos);
+	std::string textoSeg = std::to_string(segundos);
+
+	if (minutos < 10)  textoMin = "0" + textoMin;
+	if (segundos < 10) textoSeg = "0" + textoSeg;
+
+	std::string buf = textoMin + "." + textoSeg;
+
+	float bx = G_XMAX - 5.8f;
+	float by = -G_YMAX + 1.0f;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(0.0f, 0.0f, 0.0f, 0.55f);
+	glBegin(GL_QUADS);
+	glVertex2f(bx - 0.f, by - 0.4f);
+	glVertex2f(bx + 5.4f, by - 0.4f);
+	glVertex2f(bx + 5.4f, by + 1.6f);
+	glVertex2f(bx - 0.f, by + 1.6f);
+	glEnd();
+	glDisable(GL_BLEND);
+
+	ETSIDI::setTextColor(1.f, 1.f, 1.f);
+	ETSIDI::setFont("fuentes/auxiliar.ttf", 40);
+	ETSIDI::printxy(buf.c_str(), bx + 2, by);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glDisable(GL_BLEND);
+}
 
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
@@ -56,9 +95,18 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	if (enPausa) {
-		if (key == 'w' || key == 'W') opcionPausa = 0;
-		if (key == 's' || key == 'S') opcionPausa = 1;
+		if (key == 'w' || key == 'W') {
+			opcionPausa = 0;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
+		if (key == 's' || key == 'S') {
+			opcionPausa = 1;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
 		if (key == 13) {
+			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcionPausa == 0) enPausa = false;
 			if (opcionPausa == 1) exit(0);
 		}
@@ -86,7 +134,7 @@ void Mundo::tecla(unsigned char key)
 
 	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
 	// Cada cursor se mueve solo durante su turno
-	// Movimiento por teclado ahora es complementario al raton 
+	// Movimiento por teclado ahora es complementario al raton
 	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
@@ -101,30 +149,36 @@ void Mundo::tecla(unsigned char key)
 		if (m != nullptr)
 		{
 			if (key == '2' && m->puedeUsarHechizo(Hechizo::HEAL)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoHeal);
 				m->usarHechizo(Hechizo::HEAL);
 				magoSeleccionado = nullptr;
 			}
 
 			if (key == '3' && m->puedeUsarHechizo(Hechizo::REVIVE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoRevive = true;
 				mostrarPanelHechizos = true;
 			}
 
 			if (key == '6' && m->puedeUsarHechizo(Hechizo::EXCHANGE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoExchangeOrigen = true; // paso 1: elegir la primera pieza en el tablero
 			}
 
 			if (key == '1' && m->puedeUsarHechizo(Hechizo::TELEPORT)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoTeleportOrigen = true; // paso 1: elegir la pieza a teletransportar
 			}
 
 			if (key == '4' && m->puedeUsarHechizo(Hechizo::IMPRISON)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoImprison);
 				m->usarHechizo(Hechizo::IMPRISON);
 				magoSeleccionado = nullptr;
 			}
 			if (key == '5' && m->puedeUsarHechizo(Hechizo::SHIFT_TIME)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				hechizoShiftTime.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
 				m->usarHechizo(Hechizo::SHIFT_TIME);
 				mensajeFeedback = hechizoShiftTime.getMensajeExito();
@@ -133,13 +187,13 @@ void Mundo::tecla(unsigned char key)
 			}
 
 			if (key == '7' && m->puedeUsarHechizo(Hechizo::TRANSFORM)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				hechizoTransform.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
 				m->usarHechizo(Hechizo::TRANSFORM);
 				mensajeFeedback = hechizoTransform.getMensajeExito();
 				tiempoFeedback = 3.0;
 				magoSeleccionado = nullptr;
 			}
-
 		}
 	}
 
@@ -281,23 +335,34 @@ void Mundo::mueve()
 		{
 		case AccionTransicion::EMPEZAR_PARTIDA:
 			enPartida = true;
-			Audio::playMusicaTablero();
+			tiempoPartida = 0.0;
+			pendienteMusicaTablero = true;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_VERSUS:
 			rutaCartel = "imagenes/carteles/cartel_vs.png";
+			Audio::playSonido("audio/FIGHT.mp3");
+
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 3.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
-			rutaCartel = arena.getPlantaGano() ? "imagenes/carteles/cartel_plantas_ganan.png" : "imagenes/carteles/cartel_plantas_pierden.png";
+			Audio::stopMusica();
+			if (arena.getPlantaGano()) {
+				rutaCartel = "imagenes/carteles/cartel_plantas_ganan.png";
+				Audio::playSonido("audio/VICTORIA_PLANTAS.mp3");
+			}
+			else {
+				rutaCartel = "imagenes/carteles/cartel_plantas_pierden.png";
+				Audio::playSonido("audio/VICTORIA_ZOMBIS.mp3");
+			}
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 5.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
@@ -329,7 +394,7 @@ void Mundo::mueve()
 			if (m2 && m2->estaTransformado()) m2->revertirTransformacion();
 
 			arena.desactiva();
-			Audio::playMusicaTablero();
+			pendienteMusicaTablero = true;
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
@@ -340,6 +405,12 @@ void Mundo::mueve()
 		default:
 			break;
 		}
+	}
+
+	if (pendienteMusicaTablero && !transicion.estaActiva())
+	{
+		pendienteMusicaTablero = false;
+		Audio::playMusicaTablero();
 	}
 
 	if (mostrandoCartel && !transicion.estaActiva())
@@ -353,6 +424,7 @@ void Mundo::mueve()
 	}
 
 	if (!enPartida || enPausa || partidaTerminada) return;
+	tiempoPartida += 0.025;
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
@@ -378,7 +450,7 @@ void Mundo::mueve()
 
 	if (resultado == 2) {
 		turno = 1 - turno;
-		tablero.setTurnoActual(numeroJugada); 
+		tablero.setTurnoActual(numeroJugada);
 		numeroJugada++;
 		tablero.curarEnCasillasdePoder();
 	}
@@ -394,7 +466,6 @@ void Mundo::mueve()
 
 			if (favorece) p->liberar();
 		}
-
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -421,6 +492,10 @@ void Mundo::dibuja()
 	//caja.dibuja();
 	arena.dibuja();
 	dibujaPanelHechizos();
+
+	if (!enPausa && !mostrandoCartel && !transicion.estaActiva())
+		dibujaTimer();
+
 	if (enPausa) menu.dibujaPausa(opcionPausa);
 
 	if (mostrandoCartel && !rutaCartel.empty())
@@ -446,7 +521,7 @@ void Mundo::dibuja()
 		}
 	}
 
-	// creacion de la pantalla de fin de partida 
+	// creacion de la pantalla de fin de partida
 	if (partidaTerminada)
 	{
 		extern float G_XMAX;
@@ -457,10 +532,10 @@ void Mundo::dibuja()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
 		glBegin(GL_QUADS);
-			glVertex3f(-G_XMAX, -G_YMAX, 0);
-			glVertex3f( G_XMAX, -G_YMAX, 0);
-			glVertex3f( G_XMAX,  G_YMAX, 0);
-			glVertex3f(-G_XMAX,  G_YMAX, 0);
+		glVertex3f(-G_XMAX, -G_YMAX, 0);
+		glVertex3f(G_XMAX, -G_YMAX, 0);
+		glVertex3f(G_XMAX, G_YMAX, 0);
+		glVertex3f(-G_XMAX, G_YMAX, 0);
 		glEnd();
 		glDisable(GL_BLEND);
 
@@ -489,7 +564,7 @@ void Mundo::teclaEspecial(int key)
 		return;
 	}
 	if (tablero.estaAnimando()) return;
-	// Movimiento por teclado ahora es complementario al raton 
+	// Movimiento por teclado ahora es complementario al raton
 	if (turno == 1) cursor2.moverFlechas(key);
 }
 

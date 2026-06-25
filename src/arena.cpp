@@ -3,8 +3,7 @@
 #include "piezas/piezatierra.h"
 #include"piezas/piezavuelo.h"
 #include"piezas/piezateletransporte.h"
-#include"piezas/fenix.h"
-#include"piezas/unicornio.h"
+
 #include "interaccion.h"
 #include"piezas/pieza.h"
 #include "audio.h"
@@ -95,7 +94,6 @@ void arena::dibujaHUD() const
 	glVertex2d(0.0, HUD_TECHO);
 	glEnd();
 
-
 	double prop1 = (vidaMaxPieza1 > 0.0) ? (vidaPieza1 / vidaMaxPieza1) : 0.0;
 	double prop2 = (vidaMaxPieza2 > 0.0) ? (vidaPieza2 / vidaMaxPieza2) : 0.0;
 
@@ -143,6 +141,8 @@ void arena::activa()
 	activo = true;
 	terminado = false;
 	indiceFondo = 1 + rand() % 9;
+	indiceCombate = 0;
+	musicaViolentaActiva = false;
 	numObstaculos = 3 + rand() % 4;
 
 	for (int i = 0; i < MAX_OBSTACULOS; i++)
@@ -195,6 +195,7 @@ void arena::dibuja() const
 {
 	if (!activo) return;
 	dibujaFondo();
+	dibujaOverlayCombate();
 	dibujaInterior();
 	dibujaMarco();
 	dibujaHUD();
@@ -279,18 +280,18 @@ void arena::mueve(double dt)
 	if (!activo) return;
 
 	auto mover = [&](Pieza* p, const std::vector<Proyectil*>& proyectiles)
-		{ 
-			if (!p) return;
-		if (terminado) return;
-		p->actualizarAtaque(dt);
-		p->actualizarEfectos(dt);
-		if (p->estaAtacando() && p->bloqueaMovimientoAlAtacar())
 		{
-			p->setAccion(AccionPieza::ATACAR);
-			return;
-		}
-		if (p->estaAtacando()) p->setAccion(AccionPieza::ATACAR);//poner esto para qse ponga el frame de atacar si no se bloquea al hacerlo
-		p->actualizarArena(dt);
+			if (!p) return;
+			if (terminado) return;
+			p->actualizarAtaque(dt);
+			p->actualizarEfectos(dt);
+			if (p->estaAtacando() && p->bloqueaMovimientoAlAtacar())
+			{
+				p->setAccion(AccionPieza::ATACAR);
+				return;
+			}
+			if (p->estaAtacando()) p->setAccion(AccionPieza::ATACAR);//poner esto para qse ponga el frame de atacar si no se bloquea al hacerlo
+			p->actualizarArena(dt);
 		};
 
 	mover(pieza1, proyectil1);
@@ -299,7 +300,7 @@ void arena::mueve(double dt)
 	if (pieza1 && !dynamic_cast<PiezaVuelo*>(pieza1))
 		for (int i = 0; i < MAX_OBSTACULOS; i++)
 			Interaccion::choque(*pieza1, obstaculos[i]);
-	
+
 	mover(pieza2, proyectil2);
 	if (pieza2)
 		Interaccion::choque(*pieza2, caja);
@@ -317,10 +318,9 @@ void arena::mueve(double dt)
 
 	auto recoger = [&](Pieza* p, std::vector<Proyectil*>& proyectiles)
 		{
-			Unicornio* u = dynamic_cast<Unicornio*>(p);
-			if (u && u->tieneProyectilesPendientes())
+			if (p && p->tieneProyectilesPendientes())
 			{
-				auto nuevos = u->recogerProyectiles();
+				auto nuevos = p->recogerProyectiles();
 				proyectiles.insert(proyectiles.end(), nuevos.begin(), nuevos.end());
 			}
 		};
@@ -362,6 +362,30 @@ void arena::mueve(double dt)
 	if (pieza1) vidaPieza1 = pieza1->getVida();
 	if (pieza2) vidaPieza2 = pieza2->getVida();
 
+	if (pieza1 && pieza2) //eventos circustanciales arena
+	{
+		//proporción de vida restante pieza 0: muerta, 1: full vida
+		double prop1 = (vidaMaxPieza1 > 0.0) ? (vidaPieza1 / vidaMaxPieza1) : 1.0;
+		double prop2 = (vidaMaxPieza2 > 0.0) ? (vidaPieza2 / vidaMaxPieza2) : 1.0;
+
+		double propMin = (prop1 < prop2) ? prop1 : prop2;
+
+		int nuevoIndice = 0;
+		if (propMin <= 0.0)  nuevoIndice = 5;
+		else if (propMin <= 0.2)  nuevoIndice = 4;
+		else if (propMin <= 0.4)  nuevoIndice = 3;
+		else if (propMin <= 0.6)  nuevoIndice = 2;
+		else if (propMin <= 0.8)  nuevoIndice = 1;
+
+		if (nuevoIndice > indiceCombate)
+			indiceCombate = nuevoIndice;
+
+		if (!musicaViolentaActiva && (prop1 < 0.35 || prop2 < 0.35))
+		{
+			musicaViolentaActiva = true;
+			Audio::playMusicaViolenta();
+		}
+	}
 
 	// Fin de combate
 	if (pieza1 && !pieza1->estaViva()) { plantaGano = false;  terminado = true; } // murió pieza1, ganó pieza2
@@ -462,54 +486,52 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 {
 	if (!p || tiempoDisparo < p->getIntervaloAtaque()) return;
 
+	int dirX = p->getUltimoEjeX();
+	int dirY = p->getUltimoEjeY();
+
+	// Calcular dirección con último eje para ranged
+	if (dirX != 0 && dirY != 0)
+	{
+		if (p->getUltimoEjeReciente() == 0) dirY = 0;
+		else dirX = 0;
+	}
+	if (dirX == 0 && dirY == 0) dirX = dirDefecto;
+
 	if (p->esMelee())
 	{
+		Audio::playSonido("audio/ATAQUE_A_MELEE.mp3");
 		p->activarExplosion();
-		int dirX = p->getUltimoEjeX();
-		int dirY = p->getUltimoEjeY();
-		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
 
-		Vector2D pos(
-			p->getPosArena().getX() + dirX * 0.9,
-			p->getPosArena().getY() + dirY * 0.9
-		);
-		Vector2D vel(0.0, 0.0);
-		proyectiles.push_back(new Proyectil(pos, vel, p->getFuerza(), p->getTiempoAnimAtaque()));
-	}
-	else
-	{
-		int dirX = 0, dirY = 0;
-		if (p->getUltimoEjeX() != 0 && p->getUltimoEjeY() != 0)
+		if (p->tieneRafaga())
 		{
-			if (p->getUltimoEjeReciente() == 0) dirX = p->getUltimoEjeX();
-			else dirY = p->getUltimoEjeY();
+			p->iniciarRafaga(dirX, dirY);
+			// NO iniciarAtaque() — la ráfaga lo gestiona internamente
 		}
 		else
 		{
-			dirX = p->getUltimoEjeX();
-			dirY = p->getUltimoEjeY();
+			Vector2D pos(
+				p->getPosArena().getX() + dirX * 3.5,
+				p->getPosArena().getY() + dirY * 3.5
+			);
+			proyectiles.push_back(new Proyectil(pos, Vector2D(0.0, 0.0), p->getFuerza(), p->getTiempoAnimAtaque()));
+			p->iniciarAtaque();
 		}
-		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
-		Vector2D vel(dirX * p->getVelocidadProyectil(), dirY * p->getVelocidadProyectil());
-		proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
-		
-		// ... cálculo de dirección existente ...
-		if (dirX == 0 && dirY == 0) dirX = dirDefecto;
-
-		Unicornio* u = dynamic_cast<Unicornio*>(p);
-		if (u)
-			u->iniciarRafaga(dirX, dirY);
+	}
+	else
+	{
+		Audio::playSonido("audio/ATAQUE_A_DISTANCIA.mp3");
+		if (p->tieneRafaga())
+			p->iniciarRafaga(dirX, dirY);
 		else
 		{
 			Vector2D vel(dirX * p->getVelocidadProyectil(), dirY * p->getVelocidadProyectil());
 			proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
 		}
+		p->iniciarAtaque();
 	}
-	p->iniciarAtaque();
-	
+
 	tiempoDisparo = 0.0;
 }
-
 
 void arena::aplicarDanoExplosiones()
 {
@@ -525,4 +547,36 @@ void arena::aplicarDanoExplosiones()
 
 	if (pieza1 && pieza2) aplicar(pieza1, pieza2);
 	if (pieza1 && pieza2) aplicar(pieza2, pieza1);
+}
+
+void arena::dibujaOverlayCombate() const
+{
+	if (indiceCombate <= 0) return;
+
+	const char* rutas[] = {
+		"",                                     // 0
+		"imagenes/fondos/combate_20.png",       // 1
+		"imagenes/fondos/combate_40.png",       // 2
+		"imagenes/fondos/combate_60.png",       // 3
+		"imagenes/fondos/combate_80.png",       // 4
+		"imagenes/fondos/combate_100.png"       // 5
+	};
+
+	const char* ruta = rutas[indiceCombate];
+
+	extern float G_XMAX;
+	extern float G_YMAX;
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture(ruta).id);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
 }

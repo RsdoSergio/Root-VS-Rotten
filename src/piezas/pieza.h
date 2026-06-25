@@ -1,7 +1,9 @@
 #pragma once
 #include "vector2d.h"
 #include "pos.h"
+#include "proyectil.h"
 #include<iostream>
+#include<vector>
 
 enum class BandoVentaja { PLANTA, ZOMBI };
 
@@ -125,7 +127,10 @@ public:
 
 	void actualizarAtaque(double dt);
 
-	virtual ~Pieza() {}
+	virtual std::vector<Proyectil*> recogerProyectiles() { return {}; }
+	virtual bool tieneProyectilesPendientes() const { return false; }
+	virtual void iniciarRafaga(int dirX, int dirY) {}
+	virtual bool tieneRafaga() const { return false; }
 
 	bool estaAprisionada() const { return aprisionada; }
 	void aprisionar(int turnoActual) { aprisionada = true; turnoAprisionamiento = turnoActual; }
@@ -135,4 +140,5 @@ public:
 	void setVelocidad(double v) { velocidad = v; }
 	void setVidaMax(double v) { vidaMax = v; }
 	void setIntervaloAtaque(double v) { intervaloAtaque = v; }
+	virtual ~Pieza() {}
 };
