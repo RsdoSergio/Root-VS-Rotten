@@ -1,7 +1,9 @@
 #pragma once
 #include "vector2d.h"
 #include "pos.h"
+#include "proyectil.h"
 #include<iostream>
+#include<vector>
 
 enum class BandoVentaja { PLANTA, ZOMBI };
 
@@ -41,7 +43,7 @@ protected:
 	double radioGolpe = 1.5;
 	double tiempoAnimAtaque = 0.3;
 	AccionPieza accionActual = AccionPieza::IDLE;
-	float tamArena = 2.0f;//tamaño de sprite en arena
+	
 
 	bool   atacandoActivo = false;
 	double tiempoAtaqueRestante = 0.0;
@@ -49,6 +51,10 @@ protected:
 
 	bool aprisionada = false;
 	int turnoAprisionamiento = -1;
+
+	double bonusVida = 0.0;
+	double bonusFuerza = 0.0;
+	double bonusVelocidad = 0.0;
 
 	//para sprites
 	std::string rutaSpriteAtaque = "";
@@ -124,16 +130,23 @@ public:
 
 	virtual void actualizarEfectos(double dt) {}
 	virtual bool bloqueaMovimientoAlAtacar() const { return true; }
+	virtual Proyectil* crearProyectil(int dirX, int dirY);
 
 
 	void actualizarAtaque(double dt);
 
-	virtual ~Pieza() {}
+	virtual std::vector<Proyectil*> recogerProyectiles() { return {}; }
+	virtual bool tieneProyectilesPendientes() const { return false; }
+	virtual void iniciarRafaga(int dirX, int dirY) {}
+	virtual bool tieneRafaga() const { return false; }
 
 	bool estaAprisionada() const { return aprisionada; }
 	void aprisionar(int turnoActual) { aprisionada = true; turnoAprisionamiento = turnoActual; }
 	void liberar() { aprisionada = false; turnoAprisionamiento = -1; }
 	int getTurnoAprisionamiento() const { return turnoAprisionamiento; }
+	void setFuerza(double f) { fuerza = f; }
 	void setVelocidad(double v) { velocidad = v; }
 	void setVidaMax(double v) { vidaMax = v; }
+	
+	virtual ~Pieza() {}
 };

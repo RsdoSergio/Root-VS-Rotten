@@ -38,7 +38,7 @@ public:
     } // Proyectil medio
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
-    std::string getRutaSprite() const override;
+    
     
 
 

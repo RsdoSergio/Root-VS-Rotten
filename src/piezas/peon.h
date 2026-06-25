@@ -15,7 +15,7 @@ public:
             1, //rad de mov
             b, pos)
     {
-        radioGolpe = 2.5;
+        radioGolpe = 3.5;
         tiempoAnimAtaque = 0.3;
 
         rutaSpriteAtaque = bando == Bando::planta

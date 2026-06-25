@@ -40,3 +40,27 @@ void Audio::playMusicaCombate()
 	stopMusica();
 	playMusica(canciones[rand() % N], true);
 }
+
+void Audio::playMusicaViolenta()
+{
+	static const char* canciones[] = {
+		"audio/VIOLENTA1.mp3",
+		"audio/VIOLENTA2.mp3",
+		"audio/VIOLENTA3.mp3",
+		"audio/VIOLENTA4.mp3",
+		"audio/VIOLENTA5.mp3",
+		"audio/VIOLENTA6.mp3",
+		"audio/VIOLENTA7.mp3"
+	};
+	constexpr int N = sizeof(canciones) / sizeof(canciones[0]);
+	static int ultimaCancion = -1;
+
+	int nueva;
+	do {
+		nueva = rand() % N;
+	} while (nueva == ultimaCancion && N > 1);
+
+	ultimaCancion = nueva;
+	stopMusica();
+	playMusica(canciones[nueva], true);
+}

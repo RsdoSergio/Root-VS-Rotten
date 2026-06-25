@@ -35,30 +35,7 @@ void Pieza::resetEjes() {
 	ultimo_eje_reciente = 0;
 }
 
-int Pieza::getFrame(DirMovimiento dir, AccionPieza accion) const
-{
-	if (accion == AccionPieza::ATACAR)
-	{
-		if (!rutaSpriteAtaque.empty()) //direccion
-		{
-			switch (dir) {
-			case DirMovimiento::ESTE:  return 0;
-			case DirMovimiento::OESTE: return 1;
-			case DirMovimiento::NORTE: return 2;
-			case DirMovimiento::SUR:   return 3;
-			default:                   return 0;
-			}
-		}
-		return 5; // frame genérico de ataque
-	}
-	switch (dir) {
-	case DirMovimiento::ESTE:  return 1;
-	case DirMovimiento::OESTE: return 2;
-	case DirMovimiento::NORTE: return 3;
-	case DirMovimiento::SUR:   return 4;
-	default:                   return 0;
-	}
-}
+
 
 void Pieza::dibujaArena(float x, float y) const
 {
@@ -91,4 +68,35 @@ void Pieza::dibujaTableroGrande(float x, float y, float tam) const
 {
 	int frame = getFrame(getDireccion(), getAccion());
 	dibujarSprite(getRutaSprite(), x, y, tam, frame, 6);
+}
+
+int Pieza::getFrame(DirMovimiento dir, AccionPieza accion) const
+{
+	if (accion == AccionPieza::ATACAR)
+	{
+		if (!rutaSpriteAtaque.empty()) //direccion
+		{
+			switch (dir) {
+			case DirMovimiento::ESTE:  return 0;
+			case DirMovimiento::OESTE: return 1;
+			case DirMovimiento::NORTE: return 2;
+			case DirMovimiento::SUR:   return 3;
+			default:                   return 0;
+			}
+		}
+		return 5; // frame genérico de ataque
+	}
+	switch (dir) {
+	case DirMovimiento::ESTE:  return 1;
+	case DirMovimiento::OESTE: return 2;
+	case DirMovimiento::NORTE: return 3;
+	case DirMovimiento::SUR:   return 4;
+	default:                   return 0;
+	}
+}
+
+Proyectil* Pieza::crearProyectil(int dirX, int dirY)
+{
+	Vector2D vel(dirX * getVelocidadProyectil(), dirY * getVelocidadProyectil());
+	return new Proyectil(getPosArena(), vel, getFuerza());
 }

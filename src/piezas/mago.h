@@ -16,6 +16,12 @@ class Mago : public PiezaTeletransporte {
     double velocidadProyectil;
     std::array<bool, 7> hechizosUsados = { false };
 
+    bool transformado = false;
+    double vidaOriginal = 0.0;
+    double vidaMaxOriginal = 0.0;
+    double fuerzaOriginal = 0.0;
+    double velocidadOriginal = 0.0;
+
 public:
     Mago(Bando b, Pos pos)
         : PiezaTeletransporte(
@@ -48,10 +54,32 @@ public:
         hechizosUsados[static_cast<int>(h)] = true;
     }
 
-    // Antes se dibujaba como cuadrado de color (dorado LUZ / rojo oscuro OSCURIDAD);
-    // ahora usa sprite, ver Mago::getRutaSprite() en mago.cpp
-   
-    
+    bool estaTransformado() const { return transformado; }
+
+    void transformar() {
+        if (transformado) return; // evita transformar dos veces sin revertir
+        transformado = true;
+        vidaOriginal = getVida();
+        vidaMaxOriginal = getVidaMax();
+        fuerzaOriginal = getFuerza();
+        velocidadOriginal = getVelocidad();
+        setVidaMax(vidaMaxOriginal * 1.5);
+        curar(getVidaMax()); // sube tambien la vida actual al nuevo maximo
+        setFuerza(fuerzaOriginal * 1.5);
+        setVelocidad(velocidadOriginal * 1.5);
+    }
+
+    void revertirTransformacion() {
+        if (!transformado) return;
+        transformado = false;
+        setVidaMax(vidaMaxOriginal);
+        if (getVida() > vidaMaxOriginal) curar(vidaMaxOriginal - getVida()); // clamp si hiciera falta
+        setFuerza(fuerzaOriginal);
+        setVelocidad(velocidadOriginal);
+    }
+
+    std::string getRutaSprite() const override;
+
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Girasol Primitivo" : "Doctor Zombie";
