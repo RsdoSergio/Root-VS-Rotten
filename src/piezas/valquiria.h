@@ -12,7 +12,7 @@ class Valquiria : public PiezaVuelo {
 
     std::vector<Proyectil*> proyectilesPendientes;
 
-    static constexpr double OFFSET_FRENTE = 1.25;
+    static constexpr double OFFSET_FRENTE = 1.5;
     static constexpr double OFFSET_PERPENDICULAR = 1.2;
     static constexpr double DELAY_ENTRE_GOLPES = 0.15;
 
@@ -20,8 +20,8 @@ public:
     Valquiria(Bando b, Pos pos)
         : PiezaVuelo(
             10.0,  // PV medio
-            0.5,   // Daño bajo por proyectil (compensa con ráfaga)
-            6.85,   // Vel. movimiento muy alta
+            2.0,   // Daño bajo por proyectil (compensa con ráfaga)
+            9.0,   // Vel. movimiento muy alta
             0.45,   // Enfriamiento ráfaga muy bajo
             4,//rad de mov
             b, pos),

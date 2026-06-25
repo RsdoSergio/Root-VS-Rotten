@@ -23,7 +23,7 @@ public:
     {
         rutaSpriteAtaque = bando == Bando::planta
             ? "imagenes/sprites_plantas/boca_de_dragon_ataque.png"
-            : "imagenes/sprites_zombies/zombie_dragon_ataque.png";
+            : "imagenes/sprites_zombies/zombie_dragon_ataques.png";
 
         rutaSprite = bando == Bando::planta
             ? "imagenes/sprites_plantas/boca_de_dragon.png"

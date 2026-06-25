@@ -23,11 +23,11 @@ public:
     {
         rutaSprite = bando == Bando::planta
             ? "imagenes/sprites_plantas/mazorcanon.png"
-            : "imagenes/sprites_zombies/zombie_yeti.png";
+            : "imagenes/sprites_zombies/zombie_gondola.png";
 
         rutaSpriteAtaque = bando == Bando::planta
             ? "imagenes/sprites_plantas/mazorcanon_ataque.png"
-            : "imagenes/sprites_zombies/zombie_yeti_ataque.png";
+            : "imagenes/sprites_zombies/zombie_gondola_ataque.png";
 
         numFramesAtaque = 4;
     
