@@ -2,6 +2,7 @@
 #include "piezaVuelo.h"
 #include "proyectilacelerado.h"
 
+
 class Djinn : public PiezaVuelo {
     double velocidadProyectil; // Proyectil lento pero muy potente (one shot)
 
@@ -43,4 +44,7 @@ public:
 
     Proyectil* crearProyectil(int dirX, int dirY) override;
     void usarAtaqueSecundario() override {};
+
+    Proyectil* crearProyectil(int dirX, int dirY) override;
+    
 };

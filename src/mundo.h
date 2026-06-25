@@ -18,6 +18,7 @@
 #include "hechizos/hechzoTeleport.h"
 #include "hechizos/hechizoImprison.h"
 #include "hechizos/hechizoShiftTime.h"
+#include "hechizos/hechizoTransform.h"
 #include <string>
 #include "piezas/mago.h"
 #include "transicion.h"
@@ -38,7 +39,7 @@ class Mundo
 	Cursor cursor2{ 4, 4, 180,   0, 255 };  //morado
 	listapieza ListaPieza;
 	int turno = 0;
-	int numeroJugada = 0; 
+	int numeroJugada = 0;
 	std::vector<Pos> casillasValidas;
 	arena arena;
 	Menu    menu;
@@ -73,6 +74,15 @@ class Mundo
 	hechizoImprison hechizoImprison;
 	int ronda = 0;
 	hechizoShiftTime hechizoShiftTime;
+	hechizoTransform hechizoTransform;
+
+	bool partidaTerminada = false;
+	bool pendienteMusicaTablero = false;
+	std::string mensajeFinPartida;
+	void comprobarFinPartida();
+
+	double tiempoPartida = 0.0;
+	void   dibujaTimer() const;
 
 public:
 	void inicializa();

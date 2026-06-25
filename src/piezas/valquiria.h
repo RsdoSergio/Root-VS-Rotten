@@ -1,5 +1,7 @@
 #pragma once
 #include "piezaVuelo.h"
+#include "proyectil.h"
+#include <vector>
 
 class Valquiria : public PiezaVuelo {
     double velocidadProyectil; // Proyectil rápido, menos daño. También tiene ráfaga
@@ -18,7 +20,7 @@ public:
     Valquiria(Bando b, Pos pos)
         : PiezaVuelo(
             10.0,  // PV medio
-            2.0,   // Daño bajo por proyectil (compensa con ráfaga)
+            0.5,   // Daño bajo por proyectil (compensa con ráfaga)
             6.85,   // Vel. movimiento muy alta
             0.45,   // Enfriamiento ráfaga muy bajo
             4,//rad de mov

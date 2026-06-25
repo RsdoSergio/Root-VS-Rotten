@@ -1,8 +1,11 @@
 #pragma once
 #include"vector2d.h"
 #include<cstdbool>
+
 class Proyectil
 {
+protected:
+    
 	friend class Interaccion; 
     Vector2D posicion;
     Vector2D velocidad;

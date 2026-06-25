@@ -65,13 +65,13 @@ protected:
 public:
 	Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos);
 
-	double getVida()      const { return vida; }
-	double getVidaMax()   const { return vidaMax; }
-	double getFuerza()    const { return fuerza; }
-	double getVelocidad() const { return velocidad; }
+	double getVida()      const { return vida + bonusVida; }
+	double getVidaMax()   const { return vidaMax + bonusVida; }
+	double getFuerza()    const { return fuerza + bonusFuerza; }
+	double getVelocidad() const { return velocidad + bonusVelocidad; }
 	Bando  getBando()     const { return bando; }
 	Pos    getCasilla()   const { return casilla; }
-	bool   estaViva()     const { return vida > 0; }
+	bool   estaViva()     const { return getVida() > 0;}
 	double getIntervaloAtaque() const { return intervaloAtaque; }//nuevo para el cooldown de ataque
 	double getTiempoAnimAtaque() const { return tiempoAnimAtaque; }
 

@@ -60,7 +60,7 @@ void Pieza::actualizarAtaque(double dt)
 	{
 		tiempoAtaqueRestante = 0.0;
 		atacandoActivo = false;
-		accionActual = AccionPieza::IDLE; 
+		accionActual = AccionPieza::IDLE;
 	}
 }
 
@@ -84,7 +84,7 @@ int Pieza::getFrame(DirMovimiento dir, AccionPieza accion) const
 			default:                   return 0;
 			}
 		}
-		return 5; // frame genérico de ataque
+		return 5; // frame genï¿½rico de ataque
 	}
 	switch (dir) {
 	case DirMovimiento::ESTE:  return 1;

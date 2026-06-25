@@ -15,8 +15,8 @@ public:
 
 	bool tieneOrigenElegido() const { return origen.esValida(); }
 	void resetear() { origen = Pos(); }
-	std::string getMensajeSeleccion() const override { return "Pendiente de implementar"; }
-	std::string getMensajeExito() const override { return "Pendiente de implementar"; }
+	std::string getMensajeSeleccion() const override { return "Selecciona al aliado que quieres intercambiar"; }
+	std::string getMensajeExito() const override { return "Intercambio realizado con exito"; }
 
 };
 

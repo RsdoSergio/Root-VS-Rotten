@@ -32,17 +32,13 @@ public:
    
     
 
-    std::string getNombre() const override 
-    {
-        return bando == Bando::planta ? "Seta Solar" : "Zombi";
-    }
-    void usarAtaqueSecundario() override {};
-    
-    bool puedeDiagonal() const override { return true; };
+	std::string getNombre() const override
+	{
+		return bando == Bando::planta ? "Seta Solar" : "Zombi";
+	}
+	void usarAtaqueSecundario() override {};
 
-    bool esMelee()const override { return true; }
+	bool puedeDiagonal() const override { return true; };
 
-    
-
-    
+	bool esMelee()const override { return true; }
 };

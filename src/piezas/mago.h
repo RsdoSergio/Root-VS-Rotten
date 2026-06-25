@@ -9,7 +9,7 @@ enum class Hechizo {
     IMPRISON,
     SHIFT_TIME,
     EXCHANGE,
-    SUMMON
+    TRANSFORM
 };
 
 class Mago : public PiezaTeletransporte {

@@ -32,7 +32,7 @@
     <ClCompile Include="src\hechizos\hechizoImprison.cpp" />
     <ClCompile Include="src\hechizos\hechizoRevive.cpp" />
     <ClCompile Include="src\hechizos\hechizoShiftTime.cpp" />
-    <ClCompile Include="src\hechizos\hechizoSummon.cpp" />
+    <ClCompile Include="src\hechizos\hechizoTransform.cpp" />
     <ClCompile Include="src\hechizos\hechzoTeleport.cpp" />
     <ClCompile Include="src\Interaccion.cpp" />
     <ClCompile Include="src\listapieza.cpp" />
@@ -50,6 +50,7 @@
     <ClCompile Include="src\piezas\piezavuelo.cpp" />
     <ClCompile Include="src\proyectil.cpp" />
     <ClCompile Include="src\casilla.cpp" />
+    <ClCompile Include="src\proyectilacelerado.cpp" />
     <ClCompile Include="src\tablero.cpp" />
     <ClCompile Include="src\piezas\unicornio.cpp" />
     <ClCompile Include="src\piezas\valquiria.cpp" />
@@ -74,7 +75,7 @@
     <ClInclude Include="src\hechizos\hechizoImprison.h" />
     <ClInclude Include="src\hechizos\hechizoRevive.h" />
     <ClInclude Include="src\hechizos\hechizoShiftTime.h" />
-    <ClInclude Include="src\hechizos\hechizoSummon.h" />
+    <ClInclude Include="src\hechizos\hechizoTransform.h" />
     <ClInclude Include="src\hechizos\hechzoTeleport.h" />
     <ClInclude Include="src\Interaccion.h" />
     <ClInclude Include="src\listapieza.h" />
@@ -92,6 +93,7 @@
     <ClInclude Include="src\pos.h" />
     <ClInclude Include="src\proyectil.h" />
     <ClInclude Include="src\casilla.h" />
+    <ClInclude Include="src\proyectilacelerado.h" />
     <ClInclude Include="src\tablero.h" />
     <ClInclude Include="src\piezas\unicornio.h" />
     <ClInclude Include="src\piezas\valquiria.h" />

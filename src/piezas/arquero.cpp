@@ -13,3 +13,5 @@ Proyectil* Arquero::crearProyectil(int dirX, int dirY)
     return new ProyectilAcelerado(getPosArena(), ndx, ndy, getFuerza(), DURACION_PROYECTIL, VEL_MIN, VEL_MAX);
 
 }
+
+

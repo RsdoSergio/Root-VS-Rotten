@@ -94,7 +94,6 @@ void arena::dibujaHUD() const
 	glVertex2d(0.0, HUD_TECHO);
 	glEnd();
 
-
 	double prop1 = (vidaMaxPieza1 > 0.0) ? (vidaPieza1 / vidaMaxPieza1) : 0.0;
 	double prop2 = (vidaMaxPieza2 > 0.0) ? (vidaPieza2 / vidaMaxPieza2) : 0.0;
 
@@ -142,6 +141,8 @@ void arena::activa()
 	activo = true;
 	terminado = false;
 	indiceFondo = 1 + rand() % 9;
+	indiceCombate = 0;
+	musicaViolentaActiva = false;
 	numObstaculos = 3 + rand() % 4;
 
 	for (int i = 0; i < MAX_OBSTACULOS; i++)
@@ -191,6 +192,7 @@ void arena::dibuja() const
 {
 	if (!activo) return;
 	dibujaFondo();
+	dibujaOverlayCombate();
 	dibujaInterior();
 	dibujaMarco();
 	dibujaHUD();
@@ -515,7 +517,6 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 
 	tiempoDisparo = 0.0;
 }
-
 
 void arena::aplicarDanoExplosiones()
 {

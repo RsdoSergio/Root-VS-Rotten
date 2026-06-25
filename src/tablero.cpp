@@ -16,6 +16,7 @@
 #include "cursor.h"
 #include <iostream>
 #include "ETSIDI.h"
+#include "audio.h"
 
 void Tablero::inicializaTablero() {
 	// Patron del tablero Archon 9x9
@@ -43,6 +44,8 @@ void Tablero::inicializaTablero() {
 		{235, 235, 235}, // 2: Casilla Neutral
 	};
 
+	byte colorPoder[3] = { 235, 235, 235 };
+
 	for (int i = 0; i < FILAS; i++) { // Inicialización del tipo de casilla y su color
 		for (int j = 0; j < COLS; j++) {
 
@@ -60,7 +63,10 @@ void Tablero::inicializaTablero() {
 
 			// Guardar color según patrón (dentro de casilla)
 			int p = patron[i][j];
-			casillas[i][j].inicializa(i, j, tipo, colores[p][0], colores[p][1], colores[p][2]);
+			if (tipo == Casilla::PODER)
+				casillas[i][j].inicializa(i, j, tipo, colorPoder[0], colorPoder[1], colorPoder[2]);
+			else
+				casillas[i][j].inicializa(i, j, tipo, colores[p][0], colores[p][1], colores[p][2]);
 		}
 	}
 }
@@ -97,6 +103,72 @@ void Tablero::dibujaTablero(const Cursor& cursor) {
 			glVertex3f(x, y + TAM_CELDA, 0);
 			glEnd();
 		}
+
+		float factorAclarado = (cos(tiempoParpadeo) + 1.0f) / 2.0f;
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		for (int i = 0; i < FILAS; i++) {
+			for (int j = 0; j < COLS; j++) {
+				if (casillas[i][j].tipo != Casilla::PODER) continue;
+
+				float x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
+				float y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
+
+				float rBase = casillas[i][j].r / 255.0f;
+				float gBase = casillas[i][j].g / 255.0f;
+				float bBase = casillas[i][j].b / 255.0f;
+
+				// Naranja base: R=1.0, G=0.5, B=0.0
+				// Al sumarle el 'factorAclarado', los componentes suben de intensidad aclarando el color
+				 
+				float r = rBase + (factorAclarado * 0.2f); if (r > 1.0f) r = 1.0f;
+				float g = gBase + (factorAclarado * 0.2f); if (g > 1.0f) g = 1.0f;
+				float b = bBase + (factorAclarado * 0.2f); if (b > 1.0f) b = 1.0f;
+				
+				//float r = 1.0f;
+				//float g = 0.5f + (factorAclarado * 0.3f); // Sube el verde hacia un tono más cálido y luminoso
+				//float b = 0.0f + (factorAclarado * 0.2f); // Añade un toque de azul para iluminar el color
+
+				glColor4f(r, g, b, 0.8f); // Mantenemos un alpha fijo de 0.6f para que no desaparezca la celda
+
+				glBegin(GL_QUADS);
+				glVertex3f(x, y, 0);
+				glVertex3f(x + TAM_CELDA, y, 0);
+				glVertex3f(x + TAM_CELDA, y + TAM_CELDA, 0);
+				glVertex3f(x, y + TAM_CELDA, 0);
+				glEnd();
+			}
+		}
+
+		glDisable(GL_BLEND);
+
+		// Efecto intermitente sobre casillas de poder
+		/*float alpha = (sin(tiempoParpadeo) + 1.0f) / 2.0f; // oscila entre 0 y 1
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		for (int i = 0; i < FILAS; i++) {
+			for (int j = 0; j < COLS; j++) {
+				if (casillas[i][j].tipo != Casilla::PODER) continue;
+
+				float x = j * TAM_CELDA - (COLS * TAM_CELDA) / 2.0f;
+				float y = i * TAM_CELDA - (FILAS * TAM_CELDA) / 2.0f;
+
+				// Color naranja intermitente, diferente al ciclo de colores
+				glColor4f(1.0f, 0.5f, 0.0f, alpha * 0.6f);
+				glBegin(GL_QUADS);
+				glVertex3f(x, y, 0);
+				glVertex3f(x + TAM_CELDA, y, 0);
+				glVertex3f(x + TAM_CELDA, y + TAM_CELDA, 0);
+				glVertex3f(x, y + TAM_CELDA, 0);
+				glEnd();
+			}
+		}
+
+		glDisable(GL_BLEND);*/
 	}
 
 	// Dibuja el borde amarillo del cursor encima
@@ -315,8 +387,8 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 		Pieza* p = getPieza(cursor);
 		if (p != nullptr && (int)p->getBando() == turno) {
 			piezaSeleccionada = cursor;
-			casillasValidas = movimientosValidos(cursor);
-			//guarda la última seleccionada por bando
+			casillasValidas = movimientosValidos(cursor);			//guarda la última seleccionada por bando
+			Audio::playSonido("audio/SELECCION_CASILLA.mp3");
 			if (p->getBando() == Bando::planta)
 				ultimaPiezaPlanta = p;
 			else
@@ -333,6 +405,7 @@ bool Tablero::gestionarEntrada(Pos cursor, int& turno)
 			}
 
 		if (destinoValido) {
+			Audio::playSonido("audio/SELECCION_CASILLA.mp3");
 			bool hayCombate = moverPieza(piezaSeleccionada, cursor);
 			piezaSeleccionada = Pos();
 			casillasValidas.clear();
@@ -368,6 +441,9 @@ constexpr float VEL_ANIMACION = 3.0f; // movimiento casillas por segundo
 
 int Tablero::actualizarAnimacion(double dt)
 {
+	tiempoParpadeo += (float)dt * 2.0f; 
+	if (tiempoParpadeo > 2.0f * 3.14159f) tiempoParpadeo = 0.0f;
+
 	if (!animando || piezaAnimando == nullptr) return false;
 
 	float dx = destX - animX;
@@ -503,7 +579,7 @@ void Tablero::avanzarCiclo() {
 		for (int j = 0; j < COLS; j++) {
 			//if (casillas[i][j].tipo == Casilla::PODER) continue;
 			int p = patronOriginal[i][j];
-			if (p == 2) // solo las neutrales cambian
+			if (p == 2 || casillas[i][j].tipo == Casilla::PODER) // solo las neutrales cambian
 				casillas[i][j].setColor(
 					ciclos[indiceCiclo][0],
 					ciclos[indiceCiclo][1],
@@ -525,4 +601,24 @@ void Tablero::forzarVentajaPara(Bando bando)
 	do {
 		avanzarCiclo();
 	} while (getBandoVentaja() != deseada);
+}
+
+int Tablero::comprobarPuntosDePoder() const
+{
+	// Las 5 posiciones de casillas de poder 
+	const Pos puntos[5] = { {4,4}, {0,4}, {8,4}, {4,0}, {4,8} };
+
+	Pieza* primera = casillas[puntos[0].fila][puntos[0].col].pieza;
+	if (primera == nullptr) return -1; // si el primero esta vacio, imposible controlar los 5
+
+	Bando b = primera->getBando();
+
+	for (int i = 1; i < 5; i++)
+	{
+		Pieza* p = casillas[puntos[i].fila][puntos[i].col].pieza;
+		if (p == nullptr) return -1;       // hay un punto vacio
+		if (p->getBando() != b) return -1; // hay mezcla de bandos
+	}
+
+	return (b == Bando::planta) ? 0 : 1;
 }

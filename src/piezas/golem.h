@@ -13,7 +13,7 @@ public:
             1, //rad de mov
             b, pos) 
             {
-                radioGolpe = 4;  // golpe más grande que el Peón
+                radioGolpe = 6.5;  // golpe más grande que el Peón
                 tiempoAnimAtaque = 0.7;
 
                 rutaSprite = bando == Bando::planta

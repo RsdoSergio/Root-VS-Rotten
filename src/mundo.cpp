@@ -8,6 +8,7 @@
 #include "gestorTexturas.h"
 #include <ctime>
 #include "hechizos/hechizoExchange.h"
+#include "audio.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
@@ -29,6 +30,44 @@ void Mundo::inicializa() {
 	const float pos = (9 * TAM) / 2.0f;
 	Audio::playMusica("audio/INTRO.mp3", true);
 };
+
+void Mundo::dibujaTimer() const
+{
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	int totalSeg = (int)tiempoPartida;
+	int minutos = totalSeg / 60;
+	int segundos = totalSeg % 60;
+
+	std::string textoMin = std::to_string(minutos);
+	std::string textoSeg = std::to_string(segundos);
+
+	if (minutos < 10)  textoMin = "0" + textoMin;
+	if (segundos < 10) textoSeg = "0" + textoSeg;
+
+	std::string buf = textoMin + "." + textoSeg;
+
+	float bx = G_XMAX - 5.8f;
+	float by = -G_YMAX + 1.0f;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(0.0f, 0.0f, 0.0f, 0.55f);
+	glBegin(GL_QUADS);
+	glVertex2f(bx - 0.f, by - 0.4f);
+	glVertex2f(bx + 5.4f, by - 0.4f);
+	glVertex2f(bx + 5.4f, by + 1.6f);
+	glVertex2f(bx - 0.f, by + 1.6f);
+	glEnd();
+	glDisable(GL_BLEND);
+
+	ETSIDI::setTextColor(1.f, 1.f, 1.f);
+	ETSIDI::setFont("fuentes/auxiliar.ttf", 40);
+	ETSIDI::printxy(buf.c_str(), bx + 2, by);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glDisable(GL_BLEND);
+}
 
 //Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
 void Mundo::tecla(unsigned char key)
@@ -56,11 +95,29 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	if (enPausa) {
-		if (key == 'w' || key == 'W') opcionPausa = 0;
-		if (key == 's' || key == 'S') opcionPausa = 1;
+		if (key == 'w' || key == 'W') {
+			opcionPausa = 0;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
+		if (key == 's' || key == 'S') {
+			opcionPausa = 1;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
 		if (key == 13) {
+			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcionPausa == 0) enPausa = false;
 			if (opcionPausa == 1) exit(0);
+		}
+		return;
+	}
+	// Partida terminada: solo la tecla C vuelve al menu
+	if (partidaTerminada) {
+		if (key == 'c' || key == 'C') {
+			partidaTerminada = false;
+			enPartida = false;
+			mensajeFinPartida.clear();
 		}
 		return;
 	}
@@ -77,8 +134,8 @@ void Mundo::tecla(unsigned char key)
 
 	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
 	// Cada cursor se mueve solo durante su turno
-	// Movimiento por teclado sustituido por el raton (ver Mundo::clicRaton)
-	// if (turno == 0) cursor.mover(key);  // WASD
+	// Movimiento por teclado ahora es complementario al raton
+	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
 		// El cursor activo depende del turno
@@ -92,30 +149,36 @@ void Mundo::tecla(unsigned char key)
 		if (m != nullptr)
 		{
 			if (key == '2' && m->puedeUsarHechizo(Hechizo::HEAL)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoHeal);
 				m->usarHechizo(Hechizo::HEAL);
 				magoSeleccionado = nullptr;
 			}
 
 			if (key == '3' && m->puedeUsarHechizo(Hechizo::REVIVE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoRevive = true;
 				mostrarPanelHechizos = true;
 			}
 
 			if (key == '6' && m->puedeUsarHechizo(Hechizo::EXCHANGE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoExchangeOrigen = true; // paso 1: elegir la primera pieza en el tablero
 			}
 
 			if (key == '1' && m->puedeUsarHechizo(Hechizo::TELEPORT)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoTeleportOrigen = true; // paso 1: elegir la pieza a teletransportar
 			}
 
 			if (key == '4' && m->puedeUsarHechizo(Hechizo::IMPRISON)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoImprison);
 				m->usarHechizo(Hechizo::IMPRISON);
 				magoSeleccionado = nullptr;
 			}
 			if (key == '5' && m->puedeUsarHechizo(Hechizo::SHIFT_TIME)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				hechizoShiftTime.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
 				m->usarHechizo(Hechizo::SHIFT_TIME);
 				mensajeFeedback = hechizoShiftTime.getMensajeExito();
@@ -123,7 +186,14 @@ void Mundo::tecla(unsigned char key)
 				magoSeleccionado = nullptr;
 			}
 
-			// futuro: '5' SHIFT_TIME, '7' SUMMON
+			if (key == '7' && m->puedeUsarHechizo(Hechizo::TRANSFORM)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
+				hechizoTransform.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
+				m->usarHechizo(Hechizo::TRANSFORM);
+				mensajeFeedback = hechizoTransform.getMensajeExito();
+				tiempoFeedback = 3.0;
+				magoSeleccionado = nullptr;
+			}
 		}
 	}
 
@@ -142,6 +212,12 @@ void Mundo::tecla(unsigned char key)
 				magoSeleccionado = nullptr;
 			}
 		}
+	}
+
+	//prueba para abrir pantalla de ganar, la tecla T dispara pantalla de fin de partida
+	if (key == 't' || key == 'T') {
+		partidaTerminada = true;
+		mensajeFinPartida = "ACUERDTE DE ELIMINAR ESTO";
 	}
 
 	if (key == 27) {
@@ -172,6 +248,7 @@ void Mundo::jugarCasilla(Pos casilla)
 		if (exito && usado != nullptr) {
 			mensajeFeedback = usado->getMensajeExito();
 			tiempoFeedback = 3.0;
+			comprobarFinPartida();
 		}
 		magoSeleccionado = nullptr; // cerramos el menu de hechizos
 		return;
@@ -228,6 +305,70 @@ void Mundo::jugarCasilla(Pos casilla)
 		arena.activa();
 	}
 }
+void Mundo::comprobarFinPartida()
+{
+	if (partidaTerminada) return;
+
+	// Condicion 1: algun bando controla los 5 puntos de poder
+	int ganador = tablero.comprobarPuntosDePoder();
+	if (ganador == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+		return;
+	}
+	else if (ganador == 1) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+
+	
+	int piezasRoot = 0, piezasRotten = 0;
+	bool hayRootLibre = false, hayRottenLibre = false;
+
+	for (int i = 0; i < FILAS; i++)
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = tablero.getPieza(Pos(i, j));
+			if (p == nullptr) continue;
+			if (p->getBando() == Bando::planta) {
+				piezasRoot++;
+				if (!p->estaAprisionada()) hayRootLibre = true;
+			}
+			else {
+				piezasRotten++;
+				if (!p->estaAprisionada()) hayRottenLibre = true;
+			}
+		}
+
+	//eliminar todas las piezas del rival
+	if (piezasRoot == 0 && piezasRotten == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "EMPATE";
+		return;
+	}
+	if (piezasRoot == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+	if (piezasRotten == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+		return;
+	}
+
+	// las piezas restantes del rival estan aprisionadas
+	if (!hayRootLibre) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+	if (!hayRottenLibre) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+		return;
+	}
+}
 void Mundo::mueve()
 {
 	transicion.actualiza(0.025);
@@ -238,23 +379,34 @@ void Mundo::mueve()
 		{
 		case AccionTransicion::EMPEZAR_PARTIDA:
 			enPartida = true;
-			Audio::playMusicaTablero();
+			tiempoPartida = 0.0;
+			pendienteMusicaTablero = true;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_VERSUS:
 			rutaCartel = "imagenes/carteles/cartel_vs.png";
+			Audio::playSonido("audio/FIGHT.mp3");
+
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 3.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
-			rutaCartel = arena.getPlantaGano() ? "imagenes/carteles/cartel_plantas_ganan.png" : "imagenes/carteles/cartel_plantas_pierden.png";
+			Audio::stopMusica();
+			if (arena.getPlantaGano()) {
+				rutaCartel = "imagenes/carteles/cartel_plantas_ganan.png";
+				Audio::playSonido("audio/VICTORIA_PLANTAS.mp3");
+			}
+			else {
+				rutaCartel = "imagenes/carteles/cartel_plantas_pierden.png";
+				Audio::playSonido("audio/VICTORIA_ZOMBIS.mp3");
+			}
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 5.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
@@ -268,18 +420,33 @@ void Mundo::mueve()
 			break;
 
 		case AccionTransicion::CERRAR_CARTEL_RESULTADO:
+		{
 			tablero.resolverCombate(arena.getPlantaGano());
 			tablero.avanzarCiclo();
+
+			Mago* m1 = dynamic_cast<Mago*>(tablero.getPersonaje1());
+			if (m1 && m1->estaTransformado()) m1->revertirTransformacion();
+			Mago* m2 = dynamic_cast<Mago*>(tablero.getPersonaje2());
+			if (m2 && m2->estaTransformado()) m2->revertirTransformacion();
+
 			arena.desactiva();
-			Audio::playMusicaTablero();
+			pendienteMusicaTablero = true;
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
+			comprobarFinPartida();
 			break;
+		}
 
 		default:
 			break;
 		}
+	}
+
+	if (pendienteMusicaTablero && !transicion.estaActiva())
+	{
+		pendienteMusicaTablero = false;
+		Audio::playMusicaTablero();
 	}
 
 	if (mostrandoCartel && !transicion.estaActiva())
@@ -292,13 +459,14 @@ void Mundo::mueve()
 		}
 	}
 
-	if (!enPartida || enPausa) return;
+	if (!enPartida || enPausa || partidaTerminada) return;
+	tiempoPartida += 0.025;
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
+	if (arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
 	{
 		accionPendiente = AccionTransicion::ABRIR_CARTEL_RESULTADO;
 		transicion.cubrir();
@@ -318,16 +486,21 @@ void Mundo::mueve()
 
 	if (resultado == 2) {
 		turno = 1 - turno;
-		tablero.setTurnoActual(numeroJugada); 
+		tablero.setTurnoActual(numeroJugada);
 		numeroJugada++;
+		comprobarFinPartida();
 	}
 
-	// Provisional: libera piezas aprisionadas tras 3 turnos, hasta que exista el ciclo de color
+	BandoVentaja ventajaActual = tablero.getBandoVentaja();
 	for (int i = 0; i < FILAS; i++)
 		for (int j = 0; j < COLS; j++) {
 			Pieza* p = tablero.getPieza(Pos(i, j));
-			if (p && p->estaAprisionada() && (numeroJugada - p->getTurnoAprisionamiento() >= 3))
-				p->liberar();
+			if (p == nullptr || !p->estaAprisionada()) continue;
+
+			bool favorece = (p->getBando() == Bando::planta && ventajaActual == BandoVentaja::PLANTA)
+				|| (p->getBando() == Bando::zombi && ventajaActual == BandoVentaja::ZOMBI);
+
+			if (favorece) p->liberar();
 		}
 }
 
@@ -355,6 +528,10 @@ void Mundo::dibuja()
 	//caja.dibuja();
 	arena.dibuja();
 	dibujaPanelHechizos();
+
+	if (!enPausa && !mostrandoCartel && !transicion.estaActiva())
+		dibujaTimer();
+
 	if (enPausa) menu.dibujaPausa(opcionPausa);
 
 	if (mostrandoCartel && !rutaCartel.empty())
@@ -380,6 +557,33 @@ void Mundo::dibuja()
 		}
 	}
 
+	// creacion de la pantalla de fin de partida
+	if (partidaTerminada)
+	{
+		extern float G_XMAX;
+		extern float G_YMAX;
+
+		// Fondo semitransparente oscuro
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
+		glBegin(GL_QUADS);
+		glVertex3f(-G_XMAX, -G_YMAX, 0);
+		glVertex3f(G_XMAX, -G_YMAX, 0);
+		glVertex3f(G_XMAX, G_YMAX, 0);
+		glVertex3f(-G_XMAX, G_YMAX, 0);
+		glEnd();
+		glDisable(GL_BLEND);
+
+		// Texto
+		ETSIDI::setTextColor(1, 1, 0);
+		ETSIDI::setFont("fuentes/titulo.ttf", 50);
+		ETSIDI::printxy(mensajeFinPartida.c_str(), -8, 3);
+		ETSIDI::setTextColor(1, 1, 1);
+		ETSIDI::setFont("fuentes/texto.ttf", 26);
+		ETSIDI::printxy("Pulsa C para volver al menu", -6, -2);
+	}
+
 	transicion.dibuja();
 }
 // Flechas
@@ -396,8 +600,8 @@ void Mundo::teclaEspecial(int key)
 		return;
 	}
 	if (tablero.estaAnimando()) return;
-	// Movimiento por teclado sustituido por el raton (ver Mundo::clicRaton)
-	// if (turno == 1) cursor2.moverFlechas(key);
+	// Movimiento por teclado ahora es complementario al raton
+	if (turno == 1) cursor2.moverFlechas(key);
 }
 
 void Mundo::teclaLevantada(unsigned char key)
@@ -431,7 +635,7 @@ void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 {
 	if (transicion.estaActiva()) return;
 	if (boton != GLUT_LEFT_BUTTON || estado != GLUT_DOWN) return;
-	if (!enPartida || enPausa) return;
+	if (!enPartida || enPausa || partidaTerminada) return;
 	if (arena.estaActiva()) return;        // en la arena el raton no se usa
 	if (tablero.estaAnimando()) return;     // igual que con teclado: ignorar durante animacion
 
@@ -522,7 +726,7 @@ std::string Mundo::generarTextoPanel() const
 	}
 
 	std::string texto;
-	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Summon" };
+	const char* nombres[7] = { "Teleport", "Heal", "Revive", "Imprison", "ShiftTime", "Exchange", "Transform" };
 	for (int i = 0; i < 7; i++)
 		texto += std::to_string(i + 1) + "." + nombres[i] + "  ";
 	return texto;
