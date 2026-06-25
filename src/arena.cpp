@@ -499,7 +499,9 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 				p->getPosArena().getX() + dirX * 1.2,
 				p->getPosArena().getY() + dirY * 1.2
 			);
-			proyectiles.push_back(new Proyectil(pos, Vector2D(0.0, 0.0), p->getFuerza(), p->getTiempoAnimAtaque()));
+			auto* golpe = new Proyectil(pos, Vector2D(0.0, 0.0), p->getFuerza(), p->getTiempoAnimAtaque()); //si la velocidad del proyectil es 0 --> ataque melee --> proyectil invisible
+			golpe->setInvisible();
+			proyectiles.push_back(golpe);
 			p->iniciarAtaque();
 		}
 	}

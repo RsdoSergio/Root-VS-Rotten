@@ -15,6 +15,7 @@ protected:
 	double duracion;
 	double tiempoVivo;
 	std::string rutaSprite;
+	bool invisible = false;
 
 public:
 	Proyectil(Vector2D pos, Vector2D vel, double d, double duracion = -1.0, std::string ruta = "")
@@ -30,4 +31,6 @@ public:
 	//nuevos atributos y metodos para el movimiento y dibujo del proyectil
 	virtual void mueve(double dt);
 	void dibuja() const;
+
+	void setInvisible() { invisible = true; } //para q no se pinte cuando el ataque es a melee
 };

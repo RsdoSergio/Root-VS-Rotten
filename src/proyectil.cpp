@@ -40,6 +40,7 @@ void Proyectil::mueve(double dt)
 void Proyectil::dibuja() const
 {
 	if (!activo) return;
+	if (invisible) return;
 	glPushMatrix();
 	glTranslated(posicion.getX(), posicion.getY(), 0);
 
