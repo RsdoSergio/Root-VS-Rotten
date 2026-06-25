@@ -10,30 +10,37 @@ class Djinn : public PiezaVuelo {
 	static constexpr double DURACION_PROYECTIL = 5.0;
 
 public:
-	Djinn(Bando b, Pos pos)
-		: PiezaVuelo(
-			11.0,  // PV medio
-			20.0,  // Daño muy alto
-			4.0,   // Vel. movimiento alta
-			3.5,   // Enfriamiento muy alto
-			3, //rad de mov
-			b, pos),
-		velocidadProyectil(3.0) {} // Proyectil lento
+    Djinn(Bando b, Pos pos)
+        : PiezaVuelo(
+            11.0,  // PV medio
+            20.0,  // Daño muy alto
+            4.0,   // Vel. movimiento alta
+            3.5,   // Enfriamiento muy alto
+            3, //rad de mov
+            b, pos),
+        velocidadProyectil(3.0) 
+    {
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/mazorcanon.png"
+            : "imagenes/sprites_zombies/zombie_gondola.png";
 
-	double getVelocidadProyectil() const override { return velocidadProyectil; }
+        rutaSpriteAtaque = bando == Bando::planta
+            ? "imagenes/sprites_plantas/mazorcanon_ataque.png"
+            : "imagenes/sprites_zombies/zombie_gondola_ataque.png";
 
-	// Antes se dibujaba como cuadrado de color (morado claro LUZ / morado oscuro OSCURIDAD);
-	// ahora usa sprite, ver Djinn::getRutaSprite() en genio.cpp
-	std::string getRutaSprite() const override;
+        numFramesAtaque = 4;
+    } // Proyectil lento
 
-	std::string getNombre() const override {
-		return bando == Bando::planta ? "Mazorcañon" : "Gondolero";
-	}
-	void usarAtaqueSecundario() override {};
+    double getVelocidadProyectil() const override { return velocidadProyectil; }
 
-	Proyectil* crearProyectil(int dirX, int dirY) override;
+    std::string getNombre() const override {
+        return bando == Bando::planta ? "Mazorcañon" : "Gondolero";
+    }
 
-	std::string getRutaProyectil() const override {
-		return bando == Bando::planta ? "imagenes/proyectiles/proyectil_mazorcanon.png" : "imagenes/proyectiles/proyectil_gondola.png";
-	}
+    Proyectil* crearProyectil(int dirX, int dirY) override;
+    void usarAtaqueSecundario() override {};
+
+    std::string getRutaProyectil() const override {
+	     	return bando == Bando::planta ? "imagenes/proyectiles/proyectil_mazorcanon.png" : "imagenes/proyectiles/proyectil_gondola.png";
+    }
 };

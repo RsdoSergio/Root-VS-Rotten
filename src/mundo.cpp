@@ -301,7 +301,14 @@ void Mundo::jugarCasilla(Pos casilla)
 
 	if (combate) {
 		BandoVentaja ventaja = tablero.getBandoVentaja();
-		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), ventaja);
+		Pieza* p1 = tablero.getPersonaje1();
+		Pieza* p2 = tablero.getPersonaje2();
+
+		bool b1 = tablero.esCasillaDePoder(p1->getCasilla());
+		bool b2 = tablero.esCasillaDePoder(p2->getCasilla());
+		//arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(),bool bost1,bool bost2);
+		arena.fDatos(*p1, *p2, ventaja, b1, b2, tablero.contarCasillasDePoder(Bando::planta),
+			tablero.contarCasillasDePoder(Bando::zombi));
 		arena.activa();
 	}
 }
@@ -411,12 +418,21 @@ void Mundo::mueve()
 			break;
 
 		case AccionTransicion::CERRAR_CARTEL_VERSUS:
-			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), tablero.getBandoVentaja());
+		{
+
+			Pieza* p1 = tablero.getPersonaje1();
+			Pieza* p2 = tablero.getPersonaje2();
+
+			bool boost1 = tablero.esCasillaDePoder(p1->getCasilla());
+			bool boost2 = tablero.esCasillaDePoder(p2->getCasilla());
+			arena.fDatos(*p1, *p2, tablero.getBandoVentaja(), boost1, boost2, tablero.contarCasillasDePoder(Bando::planta),
+				tablero.contarCasillasDePoder(Bando::zombi));
 			arena.activa();
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
+		}
 
 		case AccionTransicion::CERRAR_CARTEL_RESULTADO:
 		{
@@ -487,7 +503,7 @@ void Mundo::mueve()
 		turno = 1 - turno;
 		tablero.setTurnoActual(numeroJugada);
 		numeroJugada++;
-		comprobarFinPartida();
+		tablero.curarEnCasillasdePoder();
 	}
 
 	BandoVentaja ventajaActual = tablero.getBandoVentaja();

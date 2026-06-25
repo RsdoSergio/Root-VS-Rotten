@@ -19,14 +19,23 @@ public:
             6.0,   // Vel. movimiento alta
             1.0,   // Enfriamiento medio
             5, //rad de mov
-            b, pos) {}
+            b, pos) 
+    {
+        rutaSpriteAtaque = bando == Bando::planta
+            ? "imagenes/sprites_plantas/boca_de_dragon_ataque.png"
+            : "imagenes/sprites_zombies/zombie_dragon_ataques.png";
+
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/boca_de_dragon.png"
+            : "imagenes/sprites_zombies/zombie_dragon.png";
+    }
 
     bool puedeUsarPoder() const { return !poderUsado; }
     void usarPoder() { poderUsado = true; }
 
     // Antes se dibujaba como cuadrado de color (naranja LUZ / naranja oscuro OSCURIDAD);
     // ahora usa sprite, ver Fenix::getRutaSprite() en fenix.cpp
-    std::string getRutaSprite() const override;
+    
     
 
     std::string getNombre() const override {

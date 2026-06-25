@@ -15,6 +15,15 @@ public:
             {
                 radioGolpe = 6.5;  // golpe más grande que el Peón
                 tiempoAnimAtaque = 0.7;
+
+                rutaSprite = bando == Bando::planta
+                    ? "imagenes/sprites_plantas/bonk_choi.png"
+                    : "imagenes/sprites_zombies/zombie_yeti.png";
+
+                rutaSpriteAtaque = bando == Bando::planta
+                    ? "imagenes/sprites_plantas/bonk_choi_ataque.png"
+                    : "imagenes/sprites_zombies/zombie_yeti_ataque.png";
+                numFramesAtaque = 4;
             }
 
     
@@ -24,7 +33,7 @@ public:
     }
     void usarAtaqueSecundario() override {};
     
-    std::string getRutaSprite() const override;
+   
     
     bool esMelee() const override { return true; }
     

@@ -16,39 +16,49 @@ class Unicornio : public PiezaTierra {
 	std::vector<Proyectil*> proyectilesPendientes;
 
 public:
-	Unicornio(Bando b, Pos pos)
-		: PiezaTierra(
-			18.0,  // PV medio-alto
-			6.0,   // Daño medio
-			7.5,   // Vel. movimiento muy alta
-			0.5,   // Enfriamiento bajo
-			4, //rad de mov
-			b, pos),
-		velocidadProyectil(9.0) {} // Proyectil medio
+    Unicornio(Bando b, Pos pos)
+        : PiezaTierra(
+            18.0,  // PV medio-alto
+            6.0,   // Daño medio
+            7.5,   // Vel. movimiento muy alta
+            0.5,   // Enfriamiento bajo
+            4, //rad de mov
+            b, pos),
+        velocidadProyectil(9.0) 
+    {
+        rutaSpriteAtaque = bando == Bando::planta
+            ?"imagenes/sprites_plantas/rabano_casillero_ataque.png"
+            : "imagenes/sprites_zombies/zombie_momia_ataque.png";
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/rabano_casillero.png"
+            : "imagenes/sprites_zombies/zombie_momia.png";
+        numFramesAtaque = 4;
 
-	double getVelocidadProyectil() const override { return velocidadProyectil; }
-	std::string getRutaSprite() const override;
+    
+    } // Proyectil medio
 
-	std::string getNombre() const override {
-		return bando == Bando::planta ? "Rabano Casillero" : "Zombidito Momia";
-	}
-	void usarAtaqueSecundario() override {};
+    double getVelocidadProyectil() const override { return velocidadProyectil; }
 
-	void iniciarRafaga(int dx, int dy) override;
-	void actualizarEfectos(double dt) override;
-	std::vector<Proyectil*> recogerProyectiles() override;
-	bool tieneProyectilesPendientes() const override { return !proyectilesPendientes.empty(); }
-	bool bloqueaMovimientoAlAtacar() const override { return false; }
-	bool enRafaga() const { return proyectilesRestantes > 0; }
-	bool tieneRafaga() const override { return true; }
+    std::string getNombre() const override {
+        return bando == Bando::planta ? "Rabano Casillero" : "Zombidito Momia";
+    }
+    std::string getRutaProyectil() const override {
+	     	return bando == Bando::planta ? "imagenes/proyectiles/proyectil_rabano.png" : "imagenes/proyectiles/proyectil_momia.png";
+    }
+  
+    void usarAtaqueSecundario() override {};
 
-	int getFrame(DirMovimiento dir, AccionPieza accion) const override
-	{
-		if (enRafaga()) return 5; // frame de ataque
-		return Pieza::getFrame(dir, accion);
-	}
+    void iniciarRafaga(int dx, int dy) override;
+    void actualizarEfectos(double dt) override;
+    std::vector<Proyectil*> recogerProyectiles() override;
+    bool tieneProyectilesPendientes() const override { return !proyectilesPendientes.empty(); }
+    bool bloqueaMovimientoAlAtacar() const override { return false; }
+    bool enRafaga() const { return proyectilesRestantes > 0; }
+    bool tieneRafaga() const override { return true; }
 
-	std::string getRutaProyectil() const override {
-		return bando == Bando::planta ? "imagenes/proyectiles/proyectil_rabano.png" : "imagenes/proyectiles/proyectil_momia.png";
-	}
+    int getFrame(DirMovimiento dir, AccionPieza accion) const override
+    {
+        if (enRafaga()) return 5; // frame de ataque
+        return Pieza::getFrame(dir, accion);
+    }
 };

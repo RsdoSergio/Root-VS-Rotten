@@ -1,28 +1,6 @@
 #include "valquiria.h"
 #include "gestorTexturas.h"
 
-std::string Valquiria::getRutaSprite() const
-{
-	return bando == Bando::planta
-		? "imagenes/sprites_plantas/rotinabo.png"
-		: "imagenes/sprites_zombies/zombie_globo.png";
-}
-
-void Valquiria::iniciarRafaga(int dx, int dy)
-{
-	golpesPendientes = 3;
-	timerEntreGolpes = 0.3;
-	dirX = dx;
-	dirY = dy;
-}
-
-std::vector<Proyectil*> Valquiria::recogerProyectiles()
-{
-	std::vector<Proyectil*> tmp = proyectilesPendientes;
-	proyectilesPendientes.clear();
-	return tmp;
-}
-
 void Valquiria::actualizarEfectos(double dt)
 {
 	if (golpesPendientes <= 0) return;
@@ -53,6 +31,18 @@ void Valquiria::actualizarEfectos(double dt)
 	golpe->setInvisible();
 	proyectilesPendientes.push_back(golpe);
 
-	golpesPendientes--;
-	if (golpesPendientes > 0) iniciarAtaque(); // mantener sprite de ataque entre golpes
+void Valquiria::iniciarRafaga(int dx, int dy)
+{
+    golpesPendientes = 3;
+    timerEntreGolpes = 0.3;
+    dirX = dx;
+    dirY = dy;
 }
+
+std::vector<Proyectil*> Valquiria::recogerProyectiles()
+{
+    std::vector<Proyectil*> tmp = proyectilesPendientes;
+    proyectilesPendientes.clear();
+    return tmp;
+}
+
