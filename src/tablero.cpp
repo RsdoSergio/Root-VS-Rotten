@@ -604,7 +604,17 @@ void Tablero::curarEnCasillasdePoder() {
 			if (casillas[i][j].tipo != Casilla::PODER) continue;
 			Pieza* p = casillas[i][j].pieza;
 			if (p != nullptr && p->estaViva())
-				p->curar(p->getVidaMax() * 0.1);
+				p->curar(p->getVidaMax() * 0.05);
 		}
 	}
+}
+int Tablero::contarCasillasDePoder(Bando b) const {
+	const Pos puntos[5] = { {4,4}, {0,4}, {8,4}, {4,0}, {4,8} };
+	int count = 0;
+	for (int i = 0; i < 5; i++) {
+		Pieza* p = casillas[puntos[i].fila][puntos[i].col].pieza;
+		if (p != nullptr && p->getBando() == b)
+			count++;
+	}
+	return count;
 }

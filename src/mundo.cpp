@@ -306,7 +306,8 @@ void Mundo::jugarCasilla(Pos casilla)
 		bool b1 = tablero.esCasillaDePoder(p1->getCasilla());
 		bool b2 = tablero.esCasillaDePoder(p2->getCasilla());
 		//arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(),bool bost1,bool bost2);
-		arena.fDatos(*p1, *p2, ventaja, b1, b2);
+		arena.fDatos(*p1, *p2, ventaja, b1, b2, tablero.contarCasillasDePoder(Bando::planta),
+			tablero.contarCasillasDePoder(Bando::zombi));
 		arena.activa();
 	}
 }
@@ -375,7 +376,8 @@ void Mundo::mueve()
 
 			bool boost1 = tablero.esCasillaDePoder(p1->getCasilla());
 			bool boost2 = tablero.esCasillaDePoder(p2->getCasilla());
-			arena.fDatos(*p1, *p2, tablero.getBandoVentaja(), boost1, boost2);
+			arena.fDatos(*p1, *p2, tablero.getBandoVentaja(), boost1, boost2, tablero.contarCasillasDePoder(Bando::planta),
+				tablero.contarCasillasDePoder(Bando::zombi));
 			arena.activa();
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;

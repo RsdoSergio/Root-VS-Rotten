@@ -63,6 +63,8 @@ public:
 	bool boostPieza1 = false; // pieza1 estaba en casilla de poder
 	bool boostPieza2 = false; // pieza2 estaba en casilla de poder
 	bool esCasillaDePoder(Pos p) const {return casillas[p.fila][p.col].tipo == Casilla::PODER;}
+	
+	int contarCasillasDePoder(Bando b) const;
 
 private:
 
