@@ -10,7 +10,6 @@ class Arquero : public PiezaTierra {
     static constexpr double VEL_MAX = 15.0;
     static constexpr double DURACION_PROYECTIL = 3.0;
 public:
-    
     Arquero(Bando b, Pos pos)
         : PiezaTierra(
             8.0,   // PV bajo
@@ -21,15 +20,24 @@ public:
             b, pos),
         velocidadProyectil(8.0) // El proyectil viaja más rápido que la propia pieza
     {
-            
+        
+        rutaSpriteAtaque = bando==Bando::planta
+        ?"imagenes/sprites_plantas/guisantralladora_ataque.png"
+        :"imagenes/sprites_zombies/zombie_pertiga_ataque.png";
+
+        rutaSprite = bando == Bando::planta
+        ? "imagenes/sprites_plantas/guisantralladora.png"
+        : "imagenes/sprites_zombies/zombie_pertiga.png";
+        numFramesAtaque = 4;
+
+        
     } 
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
 
-    // Antes se dibujaba como cuadrado de color (amarillo LUZ / amarillo oscuro OSCURIDAD);
-    // ahora usa sprite, ver Arquero::getRutaSprite() en arquero.cpp
-    std::string getRutaSprite() const override;
     
+    std::string getRutaSprite() const override;
+
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Guisantralladora" : "Pertigador";
@@ -37,5 +45,4 @@ public:
     void usarAtaqueSecundario() override {};
     bool puedeDiagonal() const override { return true; };
     Proyectil* crearProyectil(int dirX, int dirY) override;
-    
 };

@@ -19,18 +19,30 @@ public:
             3.5,   // Enfriamiento muy alto
             3, //rad de mov
             b, pos),
-        velocidadProyectil(3.0) {} // Proyectil lento
+        velocidadProyectil(3.0) 
+    {
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/mazorcanon.png"
+            : "imagenes/sprites_zombies/zombie_yeti.png";
+
+        rutaSpriteAtaque = bando == Bando::planta
+            ? "imagenes/sprites_plantas/mazorcanon_ataque.png"
+            : "imagenes/sprites_zombies/zombie_yeti_ataque.png";
+
+        numFramesAtaque = 4;
+    
+    } // Proyectil lento
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
 
-    // Antes se dibujaba como cuadrado de color (morado claro LUZ / morado oscuro OSCURIDAD);
-    // ahora usa sprite, ver Djinn::getRutaSprite() en genio.cpp
-    std::string getRutaSprite() const override;
+   
     
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Mazorcañon" : "Gondolero";
     }
+
+    Proyectil* crearProyectil(int dirX, int dirY) override;
     void usarAtaqueSecundario() override {};
 
     Proyectil* crearProyectil(int dirX, int dirY) override;

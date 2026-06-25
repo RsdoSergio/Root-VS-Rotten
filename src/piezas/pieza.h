@@ -43,6 +43,7 @@ protected:
 	double radioGolpe = 1.5;
 	double tiempoAnimAtaque = 0.3;
 	AccionPieza accionActual = AccionPieza::IDLE;
+	
 
 	bool   atacandoActivo = false;
 	double tiempoAtaqueRestante = 0.0;
@@ -54,6 +55,12 @@ protected:
 	double bonusVida = 0.0;
 	double bonusFuerza = 0.0;
 	double bonusVelocidad = 0.0;
+
+	//para sprites
+	std::string rutaSpriteAtaque = "";
+	std::string rutaSprite = "";
+	int numFramesNormal = 6;
+	int numFramesAtaque = 4;
 
 public:
 	Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos);
@@ -124,6 +131,7 @@ public:
 	virtual void actualizarEfectos(double dt) {}
 	virtual bool bloqueaMovimientoAlAtacar() const { return true; }
 	virtual Proyectil* crearProyectil(int dirX, int dirY);
+
 
 	void actualizarAtaque(double dt);
 

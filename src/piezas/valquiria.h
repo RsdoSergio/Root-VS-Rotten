@@ -6,7 +6,6 @@
 class Valquiria : public PiezaVuelo {
     double velocidadProyectil; // Proyectil rápido, menos daño. También tiene ráfaga
 
-
     int    golpesPendientes = 0;
     double timerEntreGolpes = 0.0;
     int    dirX = 0, dirY = 0; // dirección al atacar
@@ -16,6 +15,7 @@ class Valquiria : public PiezaVuelo {
     static constexpr double OFFSET_FRENTE = 1.25;
     static constexpr double OFFSET_PERPENDICULAR = 1.2;
     static constexpr double DELAY_ENTRE_GOLPES = 0.15;
+
 public:
     Valquiria(Bando b, Pos pos)
         : PiezaVuelo(
@@ -25,19 +25,28 @@ public:
             0.45,   // Enfriamiento ráfaga muy bajo
             4,//rad de mov
             b, pos),
-        velocidadProyectil(0) {}
+        velocidadProyectil(8.0) 
+    {
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/rotinabo.png"
+            : "imagenes/sprites_zombies/zombie_globo.png";
+
+        rutaSpriteAtaque = bando == Bando::planta
+            ? "imagenes/sprites_plantas/rotinabo_ataque.png"
+            : "imagenes/sprites_zombies/zombie_globo_ataque.png";
+
+        numFramesAtaque = 4;
+    }
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
 
-    // Antes se dibujaba como cuadrado de color (cian LUZ / azul oscuro OSCURIDAD);
-    // ahora usa sprite, ver Valquiria::getRutaSprite() en valquiria.cpp
-    std::string getRutaSprite() const override;
+  
+   
    
     std::string getNombre() const override {
         return bando == Bando::planta ? "Rotinabo" : "Globador";
     }
     void usarAtaqueSecundario() override {};
-
 
     bool esMelee() const override { return true; };
     void iniciarRafaga(int dx, int dy) override;
