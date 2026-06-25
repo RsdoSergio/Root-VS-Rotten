@@ -347,6 +347,10 @@ void arena::mueve(double dt)
 			}
 			if (p->estaAtacando()) p->setAccion(AccionPieza::ATACAR);//poner esto para qse ponga el frame de atacar si no se bloquea al hacerlo
 			p->actualizarArena(dt);
+			
+			if (p->getDireccion() == DirMovimiento::IDLE)
+				p->setDireccion(p->getBando() == Bando::planta ? DirMovimiento::IDLE : DirMovimiento::SUR);
+
 		};
 
 	mover(pieza1, proyectil1);
