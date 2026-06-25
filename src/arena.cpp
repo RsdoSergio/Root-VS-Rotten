@@ -158,11 +158,17 @@ void arena::desactiva()
 	{
 		pieza1->setAccion(AccionPieza::IDLE);
 		pieza1->setDireccion(DirMovimiento::IDLE);
+		pieza1->setIntervaloAtaque(intervaloOriginal1);
+		pieza1->setVidaMax(vidaMaxOriginal1);           
+		pieza1->setFuerza(fuerzaOriginal1);
 	}
 	if (pieza2)
 	{
 		pieza2->setAccion(AccionPieza::IDLE);
 		pieza2->setDireccion(DirMovimiento::IDLE);
+		pieza2->setIntervaloAtaque(intervaloOriginal2);
+		pieza2->setVidaMax(vidaMaxOriginal2);
+		pieza2->setFuerza(fuerzaOriginal2);
 	}
 
 	//limpia los proyectiles que hayan quedado activos al terminar el combate
@@ -178,8 +184,6 @@ void arena::desactiva()
 	pieza1 = nullptr;
 	pieza2 = nullptr;
 
-	if (pieza1) pieza1->setVelocidad(pieza1->getVelocidad() / 1.3f);
-	if (pieza2) pieza2->setVelocidad(pieza2->getVelocidad() / 1.3f);
 }
 
 void arena::dibujaObstaculos() const
@@ -201,7 +205,7 @@ void arena::dibuja() const
 	dibujaProyectiles();
 }
 
-void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja)
+void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool boost2, int poderPlanta, int poderZombi)
 {
 	if (p1.getBando() == Bando::planta) //esto hará que la pieza a la izquierda siempre sea planta
 	{
@@ -224,9 +228,18 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja)
 	float velZombi = 4.0f;
 	float bonus = 1.3f;
 
+
+	intervaloOriginal1 = pieza1->getIntervaloAtaque();
+	intervaloOriginal2 = pieza2->getIntervaloAtaque();
+	vidaMaxOriginal1 = pieza1->getVidaMax();
+	vidaMaxOriginal2 = pieza2->getVidaMax();
+	fuerzaOriginal1 = pieza1->getFuerza();
+	fuerzaOriginal2 = pieza2->getFuerza();
+
+
 	if (ventaja == BandoVentaja::PLANTA) {
-		pieza1->setVidaMax(pieza1->getVidaMax() * bonus); // ← primero aumentar el máximo
-		pieza1->curar(pieza1->getVidaMax()); // ← luego curar al nuevo máximo
+		pieza1->setVidaMax(pieza1->getVidaMax() * bonus); 
+		pieza1->curar(pieza1->getVidaMax()); 
 		vidaMaxPieza1 = pieza1->getVidaMax();
 		vidaPieza1 = pieza1->getVida();
 
@@ -240,6 +253,58 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja)
 
 		pieza2->setVelocidad(pieza2->getVelocidad() * bonus);
 	}
+
+
+	if (boost1) pieza1->setIntervaloAtaque(pieza1->getIntervaloAtaque() * 0.7);
+	if (boost2) pieza2->setIntervaloAtaque(pieza2->getIntervaloAtaque() * 0.7);
+
+	
+	// Bando controla 1 casilla de poder (+0.3 velocidad de ataque)
+	if (poderPlanta >= 1)
+		pieza1->setIntervaloAtaque(intervaloOriginal1 * 1.2);
+	if (poderZombi >= 1)
+		pieza2->setIntervaloAtaque(intervaloOriginal2 * 1.2);
+
+	// Bando controla 2 casillas de poder (+0.2 de vida)
+	if (poderPlanta >= 2) {
+		pieza1->setVidaMax(vidaMaxOriginal1 * 1.2);
+		pieza1->curar(pieza1->getVidaMax());
+		vidaMaxPieza1 = pieza1->getVidaMax();
+		vidaPieza1 = pieza1->getVida();
+	}
+
+	if (poderZombi >= 2) {
+		pieza2->setVidaMax(vidaMaxOriginal2 * 1.2);
+		pieza2->curar(pieza2->getVidaMax());
+		vidaMaxPieza2 = pieza2->getVidaMax();
+		vidaPieza2 = pieza2->getVida();
+	}
+
+	// Bando controla 3 casillas de poder (+0.2 daño de ataque)
+	if (poderPlanta >= 3)
+		pieza1->setFuerza(fuerzaOriginal1 * 1.2);
+	if (poderZombi >= 3)
+		pieza2->setFuerza(fuerzaOriginal2 * 1.2);
+
+	// Bando controla 4 casillas de poder (x2 en todas las ventajas anteriores)
+	if (poderPlanta >= 4) {
+		pieza1->setIntervaloAtaque(intervaloOriginal1 * 0.7 * 0.7); 
+		pieza1->setVidaMax(vidaMaxOriginal1 * 1.2 * 2.0);           
+		pieza1->curar(pieza1->getVidaMax());
+		vidaMaxPieza1 = pieza1->getVidaMax();
+		vidaPieza1 = pieza1->getVida();
+		pieza1->setFuerza(fuerzaOriginal1 * 1.2 * 2.0);             
+	}
+	if (poderZombi >= 4) {
+		pieza2->setIntervaloAtaque(intervaloOriginal2 * 0.7 * 0.7);
+		pieza2->setVidaMax(vidaMaxOriginal2 * 1.2 * 2.0);
+		pieza2->curar(pieza2->getVidaMax());
+		vidaMaxPieza2 = pieza2->getVidaMax();
+		vidaPieza2 = pieza2->getVida();
+		pieza2->setFuerza(fuerzaOriginal2 * 1.2 * 2.0);
+	}
+
+	
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
@@ -479,7 +544,6 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 	int dirX = p->getUltimoEjeX();
 	int dirY = p->getUltimoEjeY();
 
-	// Calcular dirección con último eje para ranged
 	if (dirX != 0 && dirY != 0)
 	{
 		if (p->getUltimoEjeReciente() == 0) dirY = 0;
@@ -489,32 +553,32 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 
 	if (p->esMelee())
 	{
+		Audio::playSonido("audio/ATAQUE_A_MELEE.mp3");
 		p->activarExplosion();
 
 		if (p->tieneRafaga())
-		{
 			p->iniciarRafaga(dirX, dirY);
-			// NO iniciarAtaque() — la ráfaga lo gestiona internamente
-		}
 		else
 		{
 			Vector2D pos(
-				p->getPosArena().getX() + dirX * 3.5,
-				p->getPosArena().getY() + dirY * 3.5
+				p->getPosArena().getX() + dirX * 1.35,
+				p->getPosArena().getY() + dirY * 1.35
 			);
-			proyectiles.push_back(new Proyectil(pos, Vector2D(0.0, 0.0), p->getFuerza(), p->getTiempoAnimAtaque()));
+			auto* golpe = new Proyectil(pos, Vector2D(0.0, 0.0), p->getFuerza(), p->getTiempoAnimAtaque()); //si la velocidad del proyectil es 0 --> ataque melee --> proyectil invisible
+			golpe->setInvisible();
+			proyectiles.push_back(golpe);
 			p->iniciarAtaque();
 		}
 	}
 	else
 	{
+		Audio::playSonido("audio/ATAQUE_A_DISTANCIA.mp3");
+
 		if (p->tieneRafaga())
 			p->iniciarRafaga(dirX, dirY);
 		else
-		{
-			Vector2D vel(dirX * p->getVelocidadProyectil(), dirY * p->getVelocidadProyectil());
-			proyectiles.push_back(new Proyectil(p->getPosArena(), vel, p->getFuerza()));
-		}
+			proyectiles.push_back(p->crearProyectil(dirX, dirY));
+
 		p->iniciarAtaque();
 	}
 

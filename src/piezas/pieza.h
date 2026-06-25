@@ -43,10 +43,10 @@ protected:
 	double radioGolpe = 1.5;
 	double tiempoAnimAtaque = 0.3;
 	AccionPieza accionActual = AccionPieza::IDLE;
+	
 
 	bool   atacandoActivo = false;
 	double tiempoAtaqueRestante = 0.0;
-	
 
 	bool aprisionada = false;
 	int turnoAprisionamiento = -1;
@@ -54,6 +54,15 @@ protected:
 	double bonusVida = 0.0;
 	double bonusFuerza = 0.0;
 	double bonusVelocidad = 0.0;
+
+	//para sprites
+	std::string rutaSpriteAtaque = "";
+	std::string rutaSprite = "";
+	int numFramesNormal = 6;
+	int numFramesAtaque = 4;
+
+	float tamTablero = 1.4f;
+	float tamArena = 2.0f;
 
 public:
 	Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos);
@@ -64,7 +73,7 @@ public:
 	double getVelocidad() const { return velocidad + bonusVelocidad; }
 	Bando  getBando()     const { return bando; }
 	Pos    getCasilla()   const { return casilla; }
-	bool   estaViva()     const { return vida > 0; }
+	bool   estaViva()     const { return getVida() > 0; }
 	double getIntervaloAtaque() const { return intervaloAtaque; }//nuevo para el cooldown de ataque
 	double getTiempoAnimAtaque() const { return tiempoAnimAtaque; }
 
@@ -99,8 +108,7 @@ public:
 	virtual std::string getNombre() const { return "Pieza"; }
 	virtual void usarAtaqueSecundario() {};
 
-	virtual std::string getRutaSprite() const { return ""; }
-
+	virtual std::string getRutaProyectil() const { return ""; }
 	virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
 
 	virtual bool puedeDiagonal() const { return false; } //implementado para que las piezas de tierra se puedan mover en diagonales
@@ -123,6 +131,7 @@ public:
 
 	virtual void actualizarEfectos(double dt) {}
 	virtual bool bloqueaMovimientoAlAtacar() const { return true; }
+	virtual Proyectil* crearProyectil(int dirX, int dirY);
 
 
 	void actualizarAtaque(double dt);
@@ -139,5 +148,6 @@ public:
 	void setFuerza(double f) { fuerza = f; }
 	void setVelocidad(double v) { velocidad = v; }
 	void setVidaMax(double v) { vidaMax = v; }
+	void setIntervaloAtaque(double v) { intervaloAtaque = v; }
 	virtual ~Pieza() {}
 };

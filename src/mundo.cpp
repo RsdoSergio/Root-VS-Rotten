@@ -8,6 +8,7 @@
 #include "gestorTexturas.h"
 #include <ctime>
 #include "hechizos/hechizoExchange.h"
+#include "audio.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
@@ -94,9 +95,18 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	if (enPausa) {
-		if (key == 'w' || key == 'W') opcionPausa = 0;
-		if (key == 's' || key == 'S') opcionPausa = 1;
+		if (key == 'w' || key == 'W') {
+			opcionPausa = 0;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
+		if (key == 's' || key == 'S') {
+			opcionPausa = 1;
+			Audio::playSonido("audio/MENU.mp3");
+		}
+
 		if (key == 13) {
+			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcionPausa == 0) enPausa = false;
 			if (opcionPausa == 1) exit(0);
 		}
@@ -139,30 +149,36 @@ void Mundo::tecla(unsigned char key)
 		if (m != nullptr)
 		{
 			if (key == '2' && m->puedeUsarHechizo(Hechizo::HEAL)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoHeal);
 				m->usarHechizo(Hechizo::HEAL);
 				magoSeleccionado = nullptr;
 			}
 
 			if (key == '3' && m->puedeUsarHechizo(Hechizo::REVIVE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoRevive = true;
 				mostrarPanelHechizos = true;
 			}
 
 			if (key == '6' && m->puedeUsarHechizo(Hechizo::EXCHANGE)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoExchangeOrigen = true; // paso 1: elegir la primera pieza en el tablero
 			}
 
 			if (key == '1' && m->puedeUsarHechizo(Hechizo::TELEPORT)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				eligiendoTeleportOrigen = true; // paso 1: elegir la pieza a teletransportar
 			}
 
 			if (key == '4' && m->puedeUsarHechizo(Hechizo::IMPRISON)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				tablero.activarHechizo(m, &hechizoImprison);
 				m->usarHechizo(Hechizo::IMPRISON);
 				magoSeleccionado = nullptr;
 			}
 			if (key == '5' && m->puedeUsarHechizo(Hechizo::SHIFT_TIME)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				hechizoShiftTime.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
 				m->usarHechizo(Hechizo::SHIFT_TIME);
 				mensajeFeedback = hechizoShiftTime.getMensajeExito();
@@ -171,6 +187,7 @@ void Mundo::tecla(unsigned char key)
 			}
 
 			if (key == '7' && m->puedeUsarHechizo(Hechizo::TRANSFORM)) {
+				Audio::playSonido("audio/SELECCION_HECHIZO.mp3");
 				hechizoTransform.ejecutar(tablero, m, Pos()); // Pos() vacia: no se usa el objetivo
 				m->usarHechizo(Hechizo::TRANSFORM);
 				mensajeFeedback = hechizoTransform.getMensajeExito();
@@ -231,6 +248,7 @@ void Mundo::jugarCasilla(Pos casilla)
 		if (exito && usado != nullptr) {
 			mensajeFeedback = usado->getMensajeExito();
 			tiempoFeedback = 3.0;
+			comprobarFinPartida();
 		}
 		magoSeleccionado = nullptr; // cerramos el menu de hechizos
 		return;
@@ -283,7 +301,14 @@ void Mundo::jugarCasilla(Pos casilla)
 
 	if (combate) {
 		BandoVentaja ventaja = tablero.getBandoVentaja();
-		arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), ventaja);
+		Pieza* p1 = tablero.getPersonaje1();
+		Pieza* p2 = tablero.getPersonaje2();
+
+		bool b1 = tablero.esCasillaDePoder(p1->getCasilla());
+		bool b2 = tablero.esCasillaDePoder(p2->getCasilla());
+		//arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(),bool bost1,bool bost2);
+		arena.fDatos(*p1, *p2, ventaja, b1, b2, tablero.contarCasillasDePoder(Bando::planta),
+			tablero.contarCasillasDePoder(Bando::zombi));
 		arena.activa();
 	}
 }
@@ -291,15 +316,63 @@ void Mundo::comprobarFinPartida()
 {
 	if (partidaTerminada) return;
 
-	// algun bando controla los 5 puntos de poder
+	// Condicion 1: algun bando controla los 5 puntos de poder
 	int ganador = tablero.comprobarPuntosDePoder();
 	if (ganador == 0) {
 		partidaTerminada = true;
 		mensajeFinPartida = "ROOT GANAN";
+		return;
 	}
 	else if (ganador == 1) {
 		partidaTerminada = true;
 		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+
+	int piezasRoot = 0, piezasRotten = 0;
+	bool hayRootLibre = false, hayRottenLibre = false;
+
+	for (int i = 0; i < FILAS; i++)
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = tablero.getPieza(Pos(i, j));
+			if (p == nullptr) continue;
+			if (p->getBando() == Bando::planta) {
+				piezasRoot++;
+				if (!p->estaAprisionada()) hayRootLibre = true;
+			}
+			else {
+				piezasRotten++;
+				if (!p->estaAprisionada()) hayRottenLibre = true;
+			}
+		}
+
+	//eliminar todas las piezas del rival
+	if (piezasRoot == 0 && piezasRotten == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "EMPATE";
+		return;
+	}
+	if (piezasRoot == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+	if (piezasRotten == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+		return;
+	}
+
+	// las piezas restantes del rival estan aprisionadas
+	if (!hayRootLibre) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+	if (!hayRottenLibre) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+		return;
 	}
 }
 void Mundo::mueve()
@@ -313,34 +386,53 @@ void Mundo::mueve()
 		case AccionTransicion::EMPEZAR_PARTIDA:
 			enPartida = true;
 			tiempoPartida = 0.0;
-			Audio::playMusicaTablero();
+			pendienteMusicaTablero = true;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_VERSUS:
 			rutaCartel = "imagenes/carteles/cartel_vs.png";
+			Audio::playSonido("audio/FIGHT.mp3");
+
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 3.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
 
 		case AccionTransicion::ABRIR_CARTEL_RESULTADO:
-			rutaCartel = arena.getPlantaGano() ? "imagenes/carteles/cartel_plantas_ganan.png" : "imagenes/carteles/cartel_plantas_pierden.png";
+			Audio::stopMusica();
+			if (arena.getPlantaGano()) {
+				rutaCartel = "imagenes/carteles/cartel_plantas_ganan.png";
+				Audio::playSonido("audio/VICTORIA_PLANTAS.mp3");
+			}
+			else {
+				rutaCartel = "imagenes/carteles/cartel_plantas_pierden.png";
+				Audio::playSonido("audio/VICTORIA_ZOMBIS.mp3");
+			}
 			mostrandoCartel = true;
-			tiempoCartel = 2.0;
+			tiempoCartel = 5.0;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
 
 		case AccionTransicion::CERRAR_CARTEL_VERSUS:
-			arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(), tablero.getBandoVentaja());
+		{
+
+			Pieza* p1 = tablero.getPersonaje1();
+			Pieza* p2 = tablero.getPersonaje2();
+
+			bool boost1 = tablero.esCasillaDePoder(p1->getCasilla());
+			bool boost2 = tablero.esCasillaDePoder(p2->getCasilla());
+			arena.fDatos(*p1, *p2, tablero.getBandoVentaja(), boost1, boost2, tablero.contarCasillasDePoder(Bando::planta),
+				tablero.contarCasillasDePoder(Bando::zombi));
 			arena.activa();
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
 			break;
+		}
 
 		case AccionTransicion::CERRAR_CARTEL_RESULTADO:
 		{
@@ -353,7 +445,7 @@ void Mundo::mueve()
 			if (m2 && m2->estaTransformado()) m2->revertirTransformacion();
 
 			arena.desactiva();
-			Audio::playMusicaTablero();
+			pendienteMusicaTablero = true;
 			mostrandoCartel = false;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
@@ -364,6 +456,12 @@ void Mundo::mueve()
 		default:
 			break;
 		}
+	}
+
+	if (pendienteMusicaTablero && !transicion.estaActiva())
+	{
+		pendienteMusicaTablero = false;
+		Audio::playMusicaTablero();
 	}
 
 	if (mostrandoCartel && !transicion.estaActiva())
@@ -383,7 +481,7 @@ void Mundo::mueve()
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
+	if (arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
 	{
 		accionPendiente = AccionTransicion::ABRIR_CARTEL_RESULTADO;
 		transicion.cubrir();
@@ -405,7 +503,7 @@ void Mundo::mueve()
 		turno = 1 - turno;
 		tablero.setTurnoActual(numeroJugada);
 		numeroJugada++;
-		comprobarFinPartida();
+		tablero.curarEnCasillasdePoder();
 	}
 
 	BandoVentaja ventajaActual = tablero.getBandoVentaja();

@@ -50,6 +50,7 @@
     <ClCompile Include="src\piezas\piezavuelo.cpp" />
     <ClCompile Include="src\proyectil.cpp" />
     <ClCompile Include="src\casilla.cpp" />
+    <ClCompile Include="src\proyectilacelerado.cpp" />
     <ClCompile Include="src\tablero.cpp" />
     <ClCompile Include="src\piezas\unicornio.cpp" />
     <ClCompile Include="src\piezas\valquiria.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="src\pos.h" />
     <ClInclude Include="src\proyectil.h" />
     <ClInclude Include="src\casilla.h" />
+    <ClInclude Include="src\proyectilacelerado.h" />
     <ClInclude Include="src\tablero.h" />
     <ClInclude Include="src\piezas\unicornio.h" />
     <ClInclude Include="src\piezas\valquiria.h" />

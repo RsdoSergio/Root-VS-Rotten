@@ -77,6 +77,7 @@ class Mundo
 	hechizoTransform hechizoTransform;
 
 	bool partidaTerminada = false;
+	bool pendienteMusicaTablero = false;
 	std::string mensajeFinPartida;
 	void comprobarFinPartida();
 

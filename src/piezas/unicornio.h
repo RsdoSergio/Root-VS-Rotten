@@ -4,16 +4,16 @@
 #include <vector>
 
 class Unicornio : public PiezaTierra {
-    double velocidadProyectil; // Tiene proyectil además de melee
+	double velocidadProyectil; // Tiene proyectil además de melee
 
-    int proyectilesRafaga = 3;
-    int proyectilesRestantes = 0;
-    double tiempoEntreDisparos = 0.15;
-    double timerEntreDisparos = 0.0;
-    int dirX = 0;
-    int dirY = 0;
+	int proyectilesRafaga = 3;
+	int proyectilesRestantes = 0;
+	double tiempoEntreDisparos = 0.15;
+	double timerEntreDisparos = 0.0;
+	int dirX = 0;
+	int dirY = 0;
 
-    std::vector<Proyectil*> proyectilesPendientes;
+	std::vector<Proyectil*> proyectilesPendientes;
 
 public:
     Unicornio(Bando b, Pos pos)
@@ -24,16 +24,28 @@ public:
             0.5,   // Enfriamiento bajo
             4, //rad de mov
             b, pos),
-        velocidadProyectil(9.0) {} // Proyectil medio
+        velocidadProyectil(9.0) 
+    {
+        rutaSpriteAtaque = bando == Bando::planta
+            ?"imagenes/sprites_plantas/rabano_casillero_ataque.png"
+            : "imagenes/sprites_zombies/zombie_momia_ataque.png";
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/rabano_casillero.png"
+            : "imagenes/sprites_zombies/zombie_momia.png";
+        numFramesAtaque = 4;
+
+    
+    } // Proyectil medio
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
-    std::string getRutaSprite() const override;
-    
-
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Rabano Casillero" : "Zombidito Momia";
     }
+    std::string getRutaProyectil() const override {
+	     	return bando == Bando::planta ? "imagenes/proyectiles/proyectil_rabano.png" : "imagenes/proyectiles/proyectil_momia.png";
+    }
+  
     void usarAtaqueSecundario() override {};
 
     void iniciarRafaga(int dx, int dy) override;

@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "freeglut.h"
+#include "audio.h"
 
 extern float G_XMAX;
 extern float G_YMAX;
@@ -203,20 +204,23 @@ void Menu::tecla(unsigned char key)
 	//Menu principal
 	if (pantalla == 0)
 	{
-		if (key == 'w' || key == 'W')
+		if (key == 'w' || key == 'W') {
 			opcion = (opcion - 1 + 4) % 4;   //sube, con vuelta al final
-
+			Audio::playSonido("audio/MENU.mp3");
+		}
 		if (key == 's' || key == 'S')
 			opcion = (opcion + 1) % 4;        //baja, con vuelta al principio
-
+			Audio::playSonido("audio/MENU.mp3");
+	}
 		if (key == 13)
 		{
+			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcion == 0) confirmadoJugar = true;
 			if (opcion == 1) pantalla = 1;
 			if (opcion == 2) pantalla = 2;
 			if (opcion == 3) exit(0);
+
 		}
-	}
 
 	//Pantallas secundarias
 	if (pantalla == 1 || pantalla == 2)

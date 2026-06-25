@@ -17,27 +17,28 @@ public:
     {
         radioGolpe = 3.5;
         tiempoAnimAtaque = 0.3;
+
+        rutaSpriteAtaque = bando == Bando::planta
+            ? "imagenes/sprites_plantas/seta_solar_ataque.png"
+            : "imagenes/sprites_zombies/zombie_normal_ataque.png";
+        rutaSprite = bando == Bando::planta
+            ? "imagenes/sprites_plantas/seta_solar.png"
+            : "imagenes/sprites_zombies/zombie_normal.png";
+        numFramesAtaque = 4;
+        tamArena = 1.4f;
        
     };
 
-    std::string getRutaSprite() const override;
+   
     
 
-    std::string getNombre() const override 
-    {
-        return bando == Bando::planta ? "Seta Solar" : "Zombi";
-    }
-    void usarAtaqueSecundario() override {};
-    
-    bool puedeDiagonal() const override { return true; };
+	std::string getNombre() const override
+	{
+		return bando == Bando::planta ? "Seta Solar" : "Zombi";
+	}
+	void usarAtaqueSecundario() override {};
 
-    bool esMelee()const override { return true; }
+	bool puedeDiagonal() const override { return true; };
 
-    void dibujaArena(float x, float y) const override
-    {
-        int frame = getFrame(getDireccion(), getAccion());
-        dibujarSprite(getRutaSprite(), x, y, 1.4f, frame, 6); 
-    }
-
-    
+	bool esMelee()const override { return true; }
 };
