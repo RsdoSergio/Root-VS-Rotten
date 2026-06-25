@@ -10,6 +10,8 @@
 #include"arena_constantes.h"
 #include "obstaculo.h"
 #include<vector>
+#include "tablero.h"
+
 
 constexpr int MAX_OBSTACULOS = 6;
 
@@ -67,7 +69,7 @@ public:
 	void desactiva();
 
 	bool estaActiva() const { return activo; }
-	void fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja);
+	void fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool boost2, int poderPlanta, int poderZombi);
 
 	void recibirMovimiento(int jugador, int dir, bool estado);
 	void procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, double& tiempoDisparo, int dirDefecto);
@@ -76,6 +78,16 @@ public:
 	void aplicarDanoExplosiones();
 
 	bool combateTerminado() const { return terminado; }
+
+	double intervaloOriginal1 = 0.0;
+	double intervaloOriginal2 = 0.0;
+	double vidaMaxOriginal1 = 0.0;
+	double vidaMaxOriginal2 = 0.0;
+	double fuerzaOriginal1 = 0.0;
+	double fuerzaOriginal2 = 0.0;
+
+	bool boostPieza1 = false; // pieza1 estaba en casilla de poder
+	bool boostPieza2 = false; // pieza2 estaba en casilla de poder
 
 	void dibujaOverlayCombate() const;
 };
