@@ -47,7 +47,6 @@ protected:
 
 	bool   atacandoActivo = false;
 	double tiempoAtaqueRestante = 0.0;
-	
 
 	bool aprisionada = false;
 	int turnoAprisionamiento = -1;
@@ -74,7 +73,7 @@ public:
 	double getVelocidad() const { return velocidad + bonusVelocidad; }
 	Bando  getBando()     const { return bando; }
 	Pos    getCasilla()   const { return casilla; }
-	bool   estaViva()     const { return getVida() > 0;}
+	bool   estaViva()     const { return getVida() > 0; }
 	double getIntervaloAtaque() const { return intervaloAtaque; }//nuevo para el cooldown de ataque
 	double getTiempoAnimAtaque() const { return tiempoAnimAtaque; }
 
@@ -109,8 +108,7 @@ public:
 	virtual std::string getNombre() const { return "Pieza"; }
 	virtual void usarAtaqueSecundario() {};
 
-	
-
+	virtual std::string getRutaProyectil() const { return ""; }
 	virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
 
 	virtual bool puedeDiagonal() const { return false; } //implementado para que las piezas de tierra se puedan mover en diagonales

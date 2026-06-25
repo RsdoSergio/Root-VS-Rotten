@@ -329,7 +329,6 @@ void Mundo::comprobarFinPartida()
 		return;
 	}
 
-	
 	int piezasRoot = 0, piezasRotten = 0;
 	bool hayRootLibre = false, hayRottenLibre = false;
 

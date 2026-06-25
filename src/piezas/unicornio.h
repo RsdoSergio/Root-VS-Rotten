@@ -4,16 +4,16 @@
 #include <vector>
 
 class Unicornio : public PiezaTierra {
-    double velocidadProyectil; // Tiene proyectil además de melee
+	double velocidadProyectil; // Tiene proyectil además de melee
 
-    int proyectilesRafaga = 3;
-    int proyectilesRestantes = 0;
-    double tiempoEntreDisparos = 0.15;
-    double timerEntreDisparos = 0.0;
-    int dirX = 0;
-    int dirY = 0;
+	int proyectilesRafaga = 3;
+	int proyectilesRestantes = 0;
+	double tiempoEntreDisparos = 0.15;
+	double timerEntreDisparos = 0.0;
+	int dirX = 0;
+	int dirY = 0;
 
-    std::vector<Proyectil*> proyectilesPendientes;
+	std::vector<Proyectil*> proyectilesPendientes;
 
 public:
     Unicornio(Bando b, Pos pos)
@@ -38,13 +38,14 @@ public:
     } // Proyectil medio
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
-    
-    
-
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Rabano Casillero" : "Zombidito Momia";
     }
+    std::string getRutaProyectil() const override {
+	     	return bando == Bando::planta ? "imagenes/proyectiles/proyectil_rabano.png" : "imagenes/proyectiles/proyectil_momia.png";
+    }
+  
     void usarAtaqueSecundario() override {};
 
     void iniciarRafaga(int dx, int dy) override;

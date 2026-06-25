@@ -2,13 +2,12 @@
 #include "piezaVuelo.h"
 #include "proyectilacelerado.h"
 
-
 class Djinn : public PiezaVuelo {
-    double velocidadProyectil; // Proyectil lento pero muy potente (one shot)
+	double velocidadProyectil; // Proyectil lento pero muy potente (one shot)
 
-    static constexpr double VEL_MIN = 4.0;
-    static constexpr double VEL_MAX = 10.0;
-    static constexpr double DURACION_PROYECTIL = 5.0;
+	static constexpr double VEL_MIN = 4.0;
+	static constexpr double VEL_MAX = 10.0;
+	static constexpr double DURACION_PROYECTIL = 5.0;
 
 public:
     Djinn(Bando b, Pos pos)
@@ -30,13 +29,9 @@ public:
             : "imagenes/sprites_zombies/zombie_gondola_ataque.png";
 
         numFramesAtaque = 4;
-    
     } // Proyectil lento
 
     double getVelocidadProyectil() const override { return velocidadProyectil; }
-
-   
-    
 
     std::string getNombre() const override {
         return bando == Bando::planta ? "Mazorcañon" : "Gondolero";
@@ -45,6 +40,7 @@ public:
     Proyectil* crearProyectil(int dirX, int dirY) override;
     void usarAtaqueSecundario() override {};
 
-   
-    
+    std::string getRutaProyectil() const override {
+	     	return bando == Bando::planta ? "imagenes/proyectiles/proyectil_mazorcanon.png" : "imagenes/proyectiles/proyectil_gondola.png";
+    }
 };

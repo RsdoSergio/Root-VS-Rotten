@@ -98,5 +98,5 @@ int Pieza::getFrame(DirMovimiento dir, AccionPieza accion) const
 Proyectil* Pieza::crearProyectil(int dirX, int dirY)
 {
 	Vector2D vel(dirX * getVelocidadProyectil(), dirY * getVelocidadProyectil());
-	return new Proyectil(getPosArena(), vel, getFuerza());
+	return new Proyectil(getPosArena(), vel, getFuerza(), -1.0, getRutaProyectil());
 }
