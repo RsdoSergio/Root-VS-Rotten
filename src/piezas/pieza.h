@@ -62,6 +62,9 @@ protected:
 	int numFramesNormal = 6;
 	int numFramesAtaque = 4;
 
+	float tamTablero = 1.4f;
+	float tamArena = 2.0f;
+
 public:
 	Pieza(double v, double f, double vel, double intervalo, int radio, Bando b, Pos pos);
 
