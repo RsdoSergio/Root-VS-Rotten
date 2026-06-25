@@ -1,8 +1,11 @@
 #pragma once
 #include"vector2d.h"
 #include<cstdbool>
+
 class Proyectil
 {
+protected:
+    
 	friend class Interaccion; 
     Vector2D posicion;
     Vector2D velocidad;
@@ -23,7 +26,7 @@ public:
     //habra que implementarlo posteriormente
 
 	//nuevos atributos y metodos para el movimiento y dibujo del proyectil
-    void mueve(double dt);
+    virtual void mueve(double dt);
     void dibuja() const;
     
 

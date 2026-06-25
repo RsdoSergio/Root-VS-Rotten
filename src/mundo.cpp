@@ -248,6 +248,7 @@ void Mundo::jugarCasilla(Pos casilla)
 		if (exito && usado != nullptr) {
 			mensajeFeedback = usado->getMensajeExito();
 			tiempoFeedback = 3.0;
+			comprobarFinPartida();
 		}
 		magoSeleccionado = nullptr; // cerramos el menu de hechizos
 		return;
@@ -315,15 +316,64 @@ void Mundo::comprobarFinPartida()
 {
 	if (partidaTerminada) return;
 
-	// algun bando controla los 5 puntos de poder
+	// Condicion 1: algun bando controla los 5 puntos de poder
 	int ganador = tablero.comprobarPuntosDePoder();
 	if (ganador == 0) {
 		partidaTerminada = true;
 		mensajeFinPartida = "ROOT GANAN";
+		return;
 	}
 	else if (ganador == 1) {
 		partidaTerminada = true;
 		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+
+	
+	int piezasRoot = 0, piezasRotten = 0;
+	bool hayRootLibre = false, hayRottenLibre = false;
+
+	for (int i = 0; i < FILAS; i++)
+		for (int j = 0; j < COLS; j++) {
+			Pieza* p = tablero.getPieza(Pos(i, j));
+			if (p == nullptr) continue;
+			if (p->getBando() == Bando::planta) {
+				piezasRoot++;
+				if (!p->estaAprisionada()) hayRootLibre = true;
+			}
+			else {
+				piezasRotten++;
+				if (!p->estaAprisionada()) hayRottenLibre = true;
+			}
+		}
+
+	//eliminar todas las piezas del rival
+	if (piezasRoot == 0 && piezasRotten == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "EMPATE";
+		return;
+	}
+	if (piezasRoot == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+	if (piezasRotten == 0) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+		return;
+	}
+
+	// las piezas restantes del rival estan aprisionadas
+	if (!hayRootLibre) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROTTEN GANAN";
+		return;
+	}
+	if (!hayRottenLibre) {
+		partidaTerminada = true;
+		mensajeFinPartida = "ROOT GANAN";
+		return;
 	}
 }
 void Mundo::mueve()
@@ -432,7 +482,7 @@ void Mundo::mueve()
 	if (arena.estaActiva()) arena.mueve(0.025);
 
 	// Si la arena acaba de desactivarse este frame → resolver resultado
-	if (arena.estaActiva() && arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
+	if (arena.combateTerminado() && accionPendiente == AccionTransicion::NINGUNA && !mostrandoCartel)
 	{
 		accionPendiente = AccionTransicion::ABRIR_CARTEL_RESULTADO;
 		transicion.cubrir();
