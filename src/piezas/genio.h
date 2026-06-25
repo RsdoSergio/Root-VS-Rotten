@@ -45,6 +45,6 @@ public:
     Proyectil* crearProyectil(int dirX, int dirY) override;
     void usarAtaqueSecundario() override {};
 
-    Proyectil* crearProyectil(int dirX, int dirY) override;
+   
     
 };

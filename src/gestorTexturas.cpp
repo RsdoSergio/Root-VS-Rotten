@@ -41,7 +41,7 @@ void precargarTexturas() {
 "imagenes/sprites_zombies/zombie_pertiga.png",
 "imagenes/sprites_zombies/zombie_pertiga_ataque.png",
 "imagenes/sprites_zombies/zombie_dragon.png",
-"imagenes/sprites_zombies/zombie_dragon_ataque.png",
+"imagenes/sprites_zombies/zombie_dragon_ataques.png",
 "imagenes/sprites_zombies/zombie_gondola.png",
 "imagenes/sprites_zombies/zombie_gondola_ataque.png",
 "imagenes/sprites_zombies/zombie_yeti.png",

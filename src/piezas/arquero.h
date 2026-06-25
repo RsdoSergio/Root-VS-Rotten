@@ -36,7 +36,7 @@ public:
     double getVelocidadProyectil() const override { return velocidadProyectil; }
 
     
-    std::string getRutaSprite() const override;
+   
 
 
     std::string getNombre() const override {

@@ -561,8 +561,8 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 		else
 		{
 			Vector2D pos(
-				p->getPosArena().getX() + dirX * 1.2,
-				p->getPosArena().getY() + dirY * 1.2
+				p->getPosArena().getX() + dirX * 1.35,
+				p->getPosArena().getY() + dirY * 1.35
 			);
 			proyectiles.push_back(new Proyectil(pos, Vector2D(0.0, 0.0), p->getFuerza(), p->getTiempoAnimAtaque()));
 			p->iniciarAtaque();
