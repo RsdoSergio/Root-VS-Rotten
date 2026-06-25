@@ -67,7 +67,7 @@ void Pieza::actualizarAtaque(double dt)
 void Pieza::dibujaTableroGrande(float x, float y, float tam) const
 {
 	int frame = getFrame(getDireccion(), getAccion());
-	dibujarSprite(getRutaSprite(), x, y, tam, frame, 6);
+	dibujarSprite(rutaSprite, x, y, tam, frame, numFramesNormal);
 }
 
 int Pieza::getFrame(DirMovimiento dir, AccionPieza accion) const

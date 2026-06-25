@@ -78,7 +78,7 @@ public:
         setVelocidad(velocidadOriginal);
     }
 
-    std::string getRutaSprite() const override;
+    
 
 
     std::string getNombre() const override {
