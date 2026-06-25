@@ -550,6 +550,11 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 		else dirX = 0;
 	}
 	if (dirX == 0 && dirY == 0) dirX = dirDefecto;
+	if (dirX > 0) p->setDireccion(DirMovimiento::ESTE);
+	else if (dirX < 0) p->setDireccion(DirMovimiento::OESTE);
+	else if (dirY > 0) p->setDireccion(DirMovimiento::NORTE);
+	else if (dirY < 0) p->setDireccion(DirMovimiento::SUR);
+	
 
 	if (p->esMelee())
 	{
