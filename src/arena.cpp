@@ -347,6 +347,10 @@ void arena::mueve(double dt)
 			}
 			if (p->estaAtacando()) p->setAccion(AccionPieza::ATACAR);//poner esto para qse ponga el frame de atacar si no se bloquea al hacerlo
 			p->actualizarArena(dt);
+			
+			if (p->getDireccion() == DirMovimiento::IDLE)
+				p->setDireccion(p->getBando() == Bando::planta ? DirMovimiento::IDLE : DirMovimiento::SUR);
+
 		};
 
 	mover(pieza1, proyectil1);
@@ -550,6 +554,11 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 		else dirX = 0;
 	}
 	if (dirX == 0 && dirY == 0) dirX = dirDefecto;
+	if (dirX > 0) p->setDireccion(DirMovimiento::ESTE);
+	else if (dirX < 0) p->setDireccion(DirMovimiento::OESTE);
+	else if (dirY > 0) p->setDireccion(DirMovimiento::NORTE);
+	else if (dirY < 0) p->setDireccion(DirMovimiento::SUR);
+	
 
 	if (p->esMelee())
 	{

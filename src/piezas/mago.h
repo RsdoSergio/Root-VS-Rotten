@@ -1,5 +1,6 @@
 #pragma once
 #include "piezaTeletransporte.h"
+#include"gestorTexturas.h"
 #include <array>
 
 enum class Hechizo {
@@ -21,6 +22,9 @@ class Mago : public PiezaTeletransporte {
 	double vidaMaxOriginal = 0.0;
 	double fuerzaOriginal = 0.0;
 	double velocidadOriginal = 0.0;
+	std::string rutaAuraTransform = "";
+
+
 
 public:
 	Mago(Bando b, Pos pos)
@@ -43,6 +47,10 @@ public:
 			: "imagenes/sprites_zombies/zombie_doctor_ataque.png";
 
 		numFramesAtaque = 4;
+
+		rutaAuraTransform = bando == Bando::planta
+			? "imagenes/sprites_plantas/aura_transform.png"
+			: "imagenes/sprites_zombies/aura_transform.png";
 	}
 
 	double getVelocidadProyectil() const override { return velocidadProyectil; }
@@ -85,5 +93,12 @@ public:
 
 	std::string getRutaProyectil() const override {
 		return bando == Bando::planta ? "imagenes/proyectiles/proyectil_girasol.png" : "imagenes/proyectiles/proyectil_doctor.png";
+	}
+
+	void dibujaArena(float x, float y) const override
+	{
+		Pieza::dibujaArena(x, y); // dibuja el mago normal
+		if (transformado)
+			dibujarSprite(rutaAuraTransform, x, y, 2.6, 0, 1); // superpone el aura
 	}
 };
