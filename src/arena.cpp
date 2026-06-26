@@ -158,6 +158,7 @@ void arena::desactiva()
 	{
 		pieza1->setAccion(AccionPieza::IDLE);
 		pieza1->setDireccion(DirMovimiento::IDLE);
+		pieza1->setVelocidad(velocidadOriginal1);
 		pieza1->setIntervaloAtaque(intervaloOriginal1);
 		pieza1->setVidaMax(vidaMaxOriginal1);           
 		pieza1->setFuerza(fuerzaOriginal1);
@@ -166,6 +167,7 @@ void arena::desactiva()
 	{
 		pieza2->setAccion(AccionPieza::IDLE);
 		pieza2->setDireccion(DirMovimiento::IDLE);
+		pieza1->setVelocidad(velocidadOriginal2);
 		pieza2->setIntervaloAtaque(intervaloOriginal2);
 		pieza2->setVidaMax(vidaMaxOriginal2);
 		pieza2->setFuerza(fuerzaOriginal2);
@@ -224,11 +226,12 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool
 	vidaMaxPieza1 = pieza1->getVidaMax();
 	vidaMaxPieza2 = pieza2->getVidaMax();
 
-	float velPlanta = 4.0f;
-	float velZombi = 4.0f;
+	//float velPlanta = 4.0f;
+	//float velZombi = 4.0f;
 	float bonus = 1.3f;
 
-
+	velocidadOriginal1 = pieza1->getVelocidad();
+	velocidadOriginal2 = pieza2->getVelocidad();
 	intervaloOriginal1 = pieza1->getIntervaloAtaque();
 	intervaloOriginal2 = pieza2->getIntervaloAtaque();
 	vidaMaxOriginal1 = pieza1->getVidaMax();
@@ -243,7 +246,7 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool
 		vidaMaxPieza1 = pieza1->getVidaMax();
 		vidaPieza1 = pieza1->getVida();
 
-		pieza1->setVelocidad(pieza1->getVelocidad() * bonus);
+		pieza1->setVelocidad(velocidadOriginal1 * bonus);
 	}
 	else if (ventaja == BandoVentaja::ZOMBI) {
 		pieza2->setVidaMax(pieza2->getVidaMax() * bonus);
@@ -251,7 +254,7 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool
 		vidaMaxPieza2 = pieza2->getVidaMax();
 		vidaPieza2 = pieza2->getVida();
 
-		pieza2->setVelocidad(pieza2->getVelocidad() * bonus);
+		pieza2->setVelocidad(velocidadOriginal2 * bonus);
 	}
 
 
