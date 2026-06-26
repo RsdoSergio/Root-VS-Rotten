@@ -538,16 +538,16 @@ void Tablero::dibujarPiezaSeleccionada() {
 void Tablero::avanzarCiclo() {
 	using byte = unsigned char;
 
-	byte ciclos[5][3] = {
+	byte ciclos[4][3] = {
 		{128, 0,   128},  // indice 0 - violeta oscuro 
 	{144, 238, 144},  // indice 1 - verde clarito
 	{199, 21,  133},  // indice 2 - rosado-morado 
 	{34,  139, 34},   // indice 3 - verde césped oscuro 
-	{160, 160, 160},  // indice 4 - gris
+	//{160, 160, 160},  // indice 4 - gris
 	};
 
 	
-		indiceCiclo = (indiceCiclo + 1) % 5;
+		indiceCiclo = (indiceCiclo + 1) % 4;
 	
 
 	for (int i = 0; i < FILAS; i++) {

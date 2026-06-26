@@ -57,6 +57,16 @@ class arena
 	int indiceCombate = 0;        // 0=normal, 1=20%, 2=40%, 3=60%, 4=80%, 5=100% (para la ambientación circustancial)
 	bool musicaViolentaActiva = false;
 
+	double intervaloOriginal1 = 0.0;
+	double intervaloOriginal2 = 0.0;
+	double vidaMaxOriginal1 = 0.0;
+	double vidaMaxOriginal2 = 0.0;
+	double fuerzaOriginal1 = 0.0;
+	double fuerzaOriginal2 = 0.0;
+	float velocidadOriginal1 = 0.0f;
+	float velocidadOriginal2 = 0.0f;
+
+
 
 public:
 	arena() {};
@@ -79,13 +89,6 @@ public:
 	void aplicarDanoExplosiones();
 
 	bool combateTerminado() const { return terminado; }
-
-	double intervaloOriginal1 = 0.0;
-	double intervaloOriginal2 = 0.0;
-	double vidaMaxOriginal1 = 0.0;
-	double vidaMaxOriginal2 = 0.0;
-	double fuerzaOriginal1 = 0.0;
-	double fuerzaOriginal2 = 0.0;
 
 	bool boostPieza1 = false; // pieza1 estaba en casilla de poder
 	bool boostPieza2 = false; // pieza2 estaba en casilla de poder
