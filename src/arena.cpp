@@ -242,7 +242,7 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool
 
 	if (ventaja == BandoVentaja::PLANTA) {
 		pieza1->setVidaMax(pieza1->getVidaMax() * bonus); 
-		pieza1->curar(pieza1->getVidaMax()); 
+		pieza1->curar(pieza1->getVidaMax()/3.0); 
 		vidaMaxPieza1 = pieza1->getVidaMax();
 		vidaPieza1 = pieza1->getVida();
 
@@ -250,7 +250,7 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool
 	}
 	else if (ventaja == BandoVentaja::ZOMBI) {
 		pieza2->setVidaMax(pieza2->getVidaMax() * bonus);
-		pieza2->curar(pieza2->getVidaMax());
+		pieza2->curar(pieza2->getVidaMax()/3.0);
 		vidaMaxPieza2 = pieza2->getVidaMax();
 		vidaPieza2 = pieza2->getVida();
 

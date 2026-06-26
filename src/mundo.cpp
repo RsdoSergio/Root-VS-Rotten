@@ -284,7 +284,7 @@ void Mundo::jugarCasilla(Pos casilla)
 	{
 		Pieza* p = tablero.getPieza(casilla);
 		Mago* m = dynamic_cast<Mago*>(p);
-		if (m != nullptr && (int)m->getBando() == turno)
+		if (m != nullptr && (int)m->getBando() == turno && !m->estaAprisionada())
 		{
 			magoSeleccionado = m;
 			return;
