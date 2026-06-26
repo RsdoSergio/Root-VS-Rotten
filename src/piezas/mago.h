@@ -22,6 +22,8 @@ class Mago : public PiezaTeletransporte {
 	double vidaMaxOriginal = 0.0;
 	double fuerzaOriginal = 0.0;
 	double velocidadOriginal = 0.0;
+	double velocidadProyectilOriginal = 0.0;
+
 	std::string rutaAuraTransform = "";
 
 
@@ -71,10 +73,13 @@ public:
 		vidaMaxOriginal = getVidaMax();
 		fuerzaOriginal = getFuerza();
 		velocidadOriginal = getVelocidad();
+		velocidadProyectilOriginal = velocidadProyectil;
+
 		setVidaMax(vidaMaxOriginal * 1.5);
 		curar(getVidaMax()); // sube tambien la vida actual al nuevo maximo
 		setFuerza(fuerzaOriginal * 1.5);
-		setVelocidad(velocidadOriginal * 1.5);
+		setVelocidad(velocidadOriginal * 1.3);
+		velocidadProyectil *= 1.5;
 	}
 
 	void revertirTransformacion() {
@@ -84,6 +89,7 @@ public:
 		if (getVida() > vidaMaxOriginal) curar(vidaMaxOriginal - getVida()); // clamp si hiciera falta
 		setFuerza(fuerzaOriginal);
 		setVelocidad(velocidadOriginal);
+		velocidadProyectil = velocidadProyectilOriginal;
 	}
 
 	std::string getNombre() const override {
