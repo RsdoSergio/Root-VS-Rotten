@@ -4,13 +4,21 @@
 void Audio::playMusica(const char* nombre, bool repite) {
 	ETSIDI::playMusica(nombre, repite);
 }
-
 void Audio::stopMusica() {
 	ETSIDI::stopMusica();
 }
-
 void Audio::playSonido(const char* nombre) {
 	ETSIDI::play(nombre);
+}
+
+//mezclaz un array (Fisher-Yates)
+static void mezclar(int* arr, int n)
+{
+	for (int i = n - 1; i > 0; i--)
+	{
+		int j = rand() % (i + 1);
+		int tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+	}
 }
 
 void Audio::playMusicaTablero()
@@ -22,19 +30,16 @@ void Audio::playMusicaTablero()
 		"audio/TABLERO4.mp3",
 		"audio/TABLERO5.mp3",
 		"audio/TABLERO6.mp3",
-		"audio/TABLERO7.mp3",
+		"audio/TABLERO7.mp3"
 	};
-	constexpr int N = sizeof(canciones) / sizeof(canciones[0]);
-	static int ultimaCancion = -1;
+	constexpr int N = 7;
+	static int orden[N] = { 0,1,2,3,4,5,6 };
+	static int cursor = N;
 
-	int nueva;
-	do {
-		nueva = rand() % N;
-	} while (nueva == ultimaCancion && N > 1);
+	if (cursor >= N) { mezclar(orden, N); cursor = 0; }
 
-	ultimaCancion = nueva;
 	stopMusica();
-	playMusica(canciones[nueva], true);
+	playMusica(canciones[orden[cursor++]], true);
 }
 
 void Audio::playMusicaCombate()
@@ -49,17 +54,14 @@ void Audio::playMusicaCombate()
 		"audio/COMBATE7.mp3",
 		"audio/COMBATE8.mp3"
 	};
-	constexpr int N = sizeof(canciones) / sizeof(canciones[0]);
-	static int ultimaCancion = -1;
+	constexpr int N = 8;
+	static int orden[N] = { 0,1,2,3,4,5,6,7 };
+	static int cursor = N;
 
-	int nueva;
-	do {
-		nueva = rand() % N;
-	} while (nueva == ultimaCancion && N > 1);
+	if (cursor >= N) { mezclar(orden, N); cursor = 0; }
 
-	ultimaCancion = nueva;
 	stopMusica();
-	playMusica(canciones[nueva], true);
+	playMusica(canciones[orden[cursor++]], true);
 }
 
 void Audio::playMusicaViolenta()
@@ -73,15 +75,30 @@ void Audio::playMusicaViolenta()
 		"audio/VIOLENTA6.mp3",
 		"audio/VIOLENTA7.mp3"
 	};
-	constexpr int N = sizeof(canciones) / sizeof(canciones[0]);
-	static int ultimaCancion = -1;
+	constexpr int N = 7;
+	static int orden[N] = { 0,1,2,3,4,5,6 };
+	static int cursor = N;
 
-	int nueva;
-	do {
-		nueva = rand() % N;
-	} while (nueva == ultimaCancion && N > 1);
+	if (cursor >= N) { mezclar(orden, N); cursor = 0; }
 
-	ultimaCancion = nueva;
 	stopMusica();
-	playMusica(canciones[nueva], true);
+	playMusica(canciones[orden[cursor++]], true);
+}
+
+void Audio::playMusicaFinal()
+{
+	static const char* canciones[] = {
+		"audio/PANTALLAFINAL1.mp3",
+		"audio/PANTALLAFINAL2.mp3",
+		"audio/PANTALLAFINAL3.mp3",
+		"audio/PANTALLAFINAL4.mp3"
+	};
+	constexpr int N = 4;
+	static int orden[N] = { 0,1,2,3 };
+	static int cursor = N;
+
+	if (cursor >= N) { mezclar(orden, N); cursor = 0; }
+
+	stopMusica();
+	playMusica(canciones[orden[cursor++]], false);
 }

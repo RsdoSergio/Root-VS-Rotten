@@ -134,6 +134,8 @@ void Mundo::tecla(unsigned char key)
 			partidaTerminada = false;
 			enPartida = false;
 			mensajeFinPartida.clear();
+			Audio::stopMusica();
+			Audio::playMusica("audio/INTRO.mp3", true);
 		}
 		return;
 	}
@@ -233,6 +235,7 @@ void Mundo::tecla(unsigned char key)
 	//prueba para abrir pantalla de ganar, la tecla T dispara pantalla de fin de partida
 	if (key == 't' || key == 'T') {
 		partidaTerminada = true;
+		plantasGanaronPartida = true;
 		mensajeFinPartida = "ACUERDTE DE ELIMINAR ESTO";
 	}
 
@@ -336,11 +339,13 @@ void Mundo::comprobarFinPartida()
 	int ganador = tablero.comprobarPuntosDePoder();
 	if (ganador == 0) {
 		partidaTerminada = true;
+		plantasGanaronPartida = true;
 		mensajeFinPartida = "ROOT GANAN";
 		return;
 	}
 	else if (ganador == 1) {
 		partidaTerminada = true;
+		plantasGanaronPartida = false;
 		mensajeFinPartida = "ROTTEN GANAN";
 		return;
 	}
@@ -363,18 +368,15 @@ void Mundo::comprobarFinPartida()
 		}
 
 	//eliminar todas las piezas del rival
-	if (piezasRoot == 0 && piezasRotten == 0) {
-		partidaTerminada = true;
-		mensajeFinPartida = "EMPATE";
-		return;
-	}
 	if (piezasRoot == 0) {
 		partidaTerminada = true;
+		plantasGanaronPartida = false;
 		mensajeFinPartida = "ROTTEN GANAN";
 		return;
 	}
 	if (piezasRotten == 0) {
 		partidaTerminada = true;
+		plantasGanaronPartida = true;
 		mensajeFinPartida = "ROOT GANAN";
 		return;
 	}
@@ -382,11 +384,13 @@ void Mundo::comprobarFinPartida()
 	// las piezas restantes del rival estan aprisionadas
 	if (!hayRootLibre) {
 		partidaTerminada = true;
+		plantasGanaronPartida = false;
 		mensajeFinPartida = "ROTTEN GANAN";
 		return;
 	}
 	if (!hayRottenLibre) {
 		partidaTerminada = true;
+		plantasGanaronPartida = true;
 		mensajeFinPartida = "ROOT GANAN";
 		return;
 	}
@@ -412,6 +416,7 @@ void Mundo::mueve()
 
 			enPartida = true;
 			tiempoPartida = 0.0;
+			musicaFinalSonando = false;
 			pendienteMusicaTablero = true;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
@@ -445,7 +450,6 @@ void Mundo::mueve()
 
 		case AccionTransicion::CERRAR_CARTEL_VERSUS:
 		{
-
 			Pieza* p1 = tablero.getPersonaje1();
 			Pieza* p2 = tablero.getPersonaje2();
 
@@ -500,8 +504,19 @@ void Mundo::mueve()
 		}
 	}
 
-	if (!enPartida || enPausa || partidaTerminada) return;
-	tiempoPartida += 0.025;
+	if (!enPartida || enPausa) return;
+
+	if (!partidaTerminada)
+		tiempoPartida += 0.025;
+	else
+	{
+		if (!musicaFinalSonando)
+		{
+			musicaFinalSonando = true;
+			Audio::playMusicaFinal();
+		}
+		return;
+	}
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
@@ -597,35 +612,94 @@ void Mundo::dibuja()
 		}
 	}
 
-	// creacion de la pantalla de fin de partida
 	if (partidaTerminada)
 	{
 		extern float G_XMAX;
 		extern float G_YMAX;
 
-		// Fondo semitransparente oscuro
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
-		glBegin(GL_QUADS);
-		glVertex3f(-G_XMAX, -G_YMAX, 0);
-		glVertex3f(G_XMAX, -G_YMAX, 0);
-		glVertex3f(G_XMAX, G_YMAX, 0);
-		glVertex3f(-G_XMAX, G_YMAX, 0);
-		glEnd();
-		glDisable(GL_BLEND);
+		const char* rutaFin = plantasGanaronPartida ? "imagenes/carteles/fin_juego_plantas.png" : "imagenes/carteles/fin_juego_zombies.png";
 
-		// Texto
-		ETSIDI::setTextColor(1, 1, 0);
-		ETSIDI::setFont("fuentes/titulo.ttf", 50);
-		ETSIDI::printxy(mensajeFinPartida.c_str(), -8, 3);
-		ETSIDI::setTextColor(1, 1, 1);
-		ETSIDI::setFont("fuentes/texto.ttf", 26);
-		ETSIDI::printxy("Pulsa C para volver al menu", -6, -2);
+		auto texFin = ETSIDI::getTexture(rutaFin);
+		if (texFin.id != 0)
+		{
+			glDisable(GL_LIGHTING);
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBindTexture(GL_TEXTURE_2D, texFin.id);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+			glEnd();
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		}
+		else
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glColor4f(0.0f, 0.0f, 0.0f, 0.85f);
+			glBegin(GL_QUADS);
+			glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glVertex3f(G_XMAX, -G_YMAX, 0);
+			glVertex3f(G_XMAX, G_YMAX, 0);
+			glVertex3f(-G_XMAX, G_YMAX, 0);
+			glEnd();
+			glDisable(GL_BLEND);
+		}
+
+		{
+			int totalSeg = (int)tiempoPartida;
+			int minutos = totalSeg / 60;
+			int segundos = totalSeg % 60;
+			std::string textoMin = (minutos < 10 ? "0" : "") + std::to_string(minutos);
+			std::string textoSeg = (segundos < 10 ? "0" : "") + std::to_string(segundos);
+			std::string buf = textoMin + "." + textoSeg;
+
+			float bx = G_XMAX - 9.0f;
+			float by = -G_YMAX + 1.0f;
+
+			glColor4f(0.0f, 0.0f, 0.0f, 0.75f);
+			glBegin(GL_QUADS);
+			glVertex2f(bx - 0.3f, by - 0.3f);
+			glVertex2f(bx + 8.2f, by - 0.3f);
+			glVertex2f(bx + 8.2f, by + 4.5f);
+			glVertex2f(bx - 0.3f, by + 4.5f);
+			glEnd();
+
+			glColor4f(1.0f, 0.82f, 0.0f, 1.0f);
+			glLineWidth(3.0f);
+			glBegin(GL_LINE_LOOP);
+			glVertex2f(bx - 0.3f, by - 0.3f);
+			glVertex2f(bx + 8.2f, by - 0.3f);
+			glVertex2f(bx + 8.2f, by + 4.5f);
+			glVertex2f(bx - 0.3f, by + 4.5f);
+			glEnd();
+			glLineWidth(1.0f);
+			glDisable(GL_BLEND);
+
+			ETSIDI::setTextColor(1.0f, 0.82f, 0.0f);
+			ETSIDI::setFont("fuentes/texto.ttf", 24);
+			ETSIDI::printxy("TIEMPO", bx + 2.5f, by + 3.3f);
+
+			ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
+			ETSIDI::setFont("fuentes/auxiliar.ttf", 75);
+			ETSIDI::printxy(buf.c_str(), bx + 0.2f, by + 0.3f);
+
+			glColor3f(1.0f, 1.0f, 1.0f);
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		}
+
+		transicion.dibuja();
 	}
-
-	transicion.dibuja();
 }
+
 // Flechas
 void Mundo::teclaEspecial(int key)
 {

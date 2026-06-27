@@ -83,7 +83,9 @@ void precargarTexturas() {
 	"imagenes/proyectiles/proyectil_mazorcanon.png",
 	"imagenes/proyectiles/proyectil_momia.png",
 	"imagenes/proyectiles/proyectil_pertiga.png",
-	"imagenes/proyectiles/proyectil_rabano.png"
+	"imagenes/proyectiles/proyectil_rabano.png",
+	"imagenes/carteles/fin_juego_plantas.png",
+	"imagenes/carteles/fin_juego_zombies.png"
 	};
 
 	const char* musicas[] = {
@@ -110,6 +112,10 @@ void precargarTexturas() {
 		"audio/VIOLENTA5.mp3",
 		"audio/VIOLENTA6.mp3",
 		"audio/VIOLENTA7.mp3",
+		"audio/PANTALLAFINAL1.mp3",
+		"audio/PANTALLAFINAL2.mp3",
+		"audio/PANTALLAFINAL3.mp3",
+		"audio/PANTALLAFINAL4.mp3"
 	};
 
 	const char* efectos[] = {
@@ -118,7 +124,7 @@ void precargarTexturas() {
 		"audio/SELECCION_HECHIZO.mp3",
 		"audio/FIGHT.mp3",
 		"audio/ATAQUE_A_MELEE.mp3",
-		"audio/ATAQUE_A_DISTANCIA.mp3",
+		"audio/ATAQUE_A_DISTANCIA.mp3"
 	};
 
 	int totalTexturas = sizeof(texturas) / sizeof(texturas[0]);
