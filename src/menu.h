@@ -18,4 +18,5 @@ public:
 	bool seEligeJugar() const { return confirmadoJugar; }
 	void reinicia() { confirmadoJugar = false; }
 	void dibujaPausa(int opcion) const;
+	void dibujaControlesPausa() const;
 };
