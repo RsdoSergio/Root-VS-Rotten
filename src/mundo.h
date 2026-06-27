@@ -80,6 +80,8 @@ class Mundo
 	bool pendienteMusicaTablero = false;
 	std::string mensajeFinPartida;
 	void comprobarFinPartida();
+	bool plantasGanaronPartida = false;
+	bool musicaFinalSonando = false;
 
 	double tiempoPartida = 0.0;
 	void   dibujaTimer() const;
