@@ -537,13 +537,10 @@ void Mundo::mueve()
 	for (int i = 0; i < FILAS; i++)
 		for (int j = 0; j < COLS; j++) {
 			Pieza* p = tablero.getPieza(Pos(i, j));
-			if (p == nullptr || !p->estaAprisionada()) continue;
-
-			bool favorece = (p->getBando() == Bando::planta && ventajaActual == BandoVentaja::PLANTA)
-				|| (p->getBando() == Bando::zombi && ventajaActual == BandoVentaja::ZOMBI);
-
-			if (favorece) p->liberar();
+			if (p && p->estaAprisionada() && (numeroJugada - p->getTurnoAprisionamiento() >= 3))
+				p->liberar();
 		}
+
 }
 
 //Metodo que gestiona el dibujo de la simulacion
