@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "freeglut.h"
 #include "audio.h"
+#include "puntuaciones.h"
 
 extern float G_XMAX;
 extern float G_YMAX;
@@ -36,12 +37,14 @@ static void dibujaPrincipal(int opcion)
 	ETSIDI::printxy("Root VS Rotten", -21.5f, 8.0f);
 
 	OpcionMenu opciones[] = {
-		{ "JUGAR",         -4.5f,  1.5f },
-		{ "INSTRUCCIONES", -9.5f, -2.5f },
-		{ "CREDITOS",      -6.0f, -5.5f },
-		{ "SALIR",         -4.0f, -8.0f }
+		{ "JUGAR",         -4.5f,  3.0f },
+		{ "INSTRUCCIONES", -9.5f,  0.0f },
+		{ "CREDITOS",      -6.0f, -3.0f },
+		{ "PUNTUACIONES",  -9.0f, -6.0f },
+		{ "SALIR",         -4.0f, -9.0f }
 	};
-	int numOpciones = 4;
+
+	int numOpciones = 5;
 
 	for (int i = 0; i < numOpciones; i++) {
 		if (i == opcion) {
@@ -184,6 +187,7 @@ void Menu::dibuja()
 	if (pantalla == 0) dibujaPrincipal(opcion);
 	if (pantalla == 1) dibujaInstrucciones();
 	if (pantalla == 2) dibujaCreditos();
+	if (pantalla == 3) dibujaPuntuaciones();
 }
 
 void Menu::dibujaPausa(int opcion) const
@@ -239,25 +243,25 @@ void Menu::tecla(unsigned char key)
 	if (pantalla == 0)
 	{
 		if (key == 'w' || key == 'W') {
-			opcion = (opcion - 1 + 4) % 4;   //sube, con vuelta al final
+			opcion = (opcion - 1 + 5) % 5;   //sube, con vuelta al final
 			Audio::playSonido("audio/MENU.mp3");
 		}
 		if (key == 's' || key == 'S')
-			opcion = (opcion + 1) % 4;        //baja, con vuelta al principio
-			Audio::playSonido("audio/MENU.mp3");
+			opcion = (opcion + 1) % 5;        //baja, con vuelta al principio
+		Audio::playSonido("audio/MENU.mp3");
 	}
-		if (key == 13)
-		{
-			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
-			if (opcion == 0) confirmadoJugar = true;
-			if (opcion == 1) pantalla = 1;
-			if (opcion == 2) pantalla = 2;
-			if (opcion == 3) exit(0);
-
-		}
+	if (key == 13)
+	{
+		Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
+		if (opcion == 0) confirmadoJugar = true;
+		if (opcion == 1) pantalla = 1;
+		if (opcion == 2) pantalla = 2;
+		if (opcion == 3) pantalla = 3;
+		if (opcion == 4) exit(0);
+	}
 
 	//Pantallas secundarias
-	if (pantalla == 1 || pantalla == 2)
+	if (pantalla == 1 || pantalla == 2 || pantalla == 3)
 	{
 		if (key == 27)  // ESC
 			pantalla = 0;
@@ -344,6 +348,63 @@ void Menu::dibujaControlesPausa() const
 	ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
 	ETSIDI::setFont("fuentes/texto.ttf", 18);
 	ETSIDI::printxy("ESC - Volver a la pausa", -5.0f, -11.0f);
+
+	glColor3ub(255, 255, 255);
+}
+
+void Menu::dibujaPuntuaciones() const
+{
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glBegin(GL_QUADS);
+	glVertex2f(-G_XMAX, -G_YMAX);
+	glVertex2f(G_XMAX, -G_YMAX);
+	glVertex2f(G_XMAX, G_YMAX);
+	glVertex2f(-G_XMAX, G_YMAX);
+	glEnd();
+
+	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
+	ETSIDI::setFont("fuentes/titulo.ttf", 70);
+	ETSIDI::printxy("MEJORES TIEMPOS", -20.0f, 10.0f);
+
+	auto lista = Puntuaciones::cargar();
+
+	if (lista.empty())
+	{
+		ETSIDI::setTextColor(0.6f, 0.6f, 0.6f);
+		ETSIDI::setFont("fuentes/texto.ttf", 30);
+		ETSIDI::printxy("ESC - Volver al menu", -7.0f, -14.5f);
+	}
+	else
+	{
+		float y = 6.0f;
+		for (int i = 0; i < (int)lista.size(); i++)
+		{
+			//puesto
+			if (i == 0) ETSIDI::setTextColor(1.0f, 0.85f, 0.0f);
+			else if (i == 1) ETSIDI::setTextColor(0.75f, 0.75f, 0.75f);
+			else if (i == 2) ETSIDI::setTextColor(0.7f, 0.4f, 0.1f);
+			else ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
+
+			ETSIDI::setFont("fuentes/auxiliar.ttf", 32);
+
+			std::string puesto = std::to_string(i + 1) + ":";
+			ETSIDI::printxy(puesto.c_str(), -8.0f, y);
+
+			std::string tiempo = Puntuaciones::formatearTiempo(lista[i].segundos);
+			ETSIDI::printxy(tiempo.c_str(), -4.0f, y);
+
+			ETSIDI::printxy(lista[i].nombre.c_str(), 2.0f, y);
+
+			y -= 2.0f;
+		}
+	}
+
+	ETSIDI::setTextColor(0.5f, 0.5f, 0.5f);
+	ETSIDI::setFont("fuentes/texto.ttf", 22);
+	ETSIDI::printxy("ESC - Volver al menu", -7.0f, -14.5f);
 
 	glColor3ub(255, 255, 255);
 }

@@ -85,7 +85,9 @@ void precargarTexturas() {
 	"imagenes/proyectiles/proyectil_pertiga.png",
 	"imagenes/proyectiles/proyectil_rabano.png",
 	"imagenes/carteles/fin_juego_plantas.png",
-	"imagenes/carteles/fin_juego_zombies.png"
+	"imagenes/carteles/fin_juego_zombies.png",
+	"imagenes/carteles/rellenar_nombre_plantas.png",
+	"imagenes/carteles/rellenar_nombre_zombies.png",
 	};
 
 	const char* musicas[] = {

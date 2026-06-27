@@ -20,8 +20,8 @@
 #include "hechizos/hechizoShiftTime.h"
 #include "hechizos/hechizoTransform.h"
 #include <string>
-#include "piezas/mago.h"
 #include "transicion.h"
+#include "puntuaciones.h"
 
 enum class AccionTransicion {
 	NINGUNA,
@@ -29,7 +29,9 @@ enum class AccionTransicion {
 	ABRIR_CARTEL_VERSUS,
 	ABRIR_CARTEL_RESULTADO,
 	CERRAR_CARTEL_VERSUS,
-	CERRAR_CARTEL_RESULTADO
+	CERRAR_CARTEL_RESULTADO,
+	IR_A_REGISTRAR_NOMBRE,
+	IR_AL_MENU
 };
 
 class Mundo
@@ -86,6 +88,12 @@ class Mundo
 
 	double tiempoPartida = 0.0;
 	void   dibujaTimer() const;
+
+	bool registrandoNombre = false;
+	std::string nombreIntroducido = "";
+
+	void dibujaRegistroNombre() const;
+	void dibujaFinPartida() const;
 
 public:
 	void inicializa();

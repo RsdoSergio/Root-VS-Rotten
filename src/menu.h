@@ -19,4 +19,5 @@ public:
 	void reinicia() { confirmadoJugar = false; }
 	void dibujaPausa(int opcion) const;
 	void dibujaControlesPausa() const;
+	void dibujaPuntuaciones() const;
 };

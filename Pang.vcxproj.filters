@@ -38,6 +38,7 @@
     <ClCompile Include="src\hechizos\hechizoTransform.cpp" />
     <ClCompile Include="src\transicion.cpp" />
     <ClCompile Include="src\proyectilacelerado.cpp" />
+    <ClCompile Include="src\puntuaciones.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\ETSIDI.h" />
@@ -81,6 +82,7 @@
     <ClInclude Include="src\hechizos\hechizoTransform.h" />
     <ClInclude Include="src\transicion.h" />
     <ClInclude Include="src\proyectilacelerado.h" />
+    <ClInclude Include="src\puntuaciones.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\ETSIDI.lib" />
