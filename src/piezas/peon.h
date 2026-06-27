@@ -25,7 +25,7 @@ public:
             ? "imagenes/sprites_plantas/seta_solar.png"
             : "imagenes/sprites_zombies/zombie_normal.png";
         numFramesAtaque = 4;
-        tamArena = 1.4f;
+        
        
     };
 
