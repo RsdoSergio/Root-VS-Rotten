@@ -3,7 +3,6 @@
 #include "piezas/piezatierra.h"
 #include"piezas/piezavuelo.h"
 #include"piezas/piezateletransporte.h"
-
 #include "interaccion.h"
 #include"piezas/pieza.h"
 #include "audio.h"
@@ -33,7 +32,7 @@ void arena::dibujaInterior() const
 	   "imagenes/fondos/fondo_arena9.png"
 	};
 
-	const char* ruta = fondos[indiceFondo - 1]; //ojo q es un array (índice 0 = arena1)
+	const char* ruta = fondos[indiceFondo - 1];
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture(ruta).id);
@@ -158,14 +157,16 @@ void arena::desactiva()
 	{
 		pieza1->setAccion(AccionPieza::IDLE);
 		pieza1->setDireccion(DirMovimiento::IDLE);
+		pieza1->setVelocidad(velocidadOriginal1);
 		pieza1->setIntervaloAtaque(intervaloOriginal1);
-		pieza1->setVidaMax(vidaMaxOriginal1);           
+		pieza1->setVidaMax(vidaMaxOriginal1);
 		pieza1->setFuerza(fuerzaOriginal1);
 	}
 	if (pieza2)
 	{
 		pieza2->setAccion(AccionPieza::IDLE);
 		pieza2->setDireccion(DirMovimiento::IDLE);
+		pieza1->setVelocidad(velocidadOriginal2);
 		pieza2->setIntervaloAtaque(intervaloOriginal2);
 		pieza2->setVidaMax(vidaMaxOriginal2);
 		pieza2->setFuerza(fuerzaOriginal2);
@@ -183,7 +184,6 @@ void arena::desactiva()
 	terminado = false;
 	pieza1 = nullptr;
 	pieza2 = nullptr;
-
 }
 
 void arena::dibujaObstaculos() const
@@ -224,11 +224,10 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool
 	vidaMaxPieza1 = pieza1->getVidaMax();
 	vidaMaxPieza2 = pieza2->getVidaMax();
 
-	float velPlanta = 4.0f;
-	float velZombi = 4.0f;
 	float bonus = 1.3f;
 
-
+	velocidadOriginal1 = pieza1->getVelocidad();
+	velocidadOriginal2 = pieza2->getVelocidad();
 	intervaloOriginal1 = pieza1->getIntervaloAtaque();
 	intervaloOriginal2 = pieza2->getIntervaloAtaque();
 	vidaMaxOriginal1 = pieza1->getVidaMax();
@@ -236,29 +235,26 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool
 	fuerzaOriginal1 = pieza1->getFuerza();
 	fuerzaOriginal2 = pieza2->getFuerza();
 
-
 	if (ventaja == BandoVentaja::PLANTA) {
-		pieza1->setVidaMax(pieza1->getVidaMax() * bonus); 
-		pieza1->curar(pieza1->getVidaMax()); 
+		pieza1->setVidaMax(pieza1->getVidaMax() * bonus);
+		pieza1->curar(pieza1->getVidaMax() / 3.0);
 		vidaMaxPieza1 = pieza1->getVidaMax();
 		vidaPieza1 = pieza1->getVida();
 
-		pieza1->setVelocidad(pieza1->getVelocidad() * bonus);
+		pieza1->setVelocidad(velocidadOriginal1 * bonus);
 	}
 	else if (ventaja == BandoVentaja::ZOMBI) {
 		pieza2->setVidaMax(pieza2->getVidaMax() * bonus);
-		pieza2->curar(pieza2->getVidaMax());
+		pieza2->curar(pieza2->getVidaMax() / 3.0);
 		vidaMaxPieza2 = pieza2->getVidaMax();
 		vidaPieza2 = pieza2->getVida();
 
-		pieza2->setVelocidad(pieza2->getVelocidad() * bonus);
+		pieza2->setVelocidad(velocidadOriginal2 * bonus);
 	}
-
 
 	if (boost1) pieza1->setIntervaloAtaque(pieza1->getIntervaloAtaque() * 0.7);
 	if (boost2) pieza2->setIntervaloAtaque(pieza2->getIntervaloAtaque() * 0.7);
 
-	
 	// Bando controla 1 casilla de poder (+0.3 velocidad de ataque)
 	if (poderPlanta >= 1)
 		pieza1->setIntervaloAtaque(intervaloOriginal1 * 1.2);
@@ -288,12 +284,12 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool
 
 	// Bando controla 4 casillas de poder (x2 en todas las ventajas anteriores)
 	if (poderPlanta >= 4) {
-		pieza1->setIntervaloAtaque(intervaloOriginal1 * 0.7 * 0.7); 
-		pieza1->setVidaMax(vidaMaxOriginal1 * 1.2 * 2.0);           
+		pieza1->setIntervaloAtaque(intervaloOriginal1 * 0.7 * 0.7);
+		pieza1->setVidaMax(vidaMaxOriginal1 * 1.2 * 2.0);
 		pieza1->curar(pieza1->getVidaMax());
 		vidaMaxPieza1 = pieza1->getVidaMax();
 		vidaPieza1 = pieza1->getVida();
-		pieza1->setFuerza(fuerzaOriginal1 * 1.2 * 2.0);             
+		pieza1->setFuerza(fuerzaOriginal1 * 1.2 * 2.0);
 	}
 	if (poderZombi >= 4) {
 		pieza2->setIntervaloAtaque(intervaloOriginal2 * 0.7 * 0.7);
@@ -303,8 +299,6 @@ void arena::fDatos(Pieza& p1, Pieza& p2, BandoVentaja ventaja, bool boost1, bool
 		vidaPieza2 = pieza2->getVida();
 		pieza2->setFuerza(fuerzaOriginal2 * 1.2 * 2.0);
 	}
-
-	
 
 	pieza1->setPosArena(-SEMIANCHO * 0.6, 0.0);
 	pieza2->setPosArena(SEMIANCHO * 0.6, 0.0);
@@ -323,13 +317,6 @@ void arena::dibujaPiezasArena() const
 	pieza2->dibujaArena(pieza2->getPosArena().getX(), pieza2->getPosArena().getY());
 }
 
-//SE AÑADEN LOS PROYECTILES EN ARENA PARA PROBAR SU FUNCIONAMIENTO POSTERIORMENTE SE TIENE QUE CAMBIAR
-// CADA PIEZA DEBERÁ GESTIONAR SU PROPIO PROYECTIL
-//
-//
-// Mueve los proyectiles activos
-// Sigue el mismo patron que Mundo::mueve en el juego de referencia
-
 void arena::mueve(double dt)
 {
 	if (!activo) return;
@@ -345,12 +332,11 @@ void arena::mueve(double dt)
 				p->setAccion(AccionPieza::ATACAR);
 				return;
 			}
-			if (p->estaAtacando()) p->setAccion(AccionPieza::ATACAR);//poner esto para qse ponga el frame de atacar si no se bloquea al hacerlo
+			if (p->estaAtacando()) p->setAccion(AccionPieza::ATACAR);
 			p->actualizarArena(dt);
-			
+
 			if (p->getDireccion() == DirMovimiento::IDLE)
 				p->setDireccion(p->getBando() == Bando::planta ? DirMovimiento::IDLE : DirMovimiento::SUR);
-
 		};
 
 	mover(pieza1, proyectil1);
@@ -530,8 +516,7 @@ void arena::recibirMovimiento(int jugador, int dir, bool estado)
 	Pieza* p = (jugador == 0) ? pieza1 : pieza2;
 	if (!p) return;
 
-	//solo PiezaTierra tiene setMovimiento por ahora
-	PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p);//transformar pieza de clase pieza a clase Piezatierra
+	PiezaTierra* pt = dynamic_cast<PiezaTierra*>(p); //transformar pieza de clase pieza a clase Piezatierra
 	if (pt) pt->setMovimiento(dir, estado);
 
 	PiezaVuelo* pv = dynamic_cast<PiezaVuelo*>(p);
@@ -558,7 +543,6 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 	else if (dirX < 0) p->setDireccion(DirMovimiento::OESTE);
 	else if (dirY > 0) p->setDireccion(DirMovimiento::NORTE);
 	else if (dirY < 0) p->setDireccion(DirMovimiento::SUR);
-	
 
 	if (p->esMelee())
 	{
@@ -576,8 +560,8 @@ void arena::procesarAtaque(Pieza* p, std::vector<Proyectil*>& proyectiles, doubl
 			auto* golpe = new Proyectil(pos, Vector2D(0.0, 0.0), p->getFuerza(), p->getTiempoAnimAtaque()); //si la velocidad del proyectil es 0 --> ataque melee --> proyectil invisible
 			golpe->setInvisible();
 			proyectiles.push_back(golpe);
-			p->iniciarAtaque();
 		}
+		p->iniciarAtaque();
 	}
 	else
 	{

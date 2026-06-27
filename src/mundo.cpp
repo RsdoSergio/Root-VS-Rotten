@@ -4,11 +4,9 @@
 #include "tablero.h"
 #include <vector>
 #include "audio.h"
-#include "audio.h"
 #include "gestorTexturas.h"
 #include <ctime>
 #include "hechizos/hechizoExchange.h"
-#include "audio.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
@@ -26,7 +24,7 @@ void Mundo::inicializa() {
 	precargarTexturas();
 
 	//inicializacion de peones para ambos bandos
-	const float TAM = 2.8f; //tener presente el tamaño de cada celda
+	const float TAM = 2.8f; //tamaño de cada celda
 	const float pos = (9 * TAM) / 2.0f;
 	Audio::playMusica("audio/INTRO.mp3", true);
 };
@@ -69,9 +67,30 @@ void Mundo::dibujaTimer() const
 	glDisable(GL_BLEND);
 }
 
-//Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
+//Metodo se gestiona la pulsacion de teclas
 void Mundo::tecla(unsigned char key)
 {
+	if (registrandoNombre)
+	{
+		if (key == 13 && !nombreIntroducido.empty())
+		{
+			Puntuaciones::guardar(nombreIntroducido, (int)tiempoPartida);
+			accionPendiente = AccionTransicion::IR_AL_MENU;
+			transicion.cubrir();
+		}
+		else if (key == 27)
+		{
+			registrandoNombre = false;
+			accionPendiente = AccionTransicion::IR_AL_MENU;
+			transicion.cubrir();
+		}
+		else if (key == 8 && !nombreIntroducido.empty())
+			nombreIntroducido.pop_back();
+		else if (key >= 32 && key < 127 && nombreIntroducido.size() < 20)
+			nombreIntroducido += (char)key;
+		return;
+	}
+
 	if (transicion.estaActiva()) return;
 
 	if (!enPartida) {
@@ -79,6 +98,7 @@ void Mundo::tecla(unsigned char key)
 		if (menu.seEligeJugar() && accionPendiente == AccionTransicion::NINGUNA) {
 			accionPendiente = AccionTransicion::EMPEZAR_PARTIDA;
 			transicion.cubrir();
+			menu.reinicia();
 		}
 		return;
 	}
@@ -90,37 +110,52 @@ void Mundo::tecla(unsigned char key)
 
 	if (key == 'm' || key == 'M') {
 		enPausa = !enPausa;
-		opcionPausa = 0;   // resetea al abrir
+		opcionPausa = 0;
+		verControlesPausa = false;
 		return;
 	}
 
-	if (enPausa) {
+	if (enPausa)
+	{
+		if (verControlesPausa) {
+			if (key == 27) verControlesPausa = false;
+			return;
+		}
+
 		if (key == 'w' || key == 'W') {
-			opcionPausa = 0;
+			opcionPausa = (opcionPausa - 1 + 3) % 3;
 			Audio::playSonido("audio/MENU.mp3");
 		}
 
 		if (key == 's' || key == 'S') {
-			opcionPausa = 1;
+			opcionPausa = (opcionPausa + 1) % 3;
 			Audio::playSonido("audio/MENU.mp3");
 		}
 
 		if (key == 13) {
 			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcionPausa == 0) enPausa = false;
-			if (opcionPausa == 1) exit(0);
+			if (opcionPausa == 1) verControlesPausa = true;
+			if (opcionPausa == 2) exit(0);
 		}
 		return;
 	}
-	// Partida terminada: solo la tecla C vuelve al menu
+
+	//partida terminada ESC = menu y ENTER = registrar nombre
 	if (partidaTerminada) {
-		if (key == 'c' || key == 'C') {
-			partidaTerminada = false;
-			enPartida = false;
-			mensajeFinPartida.clear();
+		if (key == 13)
+		{
+			accionPendiente = AccionTransicion::IR_A_REGISTRAR_NOMBRE;
+			transicion.cubrir();
+		}
+		else if (key == 27)
+		{
+			accionPendiente = AccionTransicion::IR_AL_MENU;
+			transicion.cubrir();
 		}
 		return;
 	}
+
 	if (arena.estaActiva()) {
 		if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, true);
 		if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, true);
@@ -133,8 +168,7 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
-	// Cada cursor se mueve solo durante su turno
-	// Movimiento por teclado ahora es complementario al raton
+
 	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
@@ -214,12 +248,6 @@ void Mundo::tecla(unsigned char key)
 		}
 	}
 
-	//prueba para abrir pantalla de ganar, la tecla T dispara pantalla de fin de partida
-	if (key == 't' || key == 'T') {
-		partidaTerminada = true;
-		mensajeFinPartida = "ACUERDTE DE ELIMINAR ESTO";
-	}
-
 	if (key == 27) {
 		tablero.cancelarSeleccion();
 		tablero.cancelarHechizo();
@@ -236,9 +264,6 @@ void Mundo::tecla(unsigned char key)
 	}
 }
 
-// Logica comun de "intentar jugar" una casilla: seleccionar pieza propia o, si ya
-// habia una seleccionada, intentar mover/combatir contra la casilla indicada.
-// La usan tanto el teclado (tecla(), con key==13) como el raton (clicRaton()).
 void Mundo::jugarCasilla(Pos casilla)
 {
 	if (tablero.modoHechizoActivo())
@@ -284,7 +309,7 @@ void Mundo::jugarCasilla(Pos casilla)
 	{
 		Pieza* p = tablero.getPieza(casilla);
 		Mago* m = dynamic_cast<Mago*>(p);
-		if (m != nullptr && (int)m->getBando() == turno)
+		if (m != nullptr && (int)m->getBando() == turno && !m->estaAprisionada())
 		{
 			magoSeleccionado = m;
 			return;
@@ -293,7 +318,7 @@ void Mundo::jugarCasilla(Pos casilla)
 
 	bool combate = tablero.gestionarEntrada(casilla, turno);
 	tablero.setTurnoActual(numeroJugada);
-	magoSeleccionado = nullptr; // <-- añadir: cualquier movimiento normal limpia la seleccion de mago
+	magoSeleccionado = nullptr;
 	if (turno == 0)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
 	else
@@ -306,9 +331,7 @@ void Mundo::jugarCasilla(Pos casilla)
 
 		bool b1 = tablero.esCasillaDePoder(p1->getCasilla());
 		bool b2 = tablero.esCasillaDePoder(p2->getCasilla());
-		//arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(),bool bost1,bool bost2);
-		arena.fDatos(*p1, *p2, ventaja, b1, b2, tablero.contarCasillasDePoder(Bando::planta),
-			tablero.contarCasillasDePoder(Bando::zombi));
+		arena.fDatos(*p1, *p2, ventaja, b1, b2, tablero.contarCasillasDePoder(Bando::planta), tablero.contarCasillasDePoder(Bando::zombi));
 		arena.activa();
 	}
 }
@@ -320,11 +343,13 @@ void Mundo::comprobarFinPartida()
 	int ganador = tablero.comprobarPuntosDePoder();
 	if (ganador == 0) {
 		partidaTerminada = true;
+		plantasGanaronPartida = true;
 		mensajeFinPartida = "ROOT GANAN";
 		return;
 	}
 	else if (ganador == 1) {
 		partidaTerminada = true;
+		plantasGanaronPartida = false;
 		mensajeFinPartida = "ROTTEN GANAN";
 		return;
 	}
@@ -347,18 +372,15 @@ void Mundo::comprobarFinPartida()
 		}
 
 	//eliminar todas las piezas del rival
-	if (piezasRoot == 0 && piezasRotten == 0) {
-		partidaTerminada = true;
-		mensajeFinPartida = "EMPATE";
-		return;
-	}
 	if (piezasRoot == 0) {
 		partidaTerminada = true;
+		plantasGanaronPartida = false;
 		mensajeFinPartida = "ROTTEN GANAN";
 		return;
 	}
 	if (piezasRotten == 0) {
 		partidaTerminada = true;
+		plantasGanaronPartida = true;
 		mensajeFinPartida = "ROOT GANAN";
 		return;
 	}
@@ -366,11 +388,13 @@ void Mundo::comprobarFinPartida()
 	// las piezas restantes del rival estan aprisionadas
 	if (!hayRootLibre) {
 		partidaTerminada = true;
+		plantasGanaronPartida = false;
 		mensajeFinPartida = "ROTTEN GANAN";
 		return;
 	}
 	if (!hayRottenLibre) {
 		partidaTerminada = true;
+		plantasGanaronPartida = true;
 		mensajeFinPartida = "ROOT GANAN";
 		return;
 	}
@@ -384,8 +408,19 @@ void Mundo::mueve()
 		switch (accionPendiente)
 		{
 		case AccionTransicion::EMPEZAR_PARTIDA:
+
+			tablero.inicializaTablero();
+			tablero.colocarPiezasIniciales();
+			turno = 0;
+			numeroJugada = 0;
+			magoSeleccionado = nullptr;
+			eligiendoRevive = false;
+			eligiendoExchangeOrigen = false;
+			eligiendoTeleportOrigen = false;
+
 			enPartida = true;
 			tiempoPartida = 0.0;
+			musicaFinalSonando = false;
 			pendienteMusicaTablero = true;
 			accionPendiente = AccionTransicion::NINGUNA;
 			transicion.descubrir();
@@ -419,7 +454,6 @@ void Mundo::mueve()
 
 		case AccionTransicion::CERRAR_CARTEL_VERSUS:
 		{
-
 			Pieza* p1 = tablero.getPersonaje1();
 			Pieza* p2 = tablero.getPersonaje2();
 
@@ -453,6 +487,24 @@ void Mundo::mueve()
 			break;
 		}
 
+		case AccionTransicion::IR_A_REGISTRAR_NOMBRE:
+			registrandoNombre = true;
+			nombreIntroducido = "";
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
+			break;
+
+		case AccionTransicion::IR_AL_MENU:
+			partidaTerminada = false;
+			enPartida = false;
+			registrandoNombre = false;
+			mensajeFinPartida.clear();
+			Audio::stopMusica();
+			Audio::playMusica("audio/INTRO.mp3", true);
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
+			break;
+
 		default:
 			break;
 		}
@@ -474,8 +526,19 @@ void Mundo::mueve()
 		}
 	}
 
-	if (!enPartida || enPausa || partidaTerminada) return;
-	tiempoPartida += 0.025;
+	if (!enPartida || enPausa) return;
+
+	if (!partidaTerminada)
+		tiempoPartida += 0.025;
+	else
+	{
+		if (!musicaFinalSonando)
+		{
+			musicaFinalSonando = true;
+			Audio::playMusicaFinal();
+		}
+		return;
+	}
 
 	bool estabaActiva = arena.estaActiva();
 	if (arena.estaActiva()) arena.mueve(0.025);
@@ -504,22 +567,18 @@ void Mundo::mueve()
 		tablero.setTurnoActual(numeroJugada);
 		numeroJugada++;
 		tablero.curarEnCasillasdePoder();
+		comprobarFinPartida();
 	}
 
 	BandoVentaja ventajaActual = tablero.getBandoVentaja();
 	for (int i = 0; i < FILAS; i++)
 		for (int j = 0; j < COLS; j++) {
 			Pieza* p = tablero.getPieza(Pos(i, j));
-			if (p == nullptr || !p->estaAprisionada()) continue;
-
-			bool favorece = (p->getBando() == Bando::planta && ventajaActual == BandoVentaja::PLANTA)
-				|| (p->getBando() == Bando::zombi && ventajaActual == BandoVentaja::ZOMBI);
-
-			if (favorece) p->liberar();
+			if (p && p->estaAprisionada() && (numeroJugada - p->getTurnoAprisionamiento() >= 3))
+				p->liberar();
 		}
 }
 
-//Metodo que gestiona el dibujo de la simulacion
 void Mundo::dibuja()
 {
 	if (!enPartida)
@@ -529,7 +588,6 @@ void Mundo::dibuja()
 		return;
 	}
 
-	//Resets necesarios sino no funciona bien
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 	glDisable(GL_LIGHTING);
@@ -540,14 +598,14 @@ void Mundo::dibuja()
 	tablero.dibuja(cursor, turno);
 	cursor.dibuja();   // borde amarillo
 	cursor2.dibuja();  // borde morado
-	//caja.dibuja();
 	arena.dibuja();
 	dibujaPanelHechizos();
 
 	if (!enPausa && !mostrandoCartel && !transicion.estaActiva())
 		dibujaTimer();
 
-	if (enPausa) menu.dibujaPausa(opcionPausa);
+	if (enPausa && !verControlesPausa) menu.dibujaPausa(opcionPausa);
+	if (enPausa && verControlesPausa) menu.dibujaControlesPausa();
 
 	if (mostrandoCartel && !rutaCartel.empty())
 	{
@@ -572,35 +630,143 @@ void Mundo::dibuja()
 		}
 	}
 
-	// creacion de la pantalla de fin de partida
-	if (partidaTerminada)
+	if (partidaTerminada && !registrandoNombre)
 	{
 		extern float G_XMAX;
 		extern float G_YMAX;
 
-		// Fondo semitransparente oscuro
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
-		glBegin(GL_QUADS);
-		glVertex3f(-G_XMAX, -G_YMAX, 0);
-		glVertex3f(G_XMAX, -G_YMAX, 0);
-		glVertex3f(G_XMAX, G_YMAX, 0);
-		glVertex3f(-G_XMAX, G_YMAX, 0);
-		glEnd();
-		glDisable(GL_BLEND);
+		const char* rutaFin = plantasGanaronPartida ? "imagenes/carteles/fin_juego_plantas.png" : "imagenes/carteles/fin_juego_zombies.png";
 
-		// Texto
-		ETSIDI::setTextColor(1, 1, 0);
-		ETSIDI::setFont("fuentes/titulo.ttf", 50);
-		ETSIDI::printxy(mensajeFinPartida.c_str(), -8, 3);
-		ETSIDI::setTextColor(1, 1, 1);
-		ETSIDI::setFont("fuentes/texto.ttf", 26);
-		ETSIDI::printxy("Pulsa C para volver al menu", -6, -2);
+		auto texFin = ETSIDI::getTexture(rutaFin);
+		if (texFin.id != 0)
+		{
+			glDisable(GL_LIGHTING);
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBindTexture(GL_TEXTURE_2D, texFin.id);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+			glEnd();
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		}
+		else
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glColor4f(0.0f, 0.0f, 0.0f, 0.85f);
+			glBegin(GL_QUADS);
+			glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glVertex3f(G_XMAX, -G_YMAX, 0);
+			glVertex3f(G_XMAX, G_YMAX, 0);
+			glVertex3f(-G_XMAX, G_YMAX, 0);
+			glEnd();
+			glDisable(GL_BLEND);
+		}
+
+		{
+			int totalSeg = (int)tiempoPartida;
+			int minutos = totalSeg / 60;
+			int segundos = totalSeg % 60;
+			std::string textoMin = (minutos < 10 ? "0" : "") + std::to_string(minutos);
+			std::string textoSeg = (segundos < 10 ? "0" : "") + std::to_string(segundos);
+			std::string buf = textoMin + "." + textoSeg;
+
+			float bx = G_XMAX - 9.0f;
+			float by = -G_YMAX + 1.0f;
+
+			ETSIDI::setTextColor(1.0f, 0.82f, 0.0f);
+			ETSIDI::setFont("fuentes/texto.ttf", 24);
+			ETSIDI::printxy("TIEMPO", bx + 2.5f, by + 3.3f);
+
+			ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
+			ETSIDI::setFont("fuentes/auxiliar.ttf", 75);
+			ETSIDI::printxy(buf.c_str(), bx + 0.2f, by + 0.3f);
+
+			glColor3f(1.0f, 1.0f, 1.0f);
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		}
+
+		ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
+		ETSIDI::setFont("fuentes/texto.ttf", 28);
+		ETSIDI::printxy("ESC   INICIO", -G_XMAX + 1.0f, -11.0f);
+		ETSIDI::printxy("ENTER REGISTRAR PUNTUACION", -G_XMAX + 1.0f, -13.0f);
+	}
+
+	if (registrandoNombre)
+	{
+		extern float G_XMAX;
+		extern float G_YMAX;
+
+		const char* rutaRelleno = plantasGanaronPartida ? "imagenes/carteles/rellenar_nombre_plantas.png" : "imagenes/carteles/rellenar_nombre_zombies.png";
+
+		auto texRelleno = ETSIDI::getTexture(rutaRelleno);
+		if (texRelleno.id != 0)
+		{
+			glDisable(GL_LIGHTING);
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBindTexture(GL_TEXTURE_2D, texRelleno.id);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+			glEnd();
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		}
+
+		ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
+		ETSIDI::setFont("fuentes/texto.ttf", 50);
+		ETSIDI::printxy("REGISTRAR PUNTUACION", -16.0f, 7.0f);
+
+		{
+			int totalSeg = (int)tiempoPartida;
+			int minutos = totalSeg / 60;
+			int segundos = totalSeg % 60;
+			std::string textoMin = (minutos < 10 ? "0" : "") + std::to_string(minutos);
+			std::string textoSeg = (segundos < 10 ? "0" : "") + std::to_string(segundos);
+			std::string buf = textoMin + "." + textoSeg;
+			float bx = G_XMAX - 9.0f;
+			float by = -G_YMAX + 1.0f;
+			ETSIDI::setTextColor(1.0f, 0.82f, 0.0f);
+			ETSIDI::setFont("fuentes/texto.ttf", 24);
+			ETSIDI::printxy("TIEMPO", bx + 2.5f, by + 3.3f);
+			ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
+			ETSIDI::setFont("fuentes/auxiliar.ttf", 75);
+			ETSIDI::printxy(buf.c_str(), bx + 0.2f, by + 0.3f);
+		}
+
+		ETSIDI::setTextColor(0.6f, 0.9f, 1.0f);
+		ETSIDI::setFont("fuentes/texto.ttf", 28);
+		ETSIDI::printxy("Introduce tu nombre:", -8.0f, 3.5f);
+
+		std::string mostrar = nombreIntroducido + "_";
+		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
+		ETSIDI::setFont("fuentes/texto.ttf", 55);
+		ETSIDI::printxy(mostrar.c_str(), -8.0f, -1.5f);
+
+		ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
+		ETSIDI::setFont("fuentes/texto.ttf", 22);
+		ETSIDI::printxy("ENTER - Guardar    ESC - Cancelar", -11.0f, -6.0f);
 	}
 
 	transicion.dibuja();
 }
+
 // Flechas
 void Mundo::teclaEspecial(int key)
 {
@@ -615,7 +781,6 @@ void Mundo::teclaEspecial(int key)
 		return;
 	}
 	if (tablero.estaAnimando()) return;
-	// Movimiento por teclado ahora es complementario al raton
 	if (turno == 1) cursor2.moverFlechas(key);
 }
 
@@ -637,15 +802,9 @@ void Mundo::teclaEspecialLevantada(int key)
 	if (key == GLUT_KEY_RIGHT) arena.recibirMovimiento(1, DIR_DCHA, false);
 }
 
-// G_XMAX/G_YMAX se definen en main.cpp y se actualizan en OnReshape: delimitan,
-// en coordenadas de mundo, la zona visible que dibuja glOrtho.
 extern float G_XMAX;
 extern float G_YMAX;
 
-// Gestiona un clic de raton sobre la ventana del juego.
-// boton/estado siguen la misma idea que los key de teclado: aqui solo nos
-// interesa el flanco de bajada del boton izquierdo (equivalente a pulsar Enter
-// tras mover el cursor con WASD/flechas).
 void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 {
 	if (transicion.estaActiva()) return;
@@ -659,8 +818,7 @@ void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 	if (anchoVentana <= 0 || altoVentana <= 0) return;
 
 	// FreeGLUT da (xPixel,yPixel) con origen arriba-izquierda.
-	// Lo pasamos a coordenadas de mundo, sabiendo que glOrtho cubre
-	// [-G_XMAX,G_XMAX] x [-G_YMAX,G_YMAX] sobre toda la ventana.
+	// Lo pasamos a coordenadas de mundo [-G_XMAX,G_XMAX] x [-G_YMAX,G_YMAX]
 	float xMundo = (xPixel / (float)anchoVentana) * (2.0f * G_XMAX) - G_XMAX;
 	float yMundo = G_YMAX - (yPixel / (float)altoVentana) * (2.0f * G_YMAX); // se invierte el eje Y
 

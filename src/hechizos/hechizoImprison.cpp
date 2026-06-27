@@ -9,6 +9,6 @@ bool hechizoImprison::ejecutar(Tablero& tablero, Pieza* caster, Pos objetivo)
 	if (enemigo == nullptr) return false;                       // casilla vacia
 	if (enemigo->getBando() == caster->getBando()) return false; // no es enemigo
 
-	enemigo->aprisionar(tablero.getTurnoActual()); // provisional: se liberara tras N turnos
+	enemigo->aprisionar(tablero.getTurnoActual());
 	return true;
 }

@@ -17,6 +17,4 @@ public:
 	void resetear() { origen = Pos(); }
 	std::string getMensajeSeleccion() const override { return "Selecciona la casilla destino, vacia"; }
 	std::string getMensajeExito() const override { return "El mago ha teletransportado a su aliado"; }
-
 };
-

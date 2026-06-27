@@ -4,29 +4,27 @@
 
 Vector2D Proyectil::getPosProyectil() const
 {
-	return posicion; // ← faltaba esto
+	return posicion;
 }
 
 Vector2D Proyectil::getVelProyectil() const
 {
-	return velocidad; // ← faltaba esto
+	return velocidad;
 }
 
 double Proyectil::getDamageProyectil() const
 {
-	return damage; // ← faltaba esto
+	return damage;
 }
 
 bool Proyectil::getEstado() const
 {
-	return activo; // ← faltaba esto
+	return activo;
 }
 
 void Proyectil::mueve(double dt)
 {
 	if (!activo) return;
-	//todavia no hay aceleracion
-	//se implmentara a posterior.
 	posicion = posicion + velocidad * dt;
 
 	if (duracion > 0.0)

@@ -10,4 +10,5 @@ public:
 	static void playMusicaTablero();
 	static void playMusicaCombate();
 	static void playMusicaViolenta();
+	static void playMusicaFinal();
 };

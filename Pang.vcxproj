@@ -26,7 +26,6 @@
     <ClCompile Include="src\piezas\fenix.cpp" />
     <ClCompile Include="src\piezas\genio.cpp" />
     <ClCompile Include="src\gestorTexturas.cpp" />
-    <ClCompile Include="src\piezas\golem.cpp" />
     <ClCompile Include="src\hechizos\hechizoExchange.cpp" />
     <ClCompile Include="src\hechizos\hechizoHeal.cpp" />
     <ClCompile Include="src\hechizos\hechizoImprison.cpp" />
@@ -36,14 +35,11 @@
     <ClCompile Include="src\hechizos\hechzoTeleport.cpp" />
     <ClCompile Include="src\Interaccion.cpp" />
     <ClCompile Include="src\listapieza.cpp" />
-    <ClCompile Include="src\piezas\mago.cpp" />
     <ClCompile Include="src\audio.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\mundo.cpp" />
-    <ClCompile Include="src\obstaculo.cpp" />
     <ClCompile Include="src\pared.cpp" />
-    <ClCompile Include="src\piezas\peon.cpp" />
     <ClCompile Include="src\piezas\pieza.cpp" />
     <ClCompile Include="src\piezas\piezateletransporte.cpp" />
     <ClCompile Include="src\piezas\piezatierra.cpp" />
@@ -51,6 +47,7 @@
     <ClCompile Include="src\proyectil.cpp" />
     <ClCompile Include="src\casilla.cpp" />
     <ClCompile Include="src\proyectilacelerado.cpp" />
+    <ClCompile Include="src\puntuaciones.cpp" />
     <ClCompile Include="src\tablero.cpp" />
     <ClCompile Include="src\piezas\unicornio.cpp" />
     <ClCompile Include="src\piezas\valquiria.cpp" />
@@ -94,6 +91,7 @@
     <ClInclude Include="src\proyectil.h" />
     <ClInclude Include="src\casilla.h" />
     <ClInclude Include="src\proyectilacelerado.h" />
+    <ClInclude Include="src\puntuaciones.h" />
     <ClInclude Include="src\tablero.h" />
     <ClInclude Include="src\piezas\unicornio.h" />
     <ClInclude Include="src\piezas\valquiria.h" />
