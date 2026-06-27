@@ -102,7 +102,7 @@ void Mundo::tecla(unsigned char key)
 		return;
 	}
 
-	if (enPausa) 
+	if (enPausa)
 	{
 		if (verControlesPausa) {
 			if (key == 27) verControlesPausa = false;
@@ -555,7 +555,6 @@ void Mundo::mueve()
 			if (p && p->estaAprisionada() && (numeroJugada - p->getTurnoAprisionamiento() >= 3))
 				p->liberar();
 		}
-
 }
 
 //Metodo que gestiona el dibujo de la simulacion
@@ -580,7 +579,7 @@ void Mundo::dibuja()
 	cursor.dibuja();   // borde amarillo
 	cursor2.dibuja();  // borde morado
 	//caja.dibuja();
-	arena.dibuja();	
+	arena.dibuja();
 	dibujaPanelHechizos();
 
 	if (!enPausa && !mostrandoCartel && !transicion.estaActiva())
@@ -695,9 +694,8 @@ void Mundo::dibuja()
 			glDisable(GL_BLEND);
 			glDisable(GL_TEXTURE_2D);
 		}
-
-		transicion.dibuja();
 	}
+	transicion.dibuja();
 }
 
 // Flechas
