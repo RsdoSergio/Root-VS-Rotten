@@ -69,7 +69,7 @@ void precargarTexturas() {
 	"imagenes/fondos/combate_100.png",
 	"imagenes/proyectiles/proyectil_doctor.png",
 	"imagenes/proyectiles/proyectil_girasol.png",
-	"imagenes/proyectiles/proyectil_gisantraladora.png",
+	"imagenes/proyectiles/proyectil_gisantralladora.png",
 	"imagenes/proyectiles/proyectil_gondola.png",
 	"imagenes/proyectiles/proyectil_mazorcanon.png",
 	"imagenes/proyectiles/proyectil_momia.png",
