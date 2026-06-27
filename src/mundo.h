@@ -47,6 +47,7 @@ class Mundo
 	bool    enPausa = false;
 	Caja caja;
 	int opcionPausa = 0;
+	bool verControlesPausa = false;
 
 	Transicion transicion;
 	AccionTransicion accionPendiente = AccionTransicion::NINGUNA;

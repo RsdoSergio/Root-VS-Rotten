@@ -75,35 +75,68 @@ static void dibujaInstrucciones()
 	glEnd();
 
 	ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
-	ETSIDI::setFont("fuentes/texto.ttf", 64);
-	ETSIDI::printxy("INSTRUCCIONES", -11.0f, 10.5f);
+	ETSIDI::setFont("fuentes/texto.ttf", 55);
+	ETSIDI::printxy("INSTRUCCIONES", -11.0f, 13.0f);
 
+	// ---- TABLERO ----
 	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
 	ETSIDI::setFont("fuentes/texto.ttf", 26);
-	ETSIDI::printxy("W / S", -18.0f, 7.0f);
-	ETSIDI::printxy("A / D", -18.0f, 4.5f);
-	ETSIDI::printxy("ENTER", -18.0f, 2.0f);
-	ETSIDI::printxy("ESC", -18.0f, -0.5f);
-	ETSIDI::printxy("C", -18.0f, -3.0f);
-	ETSIDI::printxy("M", -18.0f, -5.5f);
+	ETSIDI::printxy("TABLERO", -18.0f, 10.5f);
+
+	ETSIDI::setTextColor(0.5f, 0.85f, 1.0f);
+	ETSIDI::setFont("fuentes/texto.ttf", 21);
+	ETSIDI::printxy("W / A / S / D", -18.0f, 8.8f);
+	ETSIDI::printxy("Flechas", -18.0f, 7.4f);
+	ETSIDI::printxy("ENTER", -18.0f, 5.6f);
+	ETSIDI::printxy("ESC", -18.0f, 4.2f);
+	ETSIDI::printxy("M", -18.0f, 2.8f);
 
 	ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
-	ETSIDI::printxy("Mover cursor arriba / abajo", -10.0f, 7.0f);
-	ETSIDI::printxy("Mover cursor izquierda / derecha", -10.0f, 4.5f);
-	ETSIDI::printxy("Seleccionar pieza o casilla", -10.0f, 2.0f);
-	ETSIDI::printxy("Cancelar seleccion", -10.0f, -0.5f);
-	ETSIDI::printxy("Activar / desactivar arena", -10.0f, -3.0f);
-	ETSIDI::printxy("Silenciar musica", -10.0f, -5.5f);
+	ETSIDI::printxy("Mover cursor Planta", -5.0f, 8.8f);
+	ETSIDI::printxy("Mover cursor Zombi", -5.0f, 7.4f);
+	ETSIDI::printxy("Seleccionar pieza / casilla", -5.0f, 5.6f);
+	ETSIDI::printxy("Cancelar seleccion", -5.0f, 4.2f);
+	ETSIDI::printxy("Pausa", -5.0f, 2.8f);
 
-	ETSIDI::setTextColor(0.6f, 0.85f, 1.0f);
-	ETSIDI::setFont("fuentes/texto.ttf", 22);
-	ETSIDI::printxy("--------------------------------------------------", -18.0f, -8.5f);
-	ETSIDI::printxy("--------------------------------------------------", -18.0f, -10.5f);
-	ETSIDI::printxy("--------------------------------------------------", -18.0f, -12.5f);
+	// ---- HECHIZOS ----
+	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
+	ETSIDI::setFont("fuentes/texto.ttf", 26);
+	ETSIDI::printxy("HECHIZOS", -18.0f, 1.0f);
 
+	ETSIDI::setTextColor(0.5f, 0.85f, 1.0f);
+	ETSIDI::setFont("fuentes/texto.ttf", 21);
+	ETSIDI::printxy("ESPACIO", -18.0f, -0.4f);
+
+	ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
+	ETSIDI::printxy("Ver hechizos del Mago (con el Mago seleccionado)", -5.0f, -0.4f);
+
+	// Separador
+	ETSIDI::setTextColor(0.3f, 0.3f, 0.3f);
+	ETSIDI::setFont("fuentes/texto.ttf", 18);
+	ETSIDI::printxy("- - - - - - - - - - - - - - - - - - - - - - - - - - - - -", -18.0f, -2.0f);
+
+	// ---- ARENA ----
+	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
+	ETSIDI::setFont("fuentes/texto.ttf", 26);
+	ETSIDI::printxy("ARENA (COMBATE)", -18.0f, -3.2f);
+
+	ETSIDI::setTextColor(0.5f, 0.85f, 1.0f);
+	ETSIDI::setFont("fuentes/texto.ttf", 21);
+	ETSIDI::printxy("W / A / S / D", -18.0f, -4.8f);
+	ETSIDI::printxy("Flechas", -18.0f, -6.2f);
+	ETSIDI::printxy("Q", -18.0f, -7.6f);
+	ETSIDI::printxy("K", -18.0f, -9.0f);
+
+	ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
+	ETSIDI::printxy("Mover pieza Planta", -5.0f, -4.8f);
+	ETSIDI::printxy("Mover pieza Zombi", -5.0f, -6.2f);
+	ETSIDI::printxy("Atacar (Planta)", -5.0f, -7.6f);
+	ETSIDI::printxy("Atacar (Zombi)", -5.0f, -9.0f);
+
+	// Volver
 	ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
-	ETSIDI::setFont("fuentes/texto.ttf", 20);
-	ETSIDI::printxy("ESC - Volver al menu", -5.0f, -14.5f);
+	ETSIDI::setFont("fuentes/texto.ttf", 18);
+	ETSIDI::printxy("ESC - Volver al menu", -5.0f, -11.0f);
 
 	glColor3ub(255, 255, 255);
 }
@@ -181,10 +214,11 @@ void Menu::dibujaPausa(int opcion) const
 	ETSIDI::printxy("PAUSA", -7.0f, 4.0f);
 
 	OpcionMenu opciones[] = {
-		{ "CONTINUAR", -7.6f, -3.0f },
-		{ "SALIR",     -4.2f, -6.5f }
+		{ "CONTINUAR", -7.6f, -1.5f },
+		{ "CONTROLES", -7.6f, -4.5f },
+		{ "SALIR",     -4.2f, -7.5f }
 	};
-	int numOpciones = 2;
+	int numOpciones = 3;
 
 	for (int i = 0; i < numOpciones; i++) {
 		if (i == opcion) {
@@ -228,4 +262,88 @@ void Menu::tecla(unsigned char key)
 		if (key == 27)  // ESC
 			pantalla = 0;
 	}
+}
+
+void Menu::dibujaControlesPausa() const
+{
+	extern float G_XMAX;
+	extern float G_YMAX;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(0.0f, 0.0f, 0.08f, 0.92f);
+	glBegin(GL_QUADS);
+	glVertex2f(-G_XMAX, -G_YMAX);
+	glVertex2f(G_XMAX, -G_YMAX);
+	glVertex2f(G_XMAX, G_YMAX);
+	glVertex2f(-G_XMAX, G_YMAX);
+	glEnd();
+	glDisable(GL_BLEND);
+
+	// Titulo
+	ETSIDI::setTextColor(0.2f, 1.0f, 0.2f);
+	ETSIDI::setFont("fuentes/texto.ttf", 55);
+	ETSIDI::printxy("CONTROLES", -8.0f, 13.0f);
+
+	// ---- TABLERO ----
+	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
+	ETSIDI::setFont("fuentes/texto.ttf", 26);
+	ETSIDI::printxy("Tablero", -18.0f, 10.5f);
+
+	ETSIDI::setTextColor(0.5f, 0.85f, 1.0f);
+	ETSIDI::setFont("fuentes/texto.ttf", 21);
+	ETSIDI::printxy("W / S / A / D", -18.0f, 8.8f);
+	ETSIDI::printxy("Flechas", -18.0f, 7.4f);
+	ETSIDI::printxy("ENTER", -18.0f, 5.6f);
+	ETSIDI::printxy("ESC", -18.0f, 4.2f);
+	ETSIDI::printxy("M", -18.0f, 2.8f);
+
+	ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
+	ETSIDI::printxy("Mover cursor Planta", -5.0f, 8.8f);
+	ETSIDI::printxy("Mover cursor Zombi", -5.0f, 7.4f);
+	ETSIDI::printxy("Seleccionar pieza / casilla", -5.0f, 5.6f);
+	ETSIDI::printxy("Cancelar seleccion", -5.0f, 4.2f);
+	ETSIDI::printxy("Pausa", -5.0f, 2.8f);
+
+	// ---- HECHIZOS ----
+	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
+	ETSIDI::setFont("fuentes/texto.ttf", 26);
+	ETSIDI::printxy("Hechizos", -18.0f, 1.0f);
+
+	ETSIDI::setTextColor(0.5f, 0.85f, 1.0f);
+	ETSIDI::setFont("fuentes/texto.ttf", 21);
+	ETSIDI::printxy("ESPACIO", -18.0f, -0.4f);
+
+	ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
+	ETSIDI::printxy("Ver hechizos del Mago (con el Mago seleccionado)", -5.0f, -0.4f);
+
+	// Separador
+	ETSIDI::setTextColor(0.3f, 0.3f, 0.3f);
+	ETSIDI::setFont("fuentes/texto.ttf", 18);
+	ETSIDI::printxy("- - - - - - - - - - - - - - - - - - - - - - - - - - - - -", -18.0f, -2.0f);
+
+	// ---- ARENA ----
+	ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
+	ETSIDI::setFont("fuentes/texto.ttf", 26);
+	ETSIDI::printxy("Arena", -18.0f, -3.2f);
+
+	ETSIDI::setTextColor(0.5f, 0.85f, 1.0f);
+	ETSIDI::setFont("fuentes/texto.ttf", 21);
+	ETSIDI::printxy("W / A / S / D", -18.0f, -4.8f);
+	ETSIDI::printxy("Flechas", -18.0f, -6.2f);
+	ETSIDI::printxy("Q", -18.0f, -7.6f);
+	ETSIDI::printxy("K", -18.0f, -9.0f);
+
+	ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
+	ETSIDI::printxy("Mover pieza Planta", -5.0f, -4.8f);
+	ETSIDI::printxy("Mover pieza Zombi", -5.0f, -6.2f);
+	ETSIDI::printxy("Atacar (Planta)", -5.0f, -7.6f);
+	ETSIDI::printxy("Atacar (Zombi)", -5.0f, -9.0f);
+
+	// Volver
+	ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
+	ETSIDI::setFont("fuentes/texto.ttf", 18);
+	ETSIDI::printxy("ESC - Volver a la pausa", -5.0f, -11.0f);
+
+	glColor3ub(255, 255, 255);
 }

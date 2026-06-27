@@ -69,7 +69,7 @@ void Mundo::dibujaTimer() const
 	glDisable(GL_BLEND);
 }
 
-//Metodo se gestiona la pulsacion de teclas, y como afecta a la simulacion
+//Metodo se gestiona la pulsacion de teclas
 void Mundo::tecla(unsigned char key)
 {
 	if (transicion.estaActiva()) return;
@@ -94,24 +94,39 @@ void Mundo::tecla(unsigned char key)
 		return;
 	}
 
-	if (enPausa) {
+	if (key == 'm' || key == 'M') {
+		enPausa = !enPausa;
+		opcionPausa = 0;
+		verControlesPausa = false;
+		return;
+	}
+
+	if (enPausa) 
+	{
+		if (verControlesPausa) {
+			if (key == 27) verControlesPausa = false;
+			return;
+		}
+
 		if (key == 'w' || key == 'W') {
-			opcionPausa = 0;
+			opcionPausa = (opcionPausa - 1 + 3) % 3;
 			Audio::playSonido("audio/MENU.mp3");
 		}
 
 		if (key == 's' || key == 'S') {
-			opcionPausa = 1;
+			opcionPausa = (opcionPausa + 1) % 3;
 			Audio::playSonido("audio/MENU.mp3");
 		}
 
 		if (key == 13) {
 			Audio::playSonido("audio/SELECCION_EN_MENU.mp3");
 			if (opcionPausa == 0) enPausa = false;
-			if (opcionPausa == 1) exit(0);
+			if (opcionPausa == 1) verControlesPausa = true;
+			if (opcionPausa == 2) exit(0);
 		}
 		return;
 	}
+
 	// Partida terminada: solo la tecla C vuelve al menu
 	if (partidaTerminada) {
 		if (key == 'c' || key == 'C') {
@@ -541,13 +556,14 @@ void Mundo::dibuja()
 	cursor.dibuja();   // borde amarillo
 	cursor2.dibuja();  // borde morado
 	//caja.dibuja();
-	arena.dibuja();
+	arena.dibuja();	
 	dibujaPanelHechizos();
 
 	if (!enPausa && !mostrandoCartel && !transicion.estaActiva())
 		dibujaTimer();
 
-	if (enPausa) menu.dibujaPausa(opcionPausa);
+	if (enPausa && !verControlesPausa) menu.dibujaPausa(opcionPausa);
+	if (enPausa && verControlesPausa) menu.dibujaControlesPausa();
 
 	if (mostrandoCartel && !rutaCartel.empty())
 	{
