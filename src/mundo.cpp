@@ -24,7 +24,7 @@ void Mundo::inicializa() {
 	precargarTexturas();
 
 	//inicializacion de peones para ambos bandos
-	const float TAM = 2.8f; //tener presente el tamaño de cada celda
+	const float TAM = 2.8f; //tamaño de cada celda
 	const float pos = (9 * TAM) / 2.0f;
 	Audio::playMusica("audio/INTRO.mp3", true);
 };
@@ -174,8 +174,7 @@ void Mundo::tecla(unsigned char key)
 	}
 
 	if (tablero.estaAnimando()) return; // ignorar teclas durante movimiento de piezas en tablero
-	// Cada cursor se mueve solo durante su turno
-	// Movimiento por teclado ahora es complementario al raton
+
 	if (turno == 0) cursor.mover(key);  // WASD
 
 	if (key == 13) {
@@ -271,9 +270,6 @@ void Mundo::tecla(unsigned char key)
 	}
 }
 
-// Logica comun de "intentar jugar" una casilla: seleccionar pieza propia o, si ya
-// habia una seleccionada, intentar mover/combatir contra la casilla indicada.
-// La usan tanto el teclado (tecla(), con key==13) como el raton (clicRaton()).
 void Mundo::jugarCasilla(Pos casilla)
 {
 	if (tablero.modoHechizoActivo())
@@ -328,7 +324,7 @@ void Mundo::jugarCasilla(Pos casilla)
 
 	bool combate = tablero.gestionarEntrada(casilla, turno);
 	tablero.setTurnoActual(numeroJugada);
-	magoSeleccionado = nullptr; // <-- añadir: cualquier movimiento normal limpia la seleccion de mago
+	magoSeleccionado = nullptr;
 	if (turno == 0)
 		cursor.setBloqueado(tablero.piezaBloqueada(cursor.getPosicion()));
 	else
@@ -341,9 +337,7 @@ void Mundo::jugarCasilla(Pos casilla)
 
 		bool b1 = tablero.esCasillaDePoder(p1->getCasilla());
 		bool b2 = tablero.esCasillaDePoder(p2->getCasilla());
-		//arena.fDatos(*tablero.getPersonaje1(), *tablero.getPersonaje2(),bool bost1,bool bost2);
-		arena.fDatos(*p1, *p2, ventaja, b1, b2, tablero.contarCasillasDePoder(Bando::planta),
-			tablero.contarCasillasDePoder(Bando::zombi));
+		arena.fDatos(*p1, *p2, ventaja, b1, b2, tablero.contarCasillasDePoder(Bando::planta), tablero.contarCasillasDePoder(Bando::zombi));
 		arena.activa();
 	}
 }
@@ -591,7 +585,6 @@ void Mundo::mueve()
 		}
 }
 
-//Metodo que gestiona el dibujo de la simulacion
 void Mundo::dibuja()
 {
 	if (!enPartida)
@@ -601,7 +594,6 @@ void Mundo::dibuja()
 		return;
 	}
 
-	//Resets necesarios sino no funciona bien
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 	glDisable(GL_LIGHTING);
@@ -612,7 +604,6 @@ void Mundo::dibuja()
 	tablero.dibuja(cursor, turno);
 	cursor.dibuja();   // borde amarillo
 	cursor2.dibuja();  // borde morado
-	//caja.dibuja();
 	arena.dibuja();
 	dibujaPanelHechizos();
 
@@ -796,7 +787,6 @@ void Mundo::teclaEspecial(int key)
 		return;
 	}
 	if (tablero.estaAnimando()) return;
-	// Movimiento por teclado ahora es complementario al raton
 	if (turno == 1) cursor2.moverFlechas(key);
 }
 
@@ -818,15 +808,9 @@ void Mundo::teclaEspecialLevantada(int key)
 	if (key == GLUT_KEY_RIGHT) arena.recibirMovimiento(1, DIR_DCHA, false);
 }
 
-// G_XMAX/G_YMAX se definen en main.cpp y se actualizan en OnReshape: delimitan,
-// en coordenadas de mundo, la zona visible que dibuja glOrtho.
 extern float G_XMAX;
 extern float G_YMAX;
 
-// Gestiona un clic de raton sobre la ventana del juego.
-// boton/estado siguen la misma idea que los key de teclado: aqui solo nos
-// interesa el flanco de bajada del boton izquierdo (equivalente a pulsar Enter
-// tras mover el cursor con WASD/flechas).
 void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 {
 	if (transicion.estaActiva()) return;
@@ -840,8 +824,7 @@ void Mundo::clicRaton(int boton, int estado, int xPixel, int yPixel)
 	if (anchoVentana <= 0 || altoVentana <= 0) return;
 
 	// FreeGLUT da (xPixel,yPixel) con origen arriba-izquierda.
-	// Lo pasamos a coordenadas de mundo, sabiendo que glOrtho cubre
-	// [-G_XMAX,G_XMAX] x [-G_YMAX,G_YMAX] sobre toda la ventana.
+	// Lo pasamos a coordenadas de mundo [-G_XMAX,G_XMAX] x [-G_YMAX,G_YMAX]
 	float xMundo = (xPixel / (float)anchoVentana) * (2.0f * G_XMAX) - G_XMAX;
 	float yMundo = G_YMAX - (yPixel / (float)altoVentana) * (2.0f * G_YMAX); // se invierte el eje Y
 

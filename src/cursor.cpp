@@ -6,8 +6,6 @@ Cursor::Cursor(int fila, int col, unsigned char r, unsigned char g, unsigned cha
 
 {}
 
-// Mueve el cursor una casilla en la direccion indicada por las teclas
-// Se comprueban los limites para no salir del tablero
 void Cursor::mover(unsigned char key)
 {
 	if (key == 'w' || key == 'W')  if (posicion.fila < FILAS - 1) posicion.fila++;
@@ -16,7 +14,6 @@ void Cursor::mover(unsigned char key)
 	if (key == 'd' || key == 'D')  if (posicion.col < COLS - 1)  posicion.col++;
 }
 
-// Dibuja un borde 
 void Cursor::dibuja() const
 {
 	if (!posicion.esValida()) return;
@@ -27,7 +24,7 @@ void Cursor::dibuja() const
 	if (bloqueado)
 		glColor3ub(255, 0, 0);
 	else
-	glColor3ub(cr, cg, cb);
+		glColor3ub(cr, cg, cb);
 
 	glLineWidth(3.5f);
 	glBegin(GL_LINE_LOOP);
@@ -39,15 +36,12 @@ void Cursor::dibuja() const
 	glLineWidth(1.0f);
 }
 
-// Coloca el cursor directamente en la casilla indicada (usado por el raton)
-// Misma comprobacion de limites que mover()/moverFlechas()
 void Cursor::setPosicion(Pos p)
 {
 	if (p.fila < 0 || p.fila >= FILAS || p.col < 0 || p.col >= COLS) return;
 	posicion = p;
 }
 
-//Cursos con las flechas
 void Cursor::moverFlechas(int key)
 {
 	if (key == GLUT_KEY_UP)    if (posicion.fila < FILAS - 1) posicion.fila++;

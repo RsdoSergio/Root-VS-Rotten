@@ -1,8 +1,6 @@
 #pragma once
 //fichero para eliminar dependencia circular
 
-
-
 constexpr double ARENA_ANCHO = 44.0;
 constexpr double ARENA_ALTO = 26.0;
 constexpr double SEMIANCHO = ARENA_ANCHO / 2.0;

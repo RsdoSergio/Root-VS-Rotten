@@ -18,7 +18,7 @@ enum class DirMovimiento { IDLE, NORTE, SUR, ESTE, OESTE };
 enum class AccionPieza { IDLE, MOVERSE, ATACAR };
 
 enum class TipoMovimiento { TIERRA, VUELO, TELETRANSPORTE };
-constexpr float TAM_PIEZA = 0.9f;//Porvisional para las piezas
+constexpr float TAM_PIEZA = 0.9f;
 enum  Bando { planta, zombi };
 
 class Pieza
@@ -43,7 +43,6 @@ protected:
 	double radioGolpe = 1.5;
 	double tiempoAnimAtaque = 0.3;
 	AccionPieza accionActual = AccionPieza::IDLE;
-	
 
 	bool   atacandoActivo = false;
 	double tiempoAtaqueRestante = 0.0;
@@ -79,7 +78,7 @@ public:
 
 	Vector2D getPosArena() const { return posArena; }
 
-	DirMovimiento getUltimaDir() const { return ultimaDir; } //
+	DirMovimiento getUltimaDir() const { return ultimaDir; }
 
 	int getUltimoEjeX() const { return ultimo_eje_x; }
 	int getUltimoEjeY() const { return ultimo_eje_y; }
@@ -93,8 +92,7 @@ public:
 	void setPosArena(double x, double y) { posArena.setValores(x, y); }
 
 	AccionPieza getAccion() const { return accionActual; }
-	DirMovimiento getDireccion() const { return dirActual; }//usado para obtener en que direccion se esta moviendo la pieza en ese momento
-	//luego usarlo para los sprites
+	DirMovimiento getDireccion() const { return dirActual; } //usado para obtener en que direccion se esta moviendo la pieza en ese momento
 	void setDireccion(DirMovimiento d);
 	void setAccion(AccionPieza a) { accionActual = a; }
 
@@ -109,7 +107,7 @@ public:
 	virtual void usarAtaqueSecundario() {};
 
 	virtual std::string getRutaProyectil() const { return ""; }
-	virtual TipoMovimiento getTipoMovimiento() const = 0; // Cada clase intermedia lo implementa
+	virtual TipoMovimiento getTipoMovimiento() const = 0;
 
 	virtual bool puedeDiagonal() const { return false; } //implementado para que las piezas de tierra se puedan mover en diagonales
 	virtual bool esMelee() const { return false; }
@@ -132,7 +130,6 @@ public:
 	virtual void actualizarEfectos(double dt) {}
 	virtual bool bloqueaMovimientoAlAtacar() const { return true; }
 	virtual Proyectil* crearProyectil(int dirX, int dirY);
-
 
 	void actualizarAtaque(double dt);
 
