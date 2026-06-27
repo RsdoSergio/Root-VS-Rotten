@@ -3,6 +3,15 @@
 #include "freeglut.h"
 #include "piezas/pieza.h"
 
+void actualizarPantallaCarga(const std::string& msg) {
+	glClear(GL_COLOR_BUFFER_BIT); glutSwapBuffers();
+	glClear(GL_COLOR_BUFFER_BIT);
+	ETSIDI::setFont("fuentes/auxiliar.ttf", 70);
+	ETSIDI::setTextColor(1.f, 1.f, 1.f);
+	ETSIDI::printxy(msg.c_str(), -10.0f, 0.0f);
+	glutSwapBuffers();
+}
+
 void precargarTexturas() {
 	const char* texturas[] = {
 	"imagenes/fondos/fondo_menu_inicio.png",
@@ -77,28 +86,66 @@ void precargarTexturas() {
 	"imagenes/proyectiles/proyectil_rabano.png"
 	};
 
-	int total = sizeof(texturas) / sizeof(texturas[0]); //nº elementos
+	const char* musicas[] = {
+		"audio/INTRO.mp3",
+		"audio/TABLERO1.mp3",
+		"audio/TABLERO2.mp3",
+		"audio/TABLERO3.mp3",
+		"audio/TABLERO4.mp3",
+		"audio/TABLERO5.mp3",
+		"audio/TABLERO6.mp3",
+		"audio/TABLERO7.mp3",
+		"audio/COMBATE1.mp3",
+		"audio/COMBATE2.mp3",
+		"audio/COMBATE3.mp3",
+		"audio/COMBATE4.mp3",
+		"audio/COMBATE5.mp3",
+		"audio/COMBATE6.mp3",
+		"audio/COMBATE7.mp3",
+		"audio/COMBATE8.mp3",
+		"audio/VIOLENTA1.mp3",
+		"audio/VIOLENTA2.mp3",
+		"audio/VIOLENTA3.mp3",
+		"audio/VIOLENTA4.mp3",
+		"audio/VIOLENTA5.mp3",
+		"audio/VIOLENTA6.mp3",
+		"audio/VIOLENTA7.mp3",
+	};
 
-	glClear(GL_COLOR_BUFFER_BIT);
-	ETSIDI::setFont("fuentes/auxiliar.ttf", 70);
-	ETSIDI::setTextColor(1.f, 1.f, 1.f);
-	ETSIDI::printxy("Cargando...  0%", -10.0f, 0.0f);
-	glutSwapBuffers();
+	const char* efectos[] = {
+		"audio/MENU.mp3",
+		"audio/SELECCION_EN_MENU.mp3",
+		"audio/SELECCION_HECHIZO.mp3",
+		"audio/FIGHT.mp3",
+		"audio/ATAQUE_A_MELEE.mp3",
+		"audio/ATAQUE_A_DISTANCIA.mp3",
+	};
 
-	for (int i = 0; i < total; i++) {
+	int totalTexturas = sizeof(texturas) / sizeof(texturas[0]);
+	int totalMusicas = sizeof(musicas) / sizeof(musicas[0]);
+	int totalEfectos = sizeof(efectos) / sizeof(efectos[0]);
+	int total = totalTexturas + totalMusicas + totalEfectos;
+	int cargados = 0;
+
+	actualizarPantallaCarga("Cargando...  0%");
+
+	for (int i = 0; i < totalTexturas; i++) {
 		ETSIDI::getTexture(texturas[i]);
+		cargados++;
+		actualizarPantallaCarga("Cargando... " + std::to_string(cargados * 100 / total) + "%");
+	}
 
-		int pct = (i + 1) * 100 / total; //ptc --> porcentaje
-		std::string msg = "Cargando... " + std::to_string(pct) + "%";
+	for (int i = 0; i < totalMusicas; i++) {
+		ETSIDI::playMusica(musicas[i], false);
+		ETSIDI::stopMusica();
+		cargados++;
+		actualizarPantallaCarga("Cargando... " + std::to_string(cargados * 100 / total) + "%");
+	}
 
-		glClear(GL_COLOR_BUFFER_BIT);
-		glutSwapBuffers();
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		ETSIDI::setFont("fuentes/auxiliar.ttf", 70);
-		ETSIDI::setTextColor(1.f, 1.f, 1.f);
-		ETSIDI::printxy(msg.c_str(), -10.0f, 0.0f);
-		glutSwapBuffers();
+	for (int i = 0; i < totalEfectos; i++) {
+		ETSIDI::play(efectos[i]);
+		cargados++;
+		actualizarPantallaCarga("Cargando... " + std::to_string(cargados * 100 / total) + "%");
 	}
 }
 
