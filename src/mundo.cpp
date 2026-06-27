@@ -110,12 +110,6 @@ void Mundo::tecla(unsigned char key)
 
 	if (key == 'm' || key == 'M') {
 		enPausa = !enPausa;
-		opcionPausa = 0;   // resetea al abrir
-		return;
-	}
-
-	if (key == 'm' || key == 'M') {
-		enPausa = !enPausa;
 		opcionPausa = 0;
 		verControlesPausa = false;
 		return;
