@@ -79,6 +79,7 @@ void Mundo::tecla(unsigned char key)
 		if (menu.seEligeJugar() && accionPendiente == AccionTransicion::NINGUNA) {
 			accionPendiente = AccionTransicion::EMPEZAR_PARTIDA;
 			transicion.cubrir();
+			menu.reinicia();
 		}
 		return;
 	}
@@ -384,6 +385,16 @@ void Mundo::mueve()
 		switch (accionPendiente)
 		{
 		case AccionTransicion::EMPEZAR_PARTIDA:
+
+			tablero.inicializaTablero();
+			tablero.colocarPiezasIniciales();
+			turno = 0;
+			numeroJugada = 0;
+			magoSeleccionado = nullptr;
+			eligiendoRevive = false;
+			eligiendoExchangeOrigen = false;
+			eligiendoTeleportOrigen = false;
+
 			enPartida = true;
 			tiempoPartida = 0.0;
 			pendienteMusicaTablero = true;
@@ -504,6 +515,7 @@ void Mundo::mueve()
 		tablero.setTurnoActual(numeroJugada);
 		numeroJugada++;
 		tablero.curarEnCasillasdePoder();
+		comprobarFinPartida();
 	}
 
 	BandoVentaja ventajaActual = tablero.getBandoVentaja();
