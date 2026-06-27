@@ -255,13 +255,6 @@ void Mundo::tecla(unsigned char key)
 		}
 	}
 
-	//prueba para abrir pantalla de ganar, la tecla T dispara pantalla de fin de partida
-	if (key == 't' || key == 'T') {
-		partidaTerminada = true;
-		plantasGanaronPartida = false;
-		mensajeFinPartida = "ACUERDTE DE ELIMINAR ESTO";
-	}
-
 	if (key == 27) {
 		tablero.cancelarSeleccion();
 		tablero.cancelarHechizo();
