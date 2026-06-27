@@ -8,6 +8,4 @@ public:
 	std::string getNombre() const { return "TRANSFORM"; }
 	std::string getMensajeSeleccion() const override { return ""; }
 	std::string getMensajeExito() const override { return "El mago desborda de poder"; }
-
 };
-

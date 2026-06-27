@@ -39,5 +39,5 @@ std::string Puntuaciones::formatearTiempo(int segundos)
 	int seg = segundos % 60;
 	std::string m = (min < 10 ? "0" : "") + std::to_string(min);
 	std::string s = (seg < 10 ? "0" : "") + std::to_string(seg);
-	return m + " m " + s + " s ";
+	return m + " . " + s;
 }

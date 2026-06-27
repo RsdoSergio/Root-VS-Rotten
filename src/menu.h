@@ -1,11 +1,6 @@
 #pragma once
 #include "ETSIDI.h"
 
-//menu general (pantalla):
-//      0 = principal, 1 = instrucciones, 2 = creditos
-//dentro de menu principal (opcion):
-//      0 = jugar, 1 = instrucciones, 2 = creditos, 3 = salir
-
 class Menu
 {
 	int pantalla = 0;

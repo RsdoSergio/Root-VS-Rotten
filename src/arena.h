@@ -12,7 +12,6 @@
 #include<vector>
 #include "tablero.h"
 
-
 constexpr int MAX_OBSTACULOS = 6;
 
 class arena
@@ -65,8 +64,6 @@ class arena
 	double fuerzaOriginal2 = 0.0;
 	float velocidadOriginal1 = 0.0f;
 	float velocidadOriginal2 = 0.0f;
-
-
 
 public:
 	arena() {};
