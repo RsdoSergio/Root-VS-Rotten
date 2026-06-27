@@ -4,11 +4,9 @@
 #include "tablero.h"
 #include <vector>
 #include "audio.h"
-#include "audio.h"
 #include "gestorTexturas.h"
 #include <ctime>
 #include "hechizos/hechizoExchange.h"
-#include "audio.h"
 
 void Mundo::inicializa() {
 	srand((unsigned int)time(nullptr));
@@ -72,6 +70,27 @@ void Mundo::dibujaTimer() const
 //Metodo se gestiona la pulsacion de teclas
 void Mundo::tecla(unsigned char key)
 {
+	if (registrandoNombre)
+	{
+		if (key == 13 && !nombreIntroducido.empty())
+		{
+			Puntuaciones::guardar(nombreIntroducido, (int)tiempoPartida);
+			accionPendiente = AccionTransicion::IR_AL_MENU;
+			transicion.cubrir();
+		}
+		else if (key == 27)
+		{
+			registrandoNombre = false;
+			accionPendiente = AccionTransicion::IR_AL_MENU;
+			transicion.cubrir();
+		}
+		else if (key == 8 && !nombreIntroducido.empty())
+			nombreIntroducido.pop_back();
+		else if (key >= 32 && key < 127 && nombreIntroducido.size() < 20)
+			nombreIntroducido += (char)key;
+		return;
+	}
+
 	if (transicion.estaActiva()) return;
 
 	if (!enPartida) {
@@ -128,17 +147,21 @@ void Mundo::tecla(unsigned char key)
 		return;
 	}
 
-	// Partida terminada: solo la tecla C vuelve al menu
+	//partida terminada ESC = menu y ENTER = registrar nombre
 	if (partidaTerminada) {
-		if (key == 'c' || key == 'C') {
-			partidaTerminada = false;
-			enPartida = false;
-			mensajeFinPartida.clear();
-			Audio::stopMusica();
-			Audio::playMusica("audio/INTRO.mp3", true);
+		if (key == 13)
+		{
+			accionPendiente = AccionTransicion::IR_A_REGISTRAR_NOMBRE;
+			transicion.cubrir();
+		}
+		else if (key == 27)
+		{
+			accionPendiente = AccionTransicion::IR_AL_MENU;
+			transicion.cubrir();
 		}
 		return;
 	}
+
 	if (arena.estaActiva()) {
 		if (key == 'w' || key == 'W') arena.recibirMovimiento(0, DIR_ARRIBA, true);
 		if (key == 's' || key == 'S') arena.recibirMovimiento(0, DIR_ABAJO, true);
@@ -235,7 +258,7 @@ void Mundo::tecla(unsigned char key)
 	//prueba para abrir pantalla de ganar, la tecla T dispara pantalla de fin de partida
 	if (key == 't' || key == 'T') {
 		partidaTerminada = true;
-		plantasGanaronPartida = true;
+		plantasGanaronPartida = false;
 		mensajeFinPartida = "ACUERDTE DE ELIMINAR ESTO";
 	}
 
@@ -483,6 +506,24 @@ void Mundo::mueve()
 			break;
 		}
 
+		case AccionTransicion::IR_A_REGISTRAR_NOMBRE:
+			registrandoNombre = true;
+			nombreIntroducido = "";
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
+			break;
+
+		case AccionTransicion::IR_AL_MENU:
+			partidaTerminada = false;
+			enPartida = false;
+			registrandoNombre = false;
+			mensajeFinPartida.clear();
+			Audio::stopMusica();
+			Audio::playMusica("audio/INTRO.mp3", true);
+			accionPendiente = AccionTransicion::NINGUNA;
+			transicion.descubrir();
+			break;
+
 		default:
 			break;
 		}
@@ -611,7 +652,7 @@ void Mundo::dibuja()
 		}
 	}
 
-	if (partidaTerminada)
+	if (partidaTerminada && !registrandoNombre)
 	{
 		extern float G_XMAX;
 		extern float G_YMAX;
@@ -663,25 +704,6 @@ void Mundo::dibuja()
 			float bx = G_XMAX - 9.0f;
 			float by = -G_YMAX + 1.0f;
 
-			glColor4f(0.0f, 0.0f, 0.0f, 0.75f);
-			glBegin(GL_QUADS);
-			glVertex2f(bx - 0.3f, by - 0.3f);
-			glVertex2f(bx + 8.2f, by - 0.3f);
-			glVertex2f(bx + 8.2f, by + 4.5f);
-			glVertex2f(bx - 0.3f, by + 4.5f);
-			glEnd();
-
-			glColor4f(1.0f, 0.82f, 0.0f, 1.0f);
-			glLineWidth(3.0f);
-			glBegin(GL_LINE_LOOP);
-			glVertex2f(bx - 0.3f, by - 0.3f);
-			glVertex2f(bx + 8.2f, by - 0.3f);
-			glVertex2f(bx + 8.2f, by + 4.5f);
-			glVertex2f(bx - 0.3f, by + 4.5f);
-			glEnd();
-			glLineWidth(1.0f);
-			glDisable(GL_BLEND);
-
 			ETSIDI::setTextColor(1.0f, 0.82f, 0.0f);
 			ETSIDI::setFont("fuentes/texto.ttf", 24);
 			ETSIDI::printxy("TIEMPO", bx + 2.5f, by + 3.3f);
@@ -694,7 +716,76 @@ void Mundo::dibuja()
 			glDisable(GL_BLEND);
 			glDisable(GL_TEXTURE_2D);
 		}
+
+		ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
+		ETSIDI::setFont("fuentes/texto.ttf", 28);
+		ETSIDI::printxy("ESC   INICIO", -G_XMAX + 1.0f, -11.0f);
+		ETSIDI::printxy("ENTER REGISTRAR PUNTUACION", -G_XMAX + 1.0f, -13.0f);
 	}
+
+	if (registrandoNombre)
+	{
+		extern float G_XMAX;
+		extern float G_YMAX;
+
+		const char* rutaRelleno = plantasGanaronPartida ? "imagenes/carteles/rellenar_nombre_plantas.png" : "imagenes/carteles/rellenar_nombre_zombies.png";
+
+		auto texRelleno = ETSIDI::getTexture(rutaRelleno);
+		if (texRelleno.id != 0)
+		{
+			glDisable(GL_LIGHTING);
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBindTexture(GL_TEXTURE_2D, texRelleno.id);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(-G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(G_XMAX, -G_YMAX, 0);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(G_XMAX, G_YMAX, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(-G_XMAX, G_YMAX, 0);
+			glEnd();
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		}
+
+		ETSIDI::setTextColor(1.0f, 0.85f, 0.2f);
+		ETSIDI::setFont("fuentes/texto.ttf", 50);
+		ETSIDI::printxy("REGISTRAR PUNTUACION", -16.0f, 7.0f);
+
+		{
+			int totalSeg = (int)tiempoPartida;
+			int minutos = totalSeg / 60;
+			int segundos = totalSeg % 60;
+			std::string textoMin = (minutos < 10 ? "0" : "") + std::to_string(minutos);
+			std::string textoSeg = (segundos < 10 ? "0" : "") + std::to_string(segundos);
+			std::string buf = textoMin + "." + textoSeg;
+			float bx = G_XMAX - 9.0f;
+			float by = -G_YMAX + 1.0f;
+			ETSIDI::setTextColor(1.0f, 0.82f, 0.0f);
+			ETSIDI::setFont("fuentes/texto.ttf", 24);
+			ETSIDI::printxy("TIEMPO", bx + 2.5f, by + 3.3f);
+			ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
+			ETSIDI::setFont("fuentes/auxiliar.ttf", 75);
+			ETSIDI::printxy(buf.c_str(), bx + 0.2f, by + 0.3f);
+		}
+
+		ETSIDI::setTextColor(0.6f, 0.9f, 1.0f);
+		ETSIDI::setFont("fuentes/texto.ttf", 28);
+		ETSIDI::printxy("Introduce tu nombre:", -8.0f, 3.5f);
+
+		std::string mostrar = nombreIntroducido + "_";
+		ETSIDI::setTextColor(1.0f, 1.0f, 1.0f);
+		ETSIDI::setFont("fuentes/texto.ttf", 55);
+		ETSIDI::printxy(mostrar.c_str(), -8.0f, -1.5f);
+
+		ETSIDI::setTextColor(0.4f, 0.4f, 0.4f);
+		ETSIDI::setFont("fuentes/texto.ttf", 22);
+		ETSIDI::printxy("ENTER - Guardar    ESC - Cancelar", -11.0f, -6.0f);
+	}
+
 	transicion.dibuja();
 }
 
