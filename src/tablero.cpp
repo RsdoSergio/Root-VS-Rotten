@@ -299,6 +299,9 @@ bool Tablero::moverPieza(Pos origen, Pos destino)
 
 	Pieza* d = casillas[destino.fila][destino.col].pieza;
 
+	if (d != nullptr && d->getBando() == p->getBando())
+		return false;
+
 	personaje1 = p;
 	personaje2 = d;
 
