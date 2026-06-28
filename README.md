@@ -68,6 +68,8 @@ Es un juego por turnos alternos: primero juegan las **Plantas (ROOT)**, luego lo
 
 **Pausa:** pulsa `M` durante la partida.
 
+<img width="1918" height="1078" alt="image" src="https://github.com/user-attachments/assets/eb5db8f9-bb47-4172-b99d-bacfc7276759" />
+
 ---
 
 ### Arena (combate)
@@ -80,6 +82,8 @@ Dos piezas se enfrentan en tiempo real con obstáculos en el campo.
 | Atacar | `Q` | `K` |
 
 La pieza que gane el combate es la que vuelve al tablero conquistando la casilla disputada.
+
+<img width="1918" height="1078" alt="image" src="https://github.com/user-attachments/assets/2a86a57e-d32d-4066-8d22-826520f4cb05" />
 
 ---
 
