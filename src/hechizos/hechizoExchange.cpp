@@ -1,6 +1,7 @@
 #include "hechizoExchange.h"
 #include "tablero.h"
 #include "piezas/pieza.h"
+#include "piezas/mago.h"
 
 bool hechizoExchange::elegirOrigen(Tablero& tablero, Pieza* caster, Pos posOrigen)
 {
@@ -31,6 +32,11 @@ bool hechizoExchange::ejecutar(Tablero& tablero, Pieza* caster, Pos objetivo)
 	tablero.colocarPiezaEnCasilla(objetivo, piezaA);
 	piezaA->setCasilla(objetivo);
 	piezaB->setCasilla(origen);
+
+
+	Mago* mago = dynamic_cast<Mago*>(caster);
+	if (mago != nullptr)
+		mago->usarHechizo(Hechizo::EXCHANGE);
 
 	origen = Pos();
 	return true;

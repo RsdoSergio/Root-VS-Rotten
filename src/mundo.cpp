@@ -285,7 +285,7 @@ void Mundo::jugarCasilla(Pos casilla)
 		if (m != nullptr && hechizoExchange.elegirOrigen(tablero, m, casilla))
 		{
 			tablero.activarHechizo(m, &hechizoExchange); // el siguiente clic es el destino
-			m->usarHechizo(Hechizo::EXCHANGE);
+			
 			eligiendoExchangeOrigen = false;
 			magoSeleccionado = nullptr;
 		}
@@ -298,7 +298,7 @@ void Mundo::jugarCasilla(Pos casilla)
 		if (m != nullptr && hechizoTeleport.elegirOrigen(tablero, m, casilla))
 		{
 			tablero.activarHechizo(m, &hechizoTeleport); // el siguiente clic es la casilla destino
-			m->usarHechizo(Hechizo::TELEPORT);
+			
 			eligiendoTeleportOrigen = false;
 			magoSeleccionado = nullptr;
 		}

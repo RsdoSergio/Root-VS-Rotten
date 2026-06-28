@@ -153,10 +153,10 @@ static void dibujaCreditos()
 
 	ETSIDI::setTextColor(0.85f, 0.85f, 0.85f);
 	ETSIDI::setFont("fuentes/texto.ttf", 24);
-	ETSIDI::printxy("Emmanuel Molina", -6.0f, 5.5f);
-	ETSIDI::printxy("Mauricio Quinchuela", -8.0f, 2.5f);
+	ETSIDI::printxy("Tomas Estevez", -5.0f, 5.5f);
+	ETSIDI::printxy("Emmanuel Molina", -6.0f, 2.5f);
 	ETSIDI::printxy("Pablo Paz", -4.0f, -1.5f);
-	ETSIDI::printxy("Tomas Estevez", -5.0f, -4.5f);
+	ETSIDI::printxy("Mauricio Quinchuela", -8.0f, -4.5f);
 	ETSIDI::printxy("Sergio Rosado", -5.0f, -7.5f);
 
 	ETSIDI::setTextColor(0.4f, 0.6f, 1.0f);
