@@ -1,6 +1,7 @@
 #include "hechzoTeleport.h"
 #include "tablero.h"
 #include "piezas/pieza.h"
+#include "piezas/mago.h"
 
 bool hechizoTeleport::elegirOrigen(Tablero& tablero, Pieza* caster, Pos posOrigen)
 {
@@ -28,6 +29,10 @@ bool hechizoTeleport::ejecutar(Tablero& tablero, Pieza* caster, Pos objetivo)
 	tablero.colocarPiezaEnCasilla(origen, nullptr);
 	tablero.colocarPiezaEnCasilla(objetivo, pieza);
 	pieza->setCasilla(objetivo);
+
+	Mago* mago = dynamic_cast<Mago*>(caster);
+	if (mago != nullptr)
+		mago->usarHechizo(Hechizo::TELEPORT);
 
 	origen = Pos();
 	return true;
